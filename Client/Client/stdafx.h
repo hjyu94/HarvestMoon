@@ -17,5 +17,20 @@
 #include <memory.h>
 #include <tchar.h>
 
+#include <list>
+#include <vector>
+#include <map>
+#include <functional>
+#include <algorithm>
+#include <iostream>
+using namespace std;
 
 // TODO: reference additional headers your program requires here
+#include "Extern.h"
+#include "Define.h"
+#include "Typedef.h"
+#include "Struct.h"
+#include "Enum.h"
+#include "KeyMgr.h"
+#include "ScrollMgr.h"
+#include "Function.h"

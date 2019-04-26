@@ -1,55 +1,222 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="01. Obj">
+      <UniqueIdentifier>{8589aa79-7894-4a6e-8966-64393dae310d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="02. Line">
+      <UniqueIdentifier>{f01d213b-00b5-404f-a1e7-2b7a636e4a3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="03. Bitmap">
+      <UniqueIdentifier>{25134ca8-3bd1-4ec2-9818-2dc01eed28c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Headers">
+      <UniqueIdentifier>{3c842fed-564d-4a7f-a12e-a5c551f0e95a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Default">
+      <UniqueIdentifier>{27f5c47d-c991-47d1-9c5a-20c3fc0154a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Pattern">
+      <UniqueIdentifier>{4e59c043-2a45-4036-b89a-49948240949e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene">
+      <UniqueIdentifier>{29e4d12c-3914-4388-bce4-8da313f4bced}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager">
+      <UniqueIdentifier>{39b49f89-9e3f-44f0-9716-07125dbdf277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. MainGame">
+      <UniqueIdentifier>{c25aa813-454b-40fb-a70e-f1db9c66a781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\00. Obj">
+      <UniqueIdentifier>{1d6d3db4-f776-462b-9b1e-e56e59a2f57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\01. Player">
+      <UniqueIdentifier>{b17d1f5c-53d8-42d7-91a0-e80dacf58260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\00. Scene">
+      <UniqueIdentifier>{b2b0e2b4-8a3f-44ee-aba8-12e56ee0f053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\01. Logo">
+      <UniqueIdentifier>{af185a01-4dfd-4261-a190-8c25370b1a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\LineMgr">
+      <UniqueIdentifier>{bc6325f1-7b4e-4336-b34a-7553924ab354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\BitmapMgr">
+      <UniqueIdentifier>{9d78ab2b-29fe-4984-8be2-8ca5f0af7f1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\Keymgr">
+      <UniqueIdentifier>{d94d01f2-b581-4cf4-9175-8bae910bdaf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\CollisionMgr">
+      <UniqueIdentifier>{0917e1e7-8203-4d74-abce-ccce47d7df4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\ObjMgr">
+      <UniqueIdentifier>{c4882cbe-a6dd-4516-9bc6-969997500057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\SceneMgr">
+      <UniqueIdentifier>{da13d847-6ff2-47bd-bfb0-bb5dc86f17bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\ScrollMgr">
+      <UniqueIdentifier>{3046ab61-e51f-44e4-88db-34768749a6be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Client.h">
+      <Filter>99. Default</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>99. Default</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="stdafx.h">
+      <Filter>99. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractFactory.h">
+      <Filter>97. Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>02. Line</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame.h">
+      <Filter>00. MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="MyBitmap.h">
+      <Filter>03. Bitmap</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMenu.h">
+      <Filter>04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Typedef.h">
+      <Filter>98. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Obj.h">
+      <Filter>01. Obj\00. Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>01. Obj\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>04. Scene\00. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Logo.h">
+      <Filter>04. Scene\01. Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapMgr.h">
+      <Filter>96. Manager\BitmapMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>96. Manager\CollisionMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyMgr.h">
+      <Filter>96. Manager\Keymgr</Filter>
+    </ClInclude>
+    <ClInclude Include="LineMgr.h">
+      <Filter>96. Manager\LineMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjMgr.h">
+      <Filter>96. Manager\ObjMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>96. Manager\SceneMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollMgr.h">
+      <Filter>96. Manager\ScrollMgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Client.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>99. Default</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>02. Line</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp">
+      <Filter>00. MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="MyBitmap.cpp">
+      <Filter>03. Bitmap</Filter>
+    </ClCompile>
+    <ClCompile Include="MyMenu.cpp">
+      <Filter>04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Obj.cpp">
+      <Filter>01. Obj\00. Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>01. Obj\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>04. Scene\00. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Logo.cpp">
+      <Filter>04. Scene\01. Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapMgr.cpp">
+      <Filter>96. Manager\BitmapMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>96. Manager\CollisionMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyMgr.cpp">
+      <Filter>96. Manager\Keymgr</Filter>
+    </ClCompile>
+    <ClCompile Include="LineMgr.cpp">
+      <Filter>96. Manager\LineMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjMgr.cpp">
+      <Filter>96. Manager\ObjMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>96. Manager\SceneMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollMgr.cpp">
+      <Filter>96. Manager\ScrollMgr</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>99. Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>99. Default</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>99. Default</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Client.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <Text Include="ReadMe.txt">
+      <Filter>99. Default</Filter>
+    </Text>
   </ItemGroup>
 </Project>
