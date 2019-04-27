@@ -20,8 +20,8 @@ CPlayer::~CPlayer()
 
 void CPlayer::Initialize()
 {
-	m_tInfo.fCX = 200.f; 
-	m_tInfo.fCY = 200.f; 
+	m_tInfo.fCX = 80.f; 
+	m_tInfo.fCY = 75.f; 
 
 	m_tInfo.fX = 400.f; 
 	m_tInfo.fY = 300.f; 
@@ -31,29 +31,48 @@ void CPlayer::Initialize()
 	m_bIsJump = false; 
 	m_fJumpAccel = 0.f; 
 	m_fJumpPower = 15.f; 
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_DOWN.bmp", L"Player_DOWN");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_LD.bmp", L"Player_LD");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_LEFT.bmp", L"Player_LEFT");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_LU.bmp", L"Player_LU");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_RD.bmp", L"Player_RD");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_RIGHT.bmp", L"Player_RIGHT");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_RU.bmp", L"Player_RU");
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/Player_UP.bmp", L"Player_UP");
-	m_pFrameKey = L"Player_DOWN";
+	
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_IDLE.bmp", L"PLAYER_IDLE");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_IDLE_LEFT.bmp", L"PLAYER_IDLE_LEFT");
+	
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROARING.bmp", L"PLAYER_ROARING");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROARING_LEFT.bmp", L"PLAYER_ROARING_LEFT");
+	
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DOWN.bmp", L"PLAYER_DOWN");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DOWN_LEFT.bmp", L"PLAYER_DOWN_LEFT");
 
-	m_tFrame.dwFrameSpeed = 50;
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_UP.bmp", L"PLAYER_UP");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_UP_LEFT.bmp", L"PLAYER_UP_LEFT");
+
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_RUNNING.bmp", L"PLAYER_RUNNING");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_RUNNING_LEFT.bmp", L"PLAYER_RUNNING_LEFT");
+	
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROLLING.bmp", L"PLAYER_ROLLING");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROLLING_LEFT.bmp", L"PLAYER_ROLLING_LEFT");
+
+	m_bIsRightDir = true;
+
+	m_pFrameKey = L"PLAYER_IDLE";
+	m_tFrame.dwFrameSpeed = 200;
 	m_tFrame.dwFrameTime = GetTickCount(); 
-	m_tFrame.iFrameStart = 0; 
-	m_tFrame.iFrameEnd = 3;
-	m_tFrame.iFrameScene = 0; 
+	m_tFrame.iFrameStart_X = 0; 
+	m_tFrame.iFrameEnd_X = 9;
+	m_tFrame.iFrameStart_Y = 0; 
 }
 
 int CPlayer::Update()
 {
+	/*if (m_bMotionEnd)
+	{
+		m_pFrameKey = L"PLAYER_IDLE";
+		m_eNextState = IDLE;
+	}*/
+
 	KeyCheck();
 	IsJumping();
 	SceneChange();
-	CObj::FrameMove();
+	
+	FrameMove();
 	return 0;
 }
 
@@ -71,10 +90,10 @@ void CPlayer::Render(HDC hDC)
 		m_tRect.left + iScrollX, m_tRect.top, //출력될 위치의 xy 좌표 
 		m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 		hMemDC,
-		m_tInfo.fCX * m_tFrame.iFrameStart, 
-		m_tInfo.fCY* m_tFrame.iFrameScene, // 시작 위치 
+		m_tInfo.fCX * m_tFrame.iFrameStart_X, 
+		m_tInfo.fCY* m_tFrame.iFrameStart_Y, // 시작 위치 
 		m_tInfo.fCX, m_tInfo.fCY,// 출력할 비트맵의 전체 가로세로 길이. 
-		RGB(0, 0, 0)
+		RGB(255, 255, 255)
 	);
 }
 
@@ -114,25 +133,118 @@ void CPlayer::IsJumping()
 
 void CPlayer::KeyCheck()
 {
-		if (GetAsyncKeyState(VK_LEFT))
+	if (!m_bIsRolling)
+	{
+		if (CKeyMgr::Get_Instance()->KeyUP(VK_LEFT))
 		{
-			m_tInfo.fX -= m_fSpeed;
-			m_pFrameKey = L"Player_LEFT";
-			m_eNextState = WALK;
-			CScrollMgr::Set_ScrollX(m_fSpeed);
-		}
-		if (GetAsyncKeyState(VK_RIGHT))
-		{
-			m_tInfo.fX += m_fSpeed;
-			m_pFrameKey = L"Player_RIGHT";
-			m_eNextState = WALK;
-			CScrollMgr::Set_ScrollX(-m_fSpeed);
+			m_pFrameKey = L"PLAYER_IDLE_LEFT";
+			m_eNextState = IDLE_LEFT;
+			m_bIsRightDir = false;
 		}
 
-	if (CKeyMgr::Get_Instance()->KeyUP(VK_SPACE))
-		m_bIsJump = true;
+		if (CKeyMgr::Get_Instance()->KeyUP(VK_RIGHT))
+		{
+			m_pFrameKey = L"PLAYER_IDLE";
+			m_eNextState = IDLE;
+			m_bIsRightDir = true;
+		}
 
+		if (CKeyMgr::Get_Instance()->KeyDown(VK_LEFT))
+		{
+			m_pFrameKey = L"PLAYER_RUNNING_LEFT";
+			m_eNextState = RUNNING_LEFT;
+			m_bIsRightDir = false;
+
+			if (CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
+			{
+				m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+				m_eNextState = ROLLING_LEFT;
+				m_bIsRightDir = false;
+				m_bIsRolling = true;
+			}
+		}
+		if (CKeyMgr::Get_Instance()->KeyDown(VK_RIGHT))
+		{
+			m_pFrameKey = L"PLAYER_RUNNING";
+			m_eNextState = RUNNING;
+			m_bIsRightDir = true;
+		}
+
+		/*if (m_eCurState == RUNNING)
+		{
+			if (CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
+			{
+				m_pFrameKey = L"PLAYER_ROLLING";
+				m_eNextState = ROLLING;
+				m_bIsRightDir = true;
+				m_bIsRolling = true;
+			}
+		}
+
+		if (m_eCurState == RUNNING_LEFT)
+		{
+			if (CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
+			{
+				m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+				m_eNextState = ROLLING_LEFT;
+				m_bIsRightDir = false;
+				m_bIsRolling = true;
+			}
+		}*/
+
+
+		if (m_bIsRightDir) // 오른쪽을 보고 있을 때
+		{
+			if (GetAsyncKeyState(VK_CONTROL))
+			{
+				m_pFrameKey = L"PLAYER_ROARING";
+				m_eNextState = ROARING;
+			}
+			else if (GetAsyncKeyState(VK_DOWN))
+			{
+				m_pFrameKey = L"PLAYER_DOWN";
+				m_eNextState = DOWN;
+			}
+			else if (GetAsyncKeyState(VK_UP))
+			{
+				m_pFrameKey = L"PLAYER_UP";
+				m_eNextState = UP;
+			}
+			/*else
+			{
+				m_pFrameKey = L"PLAYER_IDLE";
+				m_eNextState = IDLE;
+			}*/
+		}
+		else if (!m_bIsRightDir) // 왼쪽을 보고 있을 때
+		{
+			if (GetAsyncKeyState(VK_CONTROL))
+			{
+				m_pFrameKey = L"PLAYER_ROARING_LEFT";
+				m_eNextState = ROARING_LEFT;
+			}
+			else if (GetAsyncKeyState(VK_DOWN))
+			{
+				m_pFrameKey = L"PLAYER_DOWN_LEFT";
+				m_eNextState = DOWN_LEFT;
+			}
+			else if (GetAsyncKeyState(VK_UP))
+			{
+				m_pFrameKey = L"PLAYER_UP_LEFT";
+				m_eNextState = UP_LEFT;
+			}
+			/*else
+			{
+				m_pFrameKey = L"PLAYER_IDLE_LEFT";
+				m_eNextState = IDLE_LEFT;
+			}*/
+		}
+
+		if (CKeyMgr::Get_Instance()->KeyUP(VK_SPACE))
+			m_bIsJump = true;
+	}
 }
+
 void CPlayer::SceneChange()
 {
 	if (m_eCurState != m_eNextState)
@@ -140,33 +252,117 @@ void CPlayer::SceneChange()
 		switch (m_eNextState)
 		{
 		case CPlayer::IDLE:
-			m_tFrame.dwFrameSpeed = 50;
+		case CPlayer::IDLE_LEFT:
+			m_tInfo.fCX = 80.f;
+			m_tInfo.fCY = 75.f;
+			m_tFrame.dwFrameSpeed = 200;
 			m_tFrame.dwFrameTime = GetTickCount();
-			m_tFrame.iFrameStart = 0;
-			m_tFrame.iFrameEnd = 3;
-			m_tFrame.iFrameScene = 0;
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 10;
+			m_tFrame.iFrameStart_Y = 0;
 			break;
-		case CPlayer::WALK:
-			m_tFrame.dwFrameSpeed = 50;
+
+		case CPlayer::ROARING:
+		case CPlayer::ROARING_LEFT:
+			m_tInfo.fCX = 135.f;
+			m_tInfo.fCY = 90.f;
+			m_tFrame.dwFrameSpeed = 200;
 			m_tFrame.dwFrameTime = GetTickCount();
-			m_tFrame.iFrameStart = 0;
-			m_tFrame.iFrameEnd = 5;
-			m_tFrame.iFrameScene = 1;
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 9;
+			m_tFrame.iFrameStart_Y = 0;
 			break;
-		case CPlayer::ATT:
-			m_tFrame.dwFrameSpeed = 50;
+
+		case CPlayer::DOWN:
+		case CPlayer::DOWN_LEFT:
+			m_tInfo.fCX = 120.f;
+			m_tInfo.fCY = 75.f;
+			m_tFrame.dwFrameSpeed = 200;
 			m_tFrame.dwFrameTime = GetTickCount();
-			m_tFrame.iFrameStart = 0;
-			m_tFrame.iFrameEnd = 3;
-			m_tFrame.iFrameScene = 0;
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 14;
+			m_tFrame.iFrameStart_Y = 0;
 			break;
-		case CPlayer::HIT:
+
+		case CPlayer::UP:
+		case CPlayer::UP_LEFT:
+			m_tInfo.fCX = 96.f;
+			m_tInfo.fCY = 90.f;
+			m_tFrame.dwFrameSpeed = 200;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 3;
+			m_tFrame.iFrameStart_Y = 0;
 			break;
-		case CPlayer::DIE:
+
+		case CPlayer::RUNNING:
+		case CPlayer::RUNNING_LEFT:
+			m_tInfo.fCX = 130.f;
+			m_tInfo.fCY = 75.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 13;
+			m_tFrame.iFrameStart_Y = 0;
 			break;
-		default:
+
+		case CPlayer::ROLLING:
+		case CPlayer::ROLLING_LEFT:
+			m_tInfo.fCX = 106.f;
+			m_tInfo.fCY = 76.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 13;
+			m_tFrame.iFrameStart_Y = 0;
 			break;
 		}
 		m_eCurState = m_eNextState;
+		m_bMotionEnd = false;
 	}
+}
+
+void CPlayer::FrameMove()
+{
+	//if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount()
+	//	&& m_tFrame.iFrameStart_X != m_tFrame.iFrameEnd_X)
+	//{
+	//	++m_tFrame.iFrameStart_X;
+	//	m_tFrame.dwFrameTime = GetTickCount();
+	//}
+
+	//// IDLE 일때만 반복
+	//if (m_eCurState == IDLE)
+	//{
+	//	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
+	//	{
+
+	//		m_tFrame.iFrameStart_X = 0;
+	//		m_bMotionEnd = true;
+	//	}
+	//}
+	//else
+	//{
+	//	// 마지막 화면에서 정지
+	//	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
+	//	{
+
+	//		m_tFrame.iFrameStart_X = m_tFrame.iFrameEnd_X;
+	//		m_bMotionEnd = true;
+	//	}
+	//}
+
+	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount())
+	{
+		++m_tFrame.iFrameStart_X;
+		m_tFrame.dwFrameTime = GetTickCount();
+	}
+
+	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
+	{
+
+		m_tFrame.iFrameStart_X = 0;
+		m_bMotionEnd = true;
+	}
+
 }

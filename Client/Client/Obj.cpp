@@ -5,7 +5,9 @@
 CObj::CObj()
 	:m_bIsDead(false)
 	, m_fAngle(0.f)
-	,m_bIsInit(false)
+	, m_bIsInit(false)
+	, m_bMotionEnd(false)
+	, m_bIsRightDir(false)
 {
 	ZeroMemory(&m_tInfo, sizeof(INFO));
 	ZeroMemory(&m_tRect, sizeof(RECT));
@@ -26,14 +28,18 @@ void CObj::UpdateRect()
 
 void CObj::FrameMove()
 {
-	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed <GetTickCount())
+	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount())
 	{
-		++m_tFrame.iFrameStart;
+		++m_tFrame.iFrameStart_X;
 		m_tFrame.dwFrameTime = GetTickCount();
 	}
 
-	if (m_tFrame.iFrameStart >= m_tFrame.iFrameEnd)
-		m_tFrame.iFrameStart = 0; 
+	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
+	{
+
+		m_tFrame.iFrameStart_X = 0;
+		m_bMotionEnd = true;
+	}
 }
 
 void CObj::LateInit()

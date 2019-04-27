@@ -22,10 +22,10 @@ void CMainGame::Initialize()
 {
 	m_hDC = GetDC(g_hWnd);
 
-	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Back.bmp", L"Back");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/background.bmp", L"background");
 
 	// 작업할 도화지. 
-	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/BackBuffer.bmp", L"BackBuffer");
+	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/BackBuffer.bmp", L"BackBuffer");
 
 	CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LOGO);
 	
@@ -44,14 +44,14 @@ void CMainGame::LateUpdate()
 
 void CMainGame::Render()
 {
-	HDC hBackDC = CBitmapMgr::Get_Instance()->FindImage(L"BackBuffer");
-	HDC hmemDC = CBitmapMgr::Get_Instance()->FindImage(L"Back");
+	HDC hBackDC = CBitmapMgr::Get_Instance()->FindImage(L"background");
+	//HDC hmemDC = CBitmapMgr::Get_Instance()->FindImage(L"Back");
 
-	BitBlt(hBackDC, 0, 0, WINCX, WINCY, hmemDC, 0, 0, SRCCOPY);
+	BitBlt(m_hDC, 0, 0, WINCX, WINCY, hBackDC, 0, 0, SRCCOPY);
 
 	// 여기에서 씬매니저 -> 씬 -> ObjMgr를 돌리면 각 객체가 다 돌아가겠네 
-	CSceneMgr::Get_Instance()->Render(hBackDC);
-	BitBlt(m_hDC, 0, 0, WINCX, WINCY, hBackDC, 0, 0, SRCCOPY);
+	CSceneMgr::Get_Instance()->Render(m_hDC);
+	//BitBlt(m_hDC, 0, 0, WINCX, WINCY, hBackDC, 0, 0, SRCCOPY);
 }
 
 void CMainGame::Release()

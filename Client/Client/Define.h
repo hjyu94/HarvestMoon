@@ -1,6 +1,6 @@
 #pragma once
 
-#define WINCX 800
+#define WINCX 1000
 #define WINCY 600
 
 #define OBJ_DEAD 1

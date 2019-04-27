@@ -39,9 +39,9 @@ typedef struct tagLine
 
 typedef struct tagFrame
 {
-	int iFrameStart;// 시작 지점. 
-	int iFrameEnd; // 끝점
-	int iFrameScene; // // y 즉, 상태값. 
+	int iFrameStart_X;// 시작 지점. 
+	int iFrameEnd_X; // 끝점
+	int iFrameStart_Y; // // y 즉, 상태값. 
 	DWORD dwFrameSpeed; //재생 속도. 
 	DWORD dwFrameTime; // 시간값. 
 

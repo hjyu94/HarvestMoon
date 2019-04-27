@@ -5,7 +5,14 @@ class CPlayer :
 	public CObj
 {
 public:
-	enum STATE { IDLE, WALK, ATT, HIT, DIE};
+	enum STATE {
+		IDLE, IDLE_LEFT
+		, ROARING, ROARING_LEFT
+		, DOWN, DOWN_LEFT
+		, UP, UP_LEFT
+		, RUNNING, RUNNING_LEFT
+		, ROLLING, ROLLING_LEFT
+	};
 
 public:
 	CPlayer();
@@ -23,6 +30,7 @@ public:
 	void IsJumping();
 	void KeyCheck(); 
 	void SceneChange();
+	virtual void FrameMove();
 
 private:
 	// jump에 필요한 변수. 
@@ -33,5 +41,9 @@ private:
 	TCHAR* m_pFrameKey;
 	STATE m_eNextState;
 	STATE m_eCurState; 
+
+	bool m_bIsRolling = false;
+
+
 };
 

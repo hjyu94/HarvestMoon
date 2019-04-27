@@ -61,6 +61,9 @@
     <Filter Include="96. Manager\ScrollMgr">
       <UniqueIdentifier>{3046ab61-e51f-44e4-88db-34768749a6be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Obj\Giraffe">
+      <UniqueIdentifier>{3bed5c68-ccc3-4236-8d5d-a0bffa07a798}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -141,6 +144,9 @@
     <ClInclude Include="ScrollMgr.h">
       <Filter>96. Manager\ScrollMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Giraffe.h">
+      <Filter>01. Obj\Giraffe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -193,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="ScrollMgr.cpp">
       <Filter>96. Manager\ScrollMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Giraffe.cpp">
+      <Filter>01. Obj\Giraffe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

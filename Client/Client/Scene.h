@@ -1,4 +1,10 @@
 #pragma once
+
+#include "BitmapMgr.h"
+#include "SceneMgr.h"
+#include "ObjMgr.h"
+#include "AbstractFactory.h"
+
 class CScene
 {
 public:

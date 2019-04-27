@@ -1,4 +1,7 @@
 #pragma once
+
+#include "BitmapMgr.h"
+
 class CObj
 {
 public:
@@ -27,7 +30,7 @@ public:
 
 public:
 	void UpdateRect(); 
-	void FrameMove();
+	virtual void FrameMove();
 	virtual void LateInit(); 
 
 protected:
@@ -39,5 +42,8 @@ protected:
 	bool m_bIsDead;
 	CObj* m_pTarget; 
 	bool m_bIsInit; 
+
+	bool m_bMotionEnd;
+	bool m_bIsRightDir;
 };
 
