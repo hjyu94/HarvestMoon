@@ -133,7 +133,23 @@ void CPlayer::IsJumping()
 
 void CPlayer::KeyCheck()
 {
-	if (!m_bIsRolling)
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT) && CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
+	{
+		m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+		m_eNextState = ROLLING_LEFT;
+		m_bIsRightDir = false;
+		m_bIsRolling = true;
+	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_RIGHT) && CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
+	{
+		m_pFrameKey = L"PLAYER_ROLLING";
+		m_eNextState = ROLLING;
+		m_bIsRightDir = true;
+		m_bIsRolling = true;
+	}
+	
+	if(!m_bIsRolling)
 	{
 		if (CKeyMgr::Get_Instance()->KeyUP(VK_LEFT))
 		{
@@ -149,21 +165,31 @@ void CPlayer::KeyCheck()
 			m_bIsRightDir = true;
 		}
 
-		if (CKeyMgr::Get_Instance()->KeyDown(VK_LEFT))
+		if (CKeyMgr::Get_Instance()->KeyUP(VK_DOWN)
+			|| CKeyMgr::Get_Instance()->KeyUP(VK_UP))
+		{
+			if (m_bIsRightDir)
+			{
+				m_pFrameKey = L"PLAYER_IDLE";
+				m_eNextState = IDLE_LEFT;
+				m_bIsRightDir = true;
+			}
+			else
+			{
+				m_pFrameKey = L"PLAYER_IDLE_LEFT";
+				m_eNextState = IDLE;
+				m_bIsRightDir = false;
+			}
+		}
+
+		if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT))
 		{
 			m_pFrameKey = L"PLAYER_RUNNING_LEFT";
 			m_eNextState = RUNNING_LEFT;
 			m_bIsRightDir = false;
-
-			if (CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
-			{
-				m_pFrameKey = L"PLAYER_ROLLING_LEFT";
-				m_eNextState = ROLLING_LEFT;
-				m_bIsRightDir = false;
-				m_bIsRolling = true;
-			}
 		}
-		if (CKeyMgr::Get_Instance()->KeyDown(VK_RIGHT))
+
+		if (CKeyMgr::Get_Instance()->KeyPressing(VK_RIGHT))
 		{
 			m_pFrameKey = L"PLAYER_RUNNING";
 			m_eNextState = RUNNING;
@@ -239,10 +265,10 @@ void CPlayer::KeyCheck()
 				m_eNextState = IDLE_LEFT;
 			}*/
 		}
-
-		if (CKeyMgr::Get_Instance()->KeyUP(VK_SPACE))
-			m_bIsJump = true;
 	}
+
+	if (CKeyMgr::Get_Instance()->KeyUP(VK_SPACE))
+		m_bIsJump = true;
 }
 
 void CPlayer::SceneChange()
@@ -313,7 +339,51 @@ void CPlayer::SceneChange()
 			m_tFrame.dwFrameSpeed = 100;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
-			m_tFrame.iFrameEnd_X = 13;
+			m_tFrame.iFrameEnd_X = 8;
+			m_tFrame.iFrameStart_Y = 0;
+			break;
+
+		case CPlayer::LEDGE_DOWN:
+		case CPlayer::LEDGE_DOWN_LEFT:
+			m_tInfo.fCX = 130.f;
+			m_tInfo.fCY = 116.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 3;
+			m_tFrame.iFrameStart_Y = 0;
+			break;
+
+		case CPlayer::STANDING_LAND:
+		case CPlayer::STANDING_LAND_LEFT:
+			m_tInfo.fCX = 88.f;
+			m_tInfo.fCY = 106.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 5;
+			m_tFrame.iFrameStart_Y = 0;
+			break;
+
+		case CPlayer::STANDING_JUMP:
+		case CPlayer::STANDING_JUMP_LEFT:
+			m_tInfo.fCX = 102.f;
+			m_tInfo.fCY = 138.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 9;
+			m_tFrame.iFrameStart_Y = 0;
+			break;
+
+		case CPlayer::HURT:
+		case CPlayer::HURT_LEFT:
+			m_tInfo.fCX = 106.f;
+			m_tInfo.fCY = 108.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 6;
 			m_tFrame.iFrameStart_Y = 0;
 			break;
 		}
@@ -360,9 +430,37 @@ void CPlayer::FrameMove()
 
 	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
 	{
-
-		m_tFrame.iFrameStart_X = 0;
-		m_bMotionEnd = true;
+		// 위나 아래를 보는 경우 마지막에서 프레임 유지
+		if (m_eCurState == DOWN
+			|| m_eCurState == DOWN_LEFT
+			|| m_eCurState == UP
+			|| m_eCurState == UP_LEFT)
+		{
+			m_tFrame.iFrameStart_X = m_tFrame.iFrameEnd_X-1;
+		}
+		// 구르는 경우, 마지막에 IDLE로 교체
+		else if (m_eCurState == ROLLING
+			|| m_eCurState == ROLLING_LEFT)
+		{
+			if (m_bIsRightDir)
+			{
+				m_pFrameKey = L"PLAYER_IDLE";
+				m_eNextState = IDLE_LEFT;
+				m_bIsRightDir = true;
+			}
+			else
+			{
+				m_pFrameKey = L"PLAYER_IDLE_LEFT";
+				m_eNextState = IDLE;
+				m_bIsRightDir = false;
+			}
+			m_bIsRolling = false;
+		}
+		else
+		{
+			m_tFrame.iFrameStart_X = 0;
+			m_bMotionEnd = true;
+		}
 	}
 
 }
