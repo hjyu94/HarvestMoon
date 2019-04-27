@@ -92,7 +92,7 @@ void CPlayer::IsJumping()
 	{
 		// 자유낙하 공식 사용 
 		// y= 힘 * sin@(1이라 생략) * 시간 - 1/2 * 중력 * 시간 * 시간;
-		m_tInfo.fY -= m_fJumpPower * m_fJumpAccel - GRAVITY * m_fJumpAccel * m_fJumpAccel * 0.5f ;
+		m_tInfo.fY -= m_fJumpPower * m_fJumpAccel - 9.8 * m_fJumpAccel * m_fJumpAccel * 0.5f ;
 
 		m_fJumpAccel += 0.21f;
 

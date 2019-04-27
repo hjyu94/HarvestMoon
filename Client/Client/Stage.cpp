@@ -45,6 +45,4 @@ void CStage::Render(HDC hDC)
 
 void CStage::Release()
 {
-	CObjMgr::Get_Instance()->DeleteID(OBJID::MONSTER);
-	CObjMgr::Get_Instance()->DeleteID(OBJID::BULLET);
 }

@@ -102,9 +102,6 @@
     <ClInclude Include="MyBitmap.h">
       <Filter>03. Bitmap</Filter>
     </ClInclude>
-    <ClInclude Include="MyMenu.h">
-      <Filter>04. Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Stage.h">
       <Filter>04. Scene</Filter>
     </ClInclude>
@@ -160,9 +157,6 @@
     </ClCompile>
     <ClCompile Include="MyBitmap.cpp">
       <Filter>03. Bitmap</Filter>
-    </ClCompile>
-    <ClCompile Include="MyMenu.cpp">
-      <Filter>04. Scene</Filter>
     </ClCompile>
     <ClCompile Include="Stage.cpp">
       <Filter>04. Scene</Filter>
