@@ -1,5 +1,6 @@
 #pragma once
 class CObj; 
+class CPlayer;
 class CObjMgr
 {
 private:
@@ -22,8 +23,10 @@ public:
 		}
 	}
 public:
-	CObj* Get_Player() { return m_Objlist[OBJID::PLAYER].front(); }
+	CPlayer* Get_Player() { return (CPlayer*)(m_Objlist[OBJID::PLAYER].front()); }
+	OBJLIST Get_OBJLIST(OBJID::ID eID) { return m_Objlist[eID]; }
 	CObj* Get_Target(CObj* pSrc, OBJID::ID eID);
+
 public:
 	void AddObject(OBJID::ID eID, CObj* pObj);
 	int Update();

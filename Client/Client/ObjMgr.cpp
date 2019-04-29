@@ -69,7 +69,6 @@ int CObjMgr::Update()
 
 void CObjMgr::LateUpdate()
 {
-
 	for (int i = 0; i < OBJID::END; ++i)
 	{
 		for (auto& pObj : m_Objlist[i])
@@ -81,7 +80,6 @@ void CObjMgr::LateUpdate()
 			}
 		}
 	}
-	//CCollisionMgr::CollisionRectEX(m_Objlist[OBJID::PLAYER], m_Objlist[OBJID::MONSTER]);
 }
 
 void CObjMgr::Render(HDC hDC)

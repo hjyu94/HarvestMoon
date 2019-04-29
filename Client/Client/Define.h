@@ -1,7 +1,7 @@
 #pragma once
 
-#define WINCX 1000
-#define WINCY 600
+#define WINCX 650
+#define WINCY 450
 
 #define OBJ_DEAD 1
 #define OBJ_NOEVENT 0
@@ -35,3 +35,5 @@ private:									\
 
 #define IMPLEMENT_SINGLETON(Class)			\
 Class* Class::m_pInstance = nullptr; 
+
+#define Is_Counter_One_Of(Class) dynamic_cast<Class*>(pCounterObj) != nullptr

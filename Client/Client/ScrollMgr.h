@@ -5,9 +5,14 @@ public:
 	CScrollMgr();
 	~CScrollMgr();
 public:
-	static int Get_ScrollX() { return m_iScrollX; }
-	static void Set_ScrollX(int x) { m_iScrollX += x; }
+	static float Get_ScrollX() { return m_fScrollX; }
+	static void Sum_ScrollX(float x) { m_fScrollX += x; }
+		
+	static float Get_ScrollY() { return m_fScrollY; }
+	static void Sum_ScrollY(float y) { m_fScrollY += y; }
+
 private:
-	static int m_iScrollX;
+	static float m_fScrollX;
+	static float m_fScrollY;
 };
 

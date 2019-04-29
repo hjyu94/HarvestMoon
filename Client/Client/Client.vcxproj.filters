@@ -64,6 +64,27 @@
     <Filter Include="01. Obj\Giraffe">
       <UniqueIdentifier>{3bed5c68-ccc3-4236-8d5d-a0bffa07a798}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Scene\02. Stage">
+      <UniqueIdentifier>{42773b38-44c1-4b92-a0a6-41fc68f97f1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\03. LineEditor">
+      <UniqueIdentifier>{4123c051-b3cd-429f-bf32-156fe9b6ad29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\EditorLineMgr">
+      <UniqueIdentifier>{ecc48ef9-575f-4fbc-a24b-c674b36feeff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\04. LineEditorTest">
+      <UniqueIdentifier>{9786736d-0103-4389-b4a8-b02b415ab38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\02. Monster">
+      <UniqueIdentifier>{1fab8891-39a1-4eee-8b99-2c223e50f739}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\03. Item">
+      <UniqueIdentifier>{24b4073a-8200-4681-a251-4c106137abb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\04. Vertex">
+      <UniqueIdentifier>{f3dd7694-7672-433f-ad15-f6e449ac2bf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -105,9 +126,6 @@
     <ClInclude Include="MyBitmap.h">
       <Filter>03. Bitmap</Filter>
     </ClInclude>
-    <ClInclude Include="Stage.h">
-      <Filter>04. Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Typedef.h">
       <Filter>98. Headers</Filter>
     </ClInclude>
@@ -147,6 +165,34 @@
     <ClInclude Include="Giraffe.h">
       <Filter>01. Obj\Giraffe</Filter>
     </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>04. Scene\02. Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="LineEditor.h">
+      <Filter>04. Scene\03. LineEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorLineMgr.h">
+      <Filter>96. Manager\EditorLineMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="LineEditorTest.h">
+      <Filter>04. Scene\04. LineEditorTest</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPlayer.h" />
+    <ClInclude Include="HedgeHog.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Lizard.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>01. Obj\03. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>01. Obj\04. Vertex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -163,9 +209,6 @@
     </ClCompile>
     <ClCompile Include="MyBitmap.cpp">
       <Filter>03. Bitmap</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage.cpp">
-      <Filter>04. Scene</Filter>
     </ClCompile>
     <ClCompile Include="Obj.cpp">
       <Filter>01. Obj\00. Obj</Filter>
@@ -203,6 +246,34 @@
     <ClCompile Include="Giraffe.cpp">
       <Filter>01. Obj\Giraffe</Filter>
     </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>04. Scene\02. Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="LineEditor.cpp">
+      <Filter>04. Scene\03. LineEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorLineMgr.cpp">
+      <Filter>96. Manager\EditorLineMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="LineEditorTest.cpp">
+      <Filter>04. Scene\04. LineEditorTest</Filter>
+    </ClCompile>
+    <ClCompile Include="HedgeHog.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Lizard.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>01. Obj\03. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPlayer.cpp" />
+    <ClCompile Include="Vertex.cpp">
+      <Filter>01. Obj\04. Vertex</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -221,5 +292,6 @@
     <Text Include="ReadMe.txt">
       <Filter>99. Default</Filter>
     </Text>
+    <Text Include="0429 수업.txt" />
   </ItemGroup>
 </Project>

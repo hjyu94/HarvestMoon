@@ -5,7 +5,13 @@ class CSceneMgr
 	DECLARE_SINGLETON(CSceneMgr)
 
 public:
-	enum SCENEID{SCENE_LOGO, SCENE_MENU, SCENE_EDIT, SCENE_STAGE, SCENE_END};
+	enum SCENEID
+	{
+		SCENE_LOGO
+		, SCENE_LINE_EDIT
+		, SCENE_STAGE
+		, SCENE_LINE_TEST
+		, SCENE_END};
 
 public:
 	void SceneChange(SCENEID eScene);
@@ -13,6 +19,10 @@ public:
 	void LateUpdate();
 	void Render(HDC hDC);
 	void Release(); 
+
+public:
+	SCENEID Get_SCENEID() { return m_eCurScene; }
+	CScene* Get_pScene() { return m_pScene; }
 
 private:
 	CScene* m_pScene;

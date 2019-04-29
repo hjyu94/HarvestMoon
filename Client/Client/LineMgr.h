@@ -26,9 +26,11 @@ public:
 	void Initialize();
 	void Render(HDC hDC);
 	void Release(); 
+
 public:
 	bool LineCollision(float fInX, float* pOutY);
 	void LoadData(); 
+
 private:
 	static CLineMgr* m_pInstance;
 	list<CLine*> m_listLine;

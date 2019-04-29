@@ -5,5 +5,5 @@ namespace BULLET
 }
 namespace OBJID
 {
-	enum ID {PLAYER, END};
+	enum ID {PLAYER, MONSTER, ITEM, MAP, END};
 }

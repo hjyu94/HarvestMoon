@@ -19,6 +19,7 @@ CLine::~CLine()
 void CLine::Render(HDC hDC)
 {
 	int iScrollX = CScrollMgr::Get_ScrollX();
-	MoveToEx(hDC, static_cast<int>(m_tInfo.tLeftPoint.fx) + iScrollX, static_cast<int>(m_tInfo.tLeftPoint.fy), nullptr);
-	LineTo(hDC, static_cast<int>(m_tInfo.tRightPoint.fx) + iScrollX, static_cast<int>(m_tInfo.tRightPoint.fy));
+	int iScrollY = CScrollMgr::Get_ScrollY();
+	MoveToEx(hDC, static_cast<int>(m_tInfo.tLeftPoint.fx) - iScrollX, static_cast<int>(m_tInfo.tLeftPoint.fy)-iScrollY, nullptr);
+	LineTo(hDC, static_cast<int>(m_tInfo.tRightPoint.fx) - iScrollX, static_cast<int>(m_tInfo.tRightPoint.fy) - iScrollY);
 }

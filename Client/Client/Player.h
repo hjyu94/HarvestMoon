@@ -15,6 +15,8 @@ public:
 		, LEDGE_DOWN, LEDGE_DOWN_LEFT
 		, STANDING_LAND, STANDING_LAND_LEFT
 		, STANDING_JUMP, STANDING_JUMP_LEFT
+		, GRABBING_LEDGE_FIRST, GRABBING_LEDGE_FIRST_LEFT
+		, GRABBING_LEDGE_SECOND, GRABBING_LEDGE_SECOND_LEFT
 		, HURT, HURT_LEFT
 	};
 
@@ -32,22 +34,43 @@ public:
 
 public:
 	void IsJumping();
+	void IsRoaring();
+	void IsRolling();
+	void IsHurting();
+	void IsDanging();
+
 	void KeyCheck(); 
 	void SceneChange();
 	virtual void FrameMove();
+	void Move(float fScrollMaxX, bool is_MovingDir_Right);
+	virtual void Collision_Proc(CObj* pCounterObj);
+	void BackToIdle();
+	STATE Get_CurState() { return m_eCurState; }
 
 private:
+
 	// jump에 필요한 변수. 
 	bool m_bIsJump; 
-	float m_fJumpPower; // 물리에서 v가 되겠다. 
-	float m_fJumpAccel; // 이게 이제 t가 되겠다. 가속도. 
+	float m_fJumpPower;
+	float m_fDeltaTime; 
 
-	TCHAR* m_pFrameKey;
+	float m_fVelX;
+	float m_fVelY;
+
+	bool m_bIsRolling;
+	bool m_bIsHurting;
+	bool m_bIsRoaring;
+	bool m_bIsDanging;
+
 	STATE m_eNextState;
-	STATE m_eCurState; 
+	STATE m_eCurState;
 
-	bool m_bIsRolling = false;
+	DWORD m_dwRecover;
+	DWORD m_dwNoCollision;
 
-
+private:
+	bool m_bIsSaved;
+	float m_fSaving_X;
+	float m_fSaving_Y;
 };
 

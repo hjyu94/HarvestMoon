@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "ScrollMgr.h"
 
-int CScrollMgr::m_iScrollX = 0; 
+float CScrollMgr::m_fScrollX = 0.f;
+float CScrollMgr::m_fScrollY = 0.f;
 
 CScrollMgr::CScrollMgr()
 {

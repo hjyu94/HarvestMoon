@@ -74,7 +74,7 @@ void CLineMgr::LoadData()
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		MessageBox(g_hWnd, L"ㄴㄴ", L"ㄴㄴ", MB_OK);
+		MessageBox(g_hWnd, L"라인 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
 		return;
 	}
 	LINEINFO tInfo = {}; 
@@ -90,5 +90,5 @@ void CLineMgr::LoadData()
 		m_listLine.emplace_back(new CLine(tInfo)); 
 	}
 	CloseHandle(hFile);
-	MessageBox(g_hWnd, L"ㅇㅇㅇ", L"ㅇㅇ", MB_OK);
+	MessageBox(g_hWnd, L"라인 정보를 읽어왔습니다", L"로드 성공", MB_OK);
 }

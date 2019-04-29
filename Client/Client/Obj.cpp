@@ -50,3 +50,13 @@ void CObj::LateInit()
 		m_bIsInit = true;
 	}
 }
+
+void CObj::Collision_Proc(CObj * pCounterObj)
+{
+}
+
+bool CObj::Is_Inside(float left, float top, float right, float bottom)
+{
+	bool bResult = (left < m_tInfo.fX && m_tInfo.fX < right && top < m_tInfo.fY && m_tInfo.fY < bottom);
+	return bResult;
+}

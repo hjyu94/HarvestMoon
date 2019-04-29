@@ -16,33 +16,46 @@ CLogo::~CLogo()
 
 void CLogo::Initialize()
 {
-	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Logo/Logo.bmp", L"Logo");
-
-	//CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CGiraffe>::Create());
-	CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create());
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Logo/Logo_1.bmp", L"Logo_1");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Logo/Logo_2.bmp", L"Logo_2");
+	m_dwIntro = GetTickCount();
 }
 
 void CLogo::Update()
 {
-	CObjMgr::Get_Instance()->Update();
 }
 
 void CLogo::LateUpdate()
 {
-	CObjMgr::Get_Instance()->LateUpdate();
-
-	// 추후 뭔가 키를 누르면 씬이 바뀌도록 만들것이다. 
+	// 엔터 누르면 스테이지 시작
 	if (CKeyMgr::Get_Instance()->KeyDown(VK_RETURN))
 	{
-		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_MENU);
+		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_STAGE);
+	}
+	// L 누르면 라인 에디터 시작
+	if (CKeyMgr::Get_Instance()->KeyDown('L'))
+	{
+		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LINE_EDIT);
+	}
+	// T 누르면 라인 에디터 테스트 씬 시작
+	if (CKeyMgr::Get_Instance()->KeyDown('T'))
+	{
+		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LINE_TEST);
 	}
 }
 
 void CLogo::Render(HDC hDC)
 {
-	CObjMgr::Get_Instance()->Render(hDC);
+	HDC hMemDC = nullptr;
 
-	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(L"Logo");
+	if (m_dwIntro + 2000 > GetTickCount())
+	{
+		hMemDC = CBitmapMgr::Get_Instance()->FindImage(L"Logo_1");
+	}
+	else
+	{
+		hMemDC = CBitmapMgr::Get_Instance()->FindImage(L"Logo_2");
+	}
 
 	BitBlt(hDC, 0, 0, WINCX, WINCY, hMemDC, 0, 0, SRCCOPY);
 }

@@ -32,11 +32,24 @@ public:
 	void UpdateRect(); 
 	virtual void FrameMove();
 	virtual void LateInit(); 
+	virtual void Collision_Proc(CObj* pCounterObj);
+	bool Is_Inside(float left, float top, float right, float bottom);
+public:
+	int Get_Hp() { return m_iHp; };
+	int Get_Mp() { return m_iMp; };
+	bool Get_IsRightDir() { return m_bIsRightDir; }
+
+public:
+	void Set_Hp(int iHp) { m_iHp = iHp; }
 
 protected:
 	INFO m_tInfo; 
 	RECT m_tRect; 
+
 	FRAME m_tFrame; 
+
+	TCHAR* m_pFrameKey;
+	
 	float m_fSpeed; 
 	float m_fAngle; 
 	bool m_bIsDead;
@@ -45,5 +58,11 @@ protected:
 
 	bool m_bMotionEnd;
 	bool m_bIsRightDir;
+
+	int m_iHp;
+	int m_iMaxHp;
+	int m_iMp;
+	int m_iMaxMp;
+
 };
 

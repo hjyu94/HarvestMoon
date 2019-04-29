@@ -1,0 +1,66 @@
+타일 깔기
+class CTile
+	- Obj 상속->CTile 클래스 생성
+
+	void Set_DrawID(int iDrawID)
+	void Set_Option(int iOption){m_iOption=iOption;}
+
+	- int m_iDrawID; -> 0 으로 초기화
+	- int m_iOption; -> 0 으로 초기화
+
+	#define TILESIZEX 64
+	#define TILESIZEY, TILEX, TILEY ...
+
+	BitBlt(hDC, m_tRect.left+iScrollX, m_tRect.top+iScrollY
+	, TILESIZEX, TILESIZEY, hMemDC, m_iDrawID * TILESIZEX, 0, SRCCOPY);
+	// m_iDrawID: 0 or 1
+
+class CTileMgr
+	- 싱글톤
+	- Initialize, Update, Render, Release
+	- void PickTile(const POINT & pt, const int iDrawID, const int iOption);
+		: 클릭한 위치에 내가 원하는 종류의 타일을 찍어내기
+	- void SaveTile();
+	- void LoadTile();
+	- private vector<CObj*> m_vecTile;
+	
+	- Initialize()
+		 for(i ...)
+			for(j ...)
+				float x = ...;
+				float y = ...;
+				CObj* pObj = CAbstra..<CTile>::Create(x,y);
+				m_vecTile.emplace_back(pObj);
+
+	- m_vecTile.shrink_to_fit();
+	 (== m_vecTile.swap(vector<CObj*>());)
+
+	 - void PickTile()
+	 {
+		int x = pt.x / TILESIZEX;
+		int y = pt.y / TILESIZEY;
+	 }
+
+class CMyEdit
+	- Initialize, Update, Release, Render
+	- public void KeyCheck();
+	- Initialize()
+	{
+		InsertBmp(L"../Tile.bmp", L"Tile");
+	}
+	- Update()
+	{
+		KeyCheck();
+	}
+	- KeyCheck()
+	{
+		if(KeyPressing(VK_LEFT))	Set_ScrollX(-5.f);
+		if(KeyPressing(VK_RIGHT))	Set_ScrollX(+5.f);
+		if(KeyPressing(VK_UP))		Set_ScrollY(+5.f);
+		if(KeyPressing(VK_DOWN))	Set_ScrollY(-5.f);
+		if(KeyDown(VK_LBUTTON))		CTileMgr::PickTile(&pt, 1, 0);
+	}
+	-
+	
+
+	

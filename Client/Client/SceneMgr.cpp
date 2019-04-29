@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "SceneMgr.h"
+
 #include "Logo.h"
+#include "LineEditor.h"
 #include "Stage.h"
+#include "LineEditorTest.h"
+
 IMPLEMENT_SINGLETON(CSceneMgr)
 
 CSceneMgr::CSceneMgr()
@@ -32,23 +36,20 @@ void CSceneMgr::SceneChange(SCENEID eScene)
 		case CSceneMgr::SCENE_LOGO:
 			m_pScene = new CLogo; 
 			break;
-		//case CSceneMgr::SCENE_MENU:
-		//	m_pScene = new CMyMenu; 
-		//	break;
-		//case CSceneMgr::SCENE_EDIT:
-		//	//m_pScene = new CMyEdit;
-		//	break;
-		//case CSceneMgr::SCENE_STAGE:
-		//	m_pScene = new CStage;
-		//	break;
-		//case CSceneMgr::SCENE_END:
-		//	break;
-		//default:
-		//	break;
+		case CSceneMgr::SCENE_STAGE:
+			m_pScene = new CStage;
+			break;
+
+		case CSceneMgr::SCENE_LINE_EDIT:
+			m_pScene = new CLineEditor;
+			break;
+
+		case CSceneMgr::SCENE_LINE_TEST:
+			m_pScene = new CLineEditorTest;
+			break;
 		}
 		
 		m_pScene->Initialize(); 
-
 		m_eCurScene = m_eNextScene;
 	}
 }
