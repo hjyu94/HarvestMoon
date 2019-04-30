@@ -25,7 +25,7 @@ void CTestPlayer::Initialize()
 int CTestPlayer::Update()
 {
 	float fy = 0.f;
-	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, &fy);
+	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
 	// 사용자가 점프를 눌렀을때!
 	if (m_bIsJump)

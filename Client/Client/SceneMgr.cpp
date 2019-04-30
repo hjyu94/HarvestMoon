@@ -77,3 +77,14 @@ void CSceneMgr::Release()
 		m_pScene = nullptr; 
 	}
 }
+
+POINT CSceneMgr::Get_SceneRect()
+{
+	POINT pt =
+	{
+		m_pScene->Get_BackgroundWidth(),
+		m_pScene->Get_BackgroundHeight()
+	};
+
+	return pt;
+}

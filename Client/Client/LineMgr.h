@@ -28,7 +28,7 @@ public:
 	void Release(); 
 
 public:
-	bool LineCollision(float fInX, float* pOutY);
+	bool LineCollision(float fInX, float fInY, float* pOutY);
 	void LoadData(); 
 
 private:

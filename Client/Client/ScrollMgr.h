@@ -11,6 +11,8 @@ public:
 	static float Get_ScrollY() { return m_fScrollY; }
 	static void Sum_ScrollY(float y) { m_fScrollY += y; }
 
+	static void ScrollLock();
+
 private:
 	static float m_fScrollX;
 	static float m_fScrollY;

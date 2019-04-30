@@ -73,7 +73,7 @@ void CPlayer::Initialize()
 	m_bIsRightDir = true;
 	m_bIsRolling = false;
 	m_bIsRoaring = false;
-	m_bIsDanging = false;
+	m_bIsDangling = false;
 
 	m_pFrameKey = L"PLAYER_IDLE";
 	m_tInfo.fCX = 80.f; 
@@ -106,9 +106,16 @@ void CPlayer::Initialize()
 int CPlayer::Update()
 {
 	float fScrollX = CScrollMgr::Get_ScrollX();
-	CSceneMgr::SCENEID eStage = CSceneMgr::Get_Instance()->Get_SCENEID();
+	float fScrollY = CScrollMgr::Get_ScrollY();
 	
-	float fScrollMaxX = CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth();
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_LBUTTON))
+	{
+		cout << "iScrollX: " << fScrollX << " / iScrollY: " << fScrollY << endl;
+	}
+	
+	CSceneMgr::SCENEID eStage = CSceneMgr::Get_Instance()->Get_SCENEID();
+	//
+	//float fScrollMaxX = CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth();
 
 	//// 왼쪽을 보다가 딱! 오른쪽을 보면, 그때부터 왼쪽으로 적당한 거리만큼 플레이어를 이동.
 	//if (m_eCurState == IDLE && m_tInfo.fX > 260.f)
@@ -120,7 +127,7 @@ int CPlayer::Update()
 	//		{
 	//			m_tInfo.fX -= 1.f;
 	//			CScrollMgr::Sum_ScrollX(1);
-	//			cout << "fScrollX: " << fScrollX << endl;
+	//			//cout << "fScrollX: " << fScrollX << endl;
 	//		}
 	//	}
 	//}
@@ -134,7 +141,7 @@ int CPlayer::Update()
 	//		{
 	//			m_tInfo.fX += 1.f;
 	//			CScrollMgr::Sum_ScrollX(-1);
-	//			cout << "fScrollX: " << fScrollX << endl;
+	//			//cout << "fScrollX: " << fScrollX << endl;
 	//		}
 	//	}
 	//}
@@ -144,6 +151,7 @@ int CPlayer::Update()
 	IsRoaring();
 	IsRolling();
 	IsHurting();
+	IsOffset();
 	SceneChange();
 
 	if (m_dwRecover + 1000 < GetTickCount())
@@ -162,16 +170,26 @@ int CPlayer::Update()
 
 void CPlayer::LateUpdate()
 {
+	CObj::UpdateRect();
+
+	int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
+
+	if (0 > m_tRect.left-iScrollX) m_tInfo.fX += m_fSpeed;
+	if (WINCX < m_tRect.right - iScrollX) m_tInfo.fX -= m_fSpeed;
+	if (0 > m_tRect.top+iScrollY) m_tInfo.fY += m_fSpeed;
+	if (WINCY < m_tRect.bottom+iScrollY) m_tInfo.fY -= m_fSpeed;
 }
 
 void CPlayer::Render(HDC hDC)
 {
-	CObj::UpdateRect();
-	//int iScrollX = CScrollMgr::Get_ScrollX();
+	float iScrollX = CScrollMgr::Get_ScrollX();
+	float iScrollY = CScrollMgr::Get_ScrollY();
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
+
 	GdiTransparentBlt(hDC, // 실제 복사받을 DC
-		m_tRect.left/* + iScrollX*/, m_tRect.top, //출력될 위치의 xy 좌표 
+		m_tRect.left- iScrollX, m_tRect.top+ iScrollY, //출력될 위치의 xy 좌표 
 		m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 		hMemDC,
 		m_tInfo.fCX * m_tFrame.iFrameStart_X, 
@@ -188,13 +206,13 @@ void CPlayer::Release()
 void CPlayer::IsJumping()
 {
 	float fy = 0.f; 
-	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, &fy);
+	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
 	// 스페이스바를 누르면 true가 된다
-	if (m_bIsJump)
+	if (m_bIsJump && !m_bIsDangling)
 	{
 		m_fVelY = m_fDeltaTime + m_fJumpPower;
-		m_tInfo.fY += m_fVelY;
+	 	m_tInfo.fY += m_fVelY;
 		m_fDeltaTime += 0.5f;
 
 		if (bIsColl && m_tInfo.fY > fy)
@@ -207,10 +225,10 @@ void CPlayer::IsJumping()
 			BackToIdle();
 		}
 	}
-	else if (bIsColl && !m_bIsDanging)
+	else if (bIsColl && !m_bIsDangling)
 		// 매달릴때는 땅으로 떨어지면 안돼
 	{
-		m_tInfo.fY = fy;
+		//m_tInfo.fY = fy;
 	}
 }
 
@@ -218,7 +236,7 @@ void CPlayer::IsHurting()
 {
 	if (m_bIsHurting)
 	{
-		if (!m_bIsRightDir)
+		if (!m_bIsRightDir)	
 		{
 			m_tInfo.fX += m_fSpeed;
 		}
@@ -233,6 +251,25 @@ void CPlayer::IsDanging()
 {
 }
 
+void CPlayer::IsOffset()
+{
+	int iOffsetX = WINCX / 2;
+	int iOffsetY = WINCY / 2;
+
+	int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
+
+	if (iOffsetX + 200 < m_tInfo.fX - iScrollX)
+		CScrollMgr::Sum_ScrollX(+m_fSpeed);
+	if (iOffsetX - 200 > m_tInfo.fX - iScrollX)
+		CScrollMgr::Sum_ScrollX(-m_fSpeed);
+	
+	if (iOffsetY - 100 > m_tInfo.fY + iScrollY)
+		CScrollMgr::Sum_ScrollY(m_fSpeed);
+	if (iOffsetY + 100 < m_tInfo.fY + iScrollY)
+		CScrollMgr::Sum_ScrollY(-m_fSpeed);
+}
+
 void CPlayer::IsRoaring()
 {
 	if (m_eCurState == ROARING || m_eCurState == ROARING_LEFT)
@@ -243,8 +280,13 @@ void CPlayer::IsRoaring()
 			for (auto& pMonster : listMonster)
 			{
 				// 일정 반경 내에 있는 고슴도치만 뒤집힌다.
-				if (pMonster->Is_Inside(m_tRect.left - 150, m_tRect.top-10, m_tRect.right + 150, m_tRect.bottom +10))
-					static_cast<CHedgeHog*>(pMonster)->Upside_Down();
+				if (pMonster->Is_Inside(m_tRect.left - 150, m_tRect.top - 10, m_tRect.right + 150, m_tRect.bottom + 10))
+				{
+					if (! static_cast<CHedgeHog*>(pMonster)->Get_UpsideState())
+					{
+						static_cast<CHedgeHog*>(pMonster)->Upside_Down();
+					}
+				}
 			}
 		}
 	}
@@ -255,15 +297,16 @@ void CPlayer::IsRolling()
 	if (m_bIsRolling)
 	{
 		if (m_bIsRightDir)
-			Move(CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth(), true);
+			m_tInfo.fX += m_fSpeed;
 		else
-			Move(CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth(), false);
+			m_tInfo.fX -= m_fSpeed;
 	}
 }
 
 void CPlayer::KeyCheck()
 {
-	if (m_bIsJump)
+	if (m_eNextState == STANDING_JUMP
+		|| m_eNextState == STANDING_JUMP_LEFT)
 	{
 		// 뛰는 중인 경우 왼쪽이나 오른쪽 키만 먹는다.
 		// 모션이 달리기가 아니라 점프 상태를 유지하며 방향만 바뀐다.
@@ -272,7 +315,7 @@ void CPlayer::KeyCheck()
 			m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
 			m_eNextState = STANDING_JUMP_LEFT;
 			m_bIsRightDir = false;
-			Move(CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth(), false);
+			m_tInfo.fX -= m_fSpeed;
 		}
 
 		if (CKeyMgr::Get_Instance()->KeyPressing(VK_RIGHT))
@@ -280,10 +323,10 @@ void CPlayer::KeyCheck()
 			m_pFrameKey = L"PLAYER_STANDING_JUMP";
 			m_eNextState = STANDING_JUMP;
 			m_bIsRightDir = true;
-			Move(CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth(), true);
+			m_tInfo.fX += m_fSpeed;
 		}
 	}
-	else if (m_bIsDanging)
+	else if (m_bIsDangling)
 	{
 	}
 	else if (m_bIsRolling || m_bIsRoaring || m_bIsHurting)
@@ -291,22 +334,7 @@ void CPlayer::KeyCheck()
 	}
 	else
 	{
-		//## 왼쪽이나 오른쪽에 관련된 키 처리
-		// 왼쪽 누르고 뗄 때 IDLE
-		if (CKeyMgr::Get_Instance()->KeyUP(VK_LEFT))
-		{
-			m_pFrameKey = L"PLAYER_IDLE_LEFT";
-			m_eNextState = IDLE_LEFT;
-			m_bIsRightDir = false;
-		}
-
-		// 오른쪽 누르고 뗄 때 IDLE
-		if (CKeyMgr::Get_Instance()->KeyUP(VK_RIGHT))
-		{
-			m_pFrameKey = L"PLAYER_IDLE";
-			m_eNextState = IDLE;
-			m_bIsRightDir = true;
-		}
+	
 
 		// 아래나 위를 보고 있다가 키를 떼면 IDLE로 돌아온다.
 		if (CKeyMgr::Get_Instance()->KeyUP(VK_DOWN)
@@ -332,8 +360,7 @@ void CPlayer::KeyCheck()
 			m_pFrameKey = L"PLAYER_RUNNING_LEFT";
 			m_eNextState = RUNNING_LEFT;
 			m_bIsRightDir = false;
-
-			Move(CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth(), false);
+			m_tInfo.fX -= m_fSpeed;
 		}
 
 		// 오른쪽을 꾹 누르면 달린다.
@@ -342,7 +369,7 @@ void CPlayer::KeyCheck()
 			m_pFrameKey = L"PLAYER_RUNNING";
 			m_eNextState = RUNNING;
 			m_bIsRightDir = true;
-			Move(CSceneMgr::Get_Instance()->Get_pScene()->Get_BackgroundWidth(), true);
+			m_tInfo.fX += m_fSpeed;
 		}
 
 		if (m_bIsRightDir) // 오른쪽을 보고 있을 때
@@ -416,6 +443,22 @@ void CPlayer::KeyCheck()
 			m_bIsRolling = true;
 		}
 
+		//## 왼쪽이나 오른쪽에 관련된 키 처리
+		// 왼쪽 누르고 뗄 때 IDLE
+		if (CKeyMgr::Get_Instance()->KeyUP(VK_LEFT))
+		{
+			m_pFrameKey = L"PLAYER_IDLE_LEFT";
+			m_eNextState = IDLE_LEFT;
+			m_bIsRightDir = false;
+		}
+
+		// 오른쪽 누르고 뗄 때 IDLE
+		if (CKeyMgr::Get_Instance()->KeyUP(VK_RIGHT))
+		{
+			m_pFrameKey = L"PLAYER_IDLE";
+			m_eNextState = IDLE;
+			m_bIsRightDir = true;
+		}
 	}
 
 	// 스페이스바를 꾸욱 누르면 더 높게 뛴다.
@@ -423,7 +466,7 @@ void CPlayer::KeyCheck()
 	{
 		m_bIsJump = true;
 	
-		if(m_fJumpPower > -15)
+		if(m_fJumpPower > -11)
 			m_fJumpPower -= 0.3f;
 		
 		if (m_bIsRightDir)
@@ -437,6 +480,17 @@ void CPlayer::KeyCheck()
 			m_eNextState = STANDING_JUMP_LEFT;
 		}
 	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing('Q'))
+	{
+		m_tInfo.fY -= m_fSpeed;
+	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		m_tInfo.fY += m_fSpeed;
+	}
+
 }
 
 void CPlayer::SceneChange()
@@ -620,7 +674,7 @@ void CPlayer::FrameMove()
 			BackToIdle();
 			m_bIsHurting = false;
 		}
-		else if (m_bIsDanging)
+		else if (m_bIsDangling)
 		{
 			m_pFrameKey = L"PLAYER_GRABBING_LEDGE_SECOND";
 			m_eNextState = GRABBING_LEDGE_SECOND;
@@ -634,36 +688,6 @@ void CPlayer::FrameMove()
 
 }
 
-void CPlayer::Move(float fScrollMaxX, bool is_MovingDir_Right)
-{
-	if (is_MovingDir_Right)
-	{
-		//if (m_tInfo.fX < 260 || CScrollMgr::Get_ScrollX()+130 > fScrollMaxX-390)
-		//{
-		//	if(m_tRect.right < WINCX)
-				m_tInfo.fX += m_fSpeed;
-		//}
-		//else
-		//{
-			//CScrollMgr::Sum_ScrollX(m_fSpeed);
-		//}
-	}
-
-	else if (!is_MovingDir_Right)
-	{
-		cout << CScrollMgr::Get_ScrollX() +130 << ", " << fScrollMaxX - 260 << endl;
-
-	//	if (m_tInfo.fX < 260 || CScrollMgr::Get_ScrollX() + 130 < fScrollMaxX - 260)
-	//	{
-	//		if (m_tRect.left > 0)
-				m_tInfo.fX -= m_fSpeed;
-	//	}
-	//	else
-	//	{
-	//		CScrollMgr::Sum_ScrollX(-m_fSpeed);
-	//	}
-	}
-}
 
 void CPlayer::Collision_Proc(CObj * pCounterObj)
 {
@@ -730,21 +754,23 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 
 	if (Is_Counter_One_Of(CVertex))
 	{
-		// 절벽 끝에 매달리 경우 아래키, 위쪽키, 왼쪽, 오른쪽키만 사용 가능
-		float fTargetX = pCounterObj->Get_Info().fX;
-		float fTargetY = pCounterObj->Get_Info().fY;
-
-		if (fTargetX - 10 <= m_tInfo.fX && m_tInfo.fX <= fTargetX + 10
-			&& fTargetY - 10 <= m_tInfo.fY && m_tInfo.fY <= fTargetY + 10)
+		if (!m_bIsDangling)
 		{
-			m_pFrameKey = L"PLAYER_GRABBING_LEDGE_FIRST";
-			m_eNextState = GRABBING_LEDGE_FIRST;
-			m_bIsDanging = true;
-			m_bIsJump = false;
-			m_tInfo.fY = fTargetY;
-			m_tInfo.fX = fTargetX;
-		}
+			// 절벽 끝에 매달리 경우 아래키, 위쪽키, 왼쪽, 오른쪽키만 사용 가능
+			float fTargetX = pCounterObj->Get_Info().fX;
+			float fTargetY = pCounterObj->Get_Info().fY;
 
+			if (fTargetX - 10 <= m_tInfo.fX && m_tInfo.fX <= fTargetX + 10
+				&& fTargetY - 10 <= m_tInfo.fY && m_tInfo.fY <= fTargetY + 10)
+			{
+				m_pFrameKey = L"PLAYER_GRABBING_LEDGE_FIRST";
+				m_eNextState = GRABBING_LEDGE_FIRST;
+				m_bIsDangling = true;
+				m_bIsJump = false;
+				m_tInfo.fY = fTargetY;
+				m_tInfo.fX = fTargetX;
+			}
+		}
 	}
 }
 

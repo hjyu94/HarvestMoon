@@ -38,11 +38,12 @@ public:
 	void IsRolling();
 	void IsHurting();
 	void IsDanging();
+	void IsOffset();
+
 
 	void KeyCheck(); 
 	void SceneChange();
 	virtual void FrameMove();
-	void Move(float fScrollMaxX, bool is_MovingDir_Right);
 	virtual void Collision_Proc(CObj* pCounterObj);
 	void BackToIdle();
 	STATE Get_CurState() { return m_eCurState; }
@@ -60,7 +61,7 @@ private:
 	bool m_bIsRolling;
 	bool m_bIsHurting;
 	bool m_bIsRoaring;
-	bool m_bIsDanging;
+	bool m_bIsDangling;
 
 	STATE m_eNextState;
 	STATE m_eCurState;

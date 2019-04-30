@@ -18,8 +18,8 @@ public:
 	virtual void Release()=0;
 
 public:
-	int Get_BackgroundWidth() { return iBackgroundWidth; }
-	int Get_BackgroundHeight() { return iBackgroundHeight; }
+	virtual int Get_BackgroundWidth() { return iBackgroundWidth; }
+	virtual int Get_BackgroundHeight() { return iBackgroundHeight; }
 
 protected:
 	int iBackgroundWidth;

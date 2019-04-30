@@ -37,34 +37,48 @@ void CLineMgr::Release()
 	m_listLine.clear();
 }
 
-bool CLineMgr::LineCollision(float fInX, float * pOutY)
+bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY)
 {
 	if (m_listLine.empty())
 		return false;
 
 	CLine* pTarget = nullptr; 
+	float fMinDistY = 9999.f;
+	float fY_On_Target =0.f;
+
 	for (auto& pLine : m_listLine)
 	{
 		if (fInX >= pLine->Get_LineInfo().tLeftPoint.fx &&
 			fInX <= pLine->Get_LineInfo().tRightPoint.fx)
 		{
-			pTarget = pLine;
+			
+			// 해당 x 에 여러 line이 있는 경우
+			// 바로 밑의 line 을 타겟팅하자.
+			float x1 = pLine->Get_LineInfo().tLeftPoint.fx;
+			float x2 = pLine->Get_LineInfo().tRightPoint.fx;
+			float y1 = pLine->Get_LineInfo().tLeftPoint.fy;
+			float y2 = pLine->Get_LineInfo().tRightPoint.fy;
+
+			float fY_On_Line = ((y2 - y1) / (x2 - x1)) * (fInX - x1) + y1;
+			float fDistY = fabs(fY_On_Line - fInY);
+
+			if (fDistY < 20.f)
+			{
+				if (fMinDistY >= fDistY)
+				{
+					pTarget = pLine;
+					fMinDistY = fY_On_Line - fInY;
+					fY_On_Target = fY_On_Line;
+				}
+			}
 		}
 	}
+
 	if (nullptr == pTarget)
 		return false;
 
-	// Outy = ((y2 - y1) / (x2 - x1)) * (InX - x1) + y1;
-
-	float x1 = pTarget->Get_LineInfo().tLeftPoint.fx;
-	float x2 = pTarget->Get_LineInfo().tRightPoint.fx; 
-	float y1 = pTarget->Get_LineInfo().tLeftPoint.fy;
-	float y2 = pTarget->Get_LineInfo().tRightPoint.fy;
-
-	*pOutY = ((y2 - y1) / (x2 - x1)) * (fInX - x1) + y1;
+	*pOutY = fY_On_Target;
 	return true; 
-
-
 }
 
 void CLineMgr::LoadData()

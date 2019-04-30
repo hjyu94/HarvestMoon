@@ -32,30 +32,30 @@ void CStage::Initialize()
 {
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Pridelands.bmp", L"Pridelands");
 	CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 370));
-	//CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(400, 370));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(400, 370));
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(400, 370));
 
 	CItem* pItem;
 
-	//// HP 아이템
-	//pItem = CAbstractFactory<CItem>::Create(100, 200);
-	//pItem->Set_ID(CItem::ID::HP);
-	//CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+	// HP 아이템
+	pItem = CAbstractFactory<CItem>::Create(100, 200);
+	pItem->Set_ID(CItem::ID::HP);
+	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
 
-	//// MP 아이템
-	//pItem = CAbstractFactory<CItem>::Create(200, 200);
-	//pItem->Set_ID(CItem::ID::MP);
-	//CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+	// MP 아이템
+	pItem = CAbstractFactory<CItem>::Create(200, 200);
+	pItem->Set_ID(CItem::ID::MP);
+	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
 
-	//// Save 아이템
-	//pItem = CAbstractFactory<CItem>::Create(300, 200);
-	//pItem->Set_ID(CItem::ID::LIFE);
-	//CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
-	//
-	//// Life 아이템
-	//pItem = CAbstractFactory<CItem>::Create(400, 200);
-	//pItem->Set_ID(CItem::ID::SAVE);
-	//CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+	// Save 아이템
+	pItem = CAbstractFactory<CItem>::Create(300, 200);
+	pItem->Set_ID(CItem::ID::LIFE);
+	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+	
+	// Life 아이템
+	pItem = CAbstractFactory<CItem>::Create(400, 200);
+	pItem->Set_ID(CItem::ID::SAVE);
+	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
 
 	CObjMgr::Get_Instance()->AddObject(OBJID::MAP, CAbstractFactory<CVertex>::Create(100, 200));
 
@@ -102,10 +102,12 @@ void CStage::Render(HDC hDC)
 	Rectangle(hDC, 0, 0, WINCX, WINCY);
 
 	int iScrollX = CScrollMgr::Get_ScrollX();
-	int iScrollY = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
 
-	//HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(L"Pridelands");
-	//BitBlt(hDC, 0, 0, WINCX, WINCY, hMemDC, iScrollX, 2050-iScrollY, SRCCOPY);
+	HDC hMapDC = CBitmapMgr::Get_Instance()->FindImage(L"Pridelands");
+	/*BitBlt(hDC, 0, 0, WINCX, WINCY, hMapDC
+		, 0 + iScrollX, 2050-iScrollY
+		, SRCCOPY);*/
 	CObjMgr::Get_Instance()->Render(hDC);
 	CLineMgr::Get_Instance()->Render(hDC);
 

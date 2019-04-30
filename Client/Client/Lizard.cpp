@@ -121,13 +121,15 @@ void CLizard::LateUpdate()
 void CLizard::Render(HDC hDC)
 {
 	CObj::UpdateRect();
-	//int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
+
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 	if (m_eCurState == IDLE || m_eCurState == IDLE_LEFT)
 	{
 		GdiTransparentBlt(hDC, // 실제 복사받을 DC
-			m_tRect.left/* + iScrollX*/, m_tRect.top, //출력될 위치의 xy 좌표 
+			m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 			m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 			hMemDC,
 			m_tInfo.fCX * m_tFrame.iFrameStart_X,
@@ -141,7 +143,7 @@ void CLizard::Render(HDC hDC)
 		if (m_tFrame.iFrameStart_X == 5)
 		{
 			GdiTransparentBlt(hDC, // 실제 복사받을 DC
-				m_tRect.left/* + iScrollX*/, m_tRect.top, //출력될 위치의 xy 좌표 
+				m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 				m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 				hMemDC,
 				470.f,
@@ -153,7 +155,7 @@ void CLizard::Render(HDC hDC)
 		else if (m_tFrame.iFrameStart_X > 5)
 		{
 			GdiTransparentBlt(hDC, // 실제 복사받을 DC
-				m_tRect.left/* + iScrollX*/, m_tRect.top, //출력될 위치의 xy 좌표 
+				m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 				m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 				hMemDC,
 				m_tInfo.fCX * m_tFrame.iFrameStart_X + 54.f,
@@ -165,7 +167,7 @@ void CLizard::Render(HDC hDC)
 		else
 		{
 			GdiTransparentBlt(hDC, // 실제 복사받을 DC
-				m_tRect.left/* + iScrollX*/, m_tRect.top, //출력될 위치의 xy 좌표 
+				m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 				m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 				hMemDC,
 				m_tInfo.fCX * m_tFrame.iFrameStart_X,

@@ -15,7 +15,8 @@ void CItem::Collision_Proc(CObj * pCounterObj)
 {
 	if (Is_Counter_One_Of(CPlayer))
 	{
-		m_bIsDead = true;
+		if(m_eID != SAVE)
+			m_bIsDead = true;
 	}
 }
 
@@ -75,11 +76,12 @@ void CItem::Render(HDC hDC)
 {
 	CObj::UpdateRect();
 
-	//int iScrollX = CScrollMgr::Get_ScrollX();
+	float iScrollX = CScrollMgr::Get_ScrollX();
+	float iScrollY = CScrollMgr::Get_ScrollY();
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 	GdiTransparentBlt(hDC, // 실제 복사받을 DC
-		m_tRect.left/* + iScrollX*/, m_tRect.top, //출력될 위치의 xy 좌표 
+		m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 		m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 		hMemDC,
 		0, 0, // 시작 위치 

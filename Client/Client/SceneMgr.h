@@ -23,6 +23,7 @@ public:
 public:
 	SCENEID Get_SCENEID() { return m_eCurScene; }
 	CScene* Get_pScene() { return m_pScene; }
+	POINT Get_SceneRect();
 
 private:
 	CScene* m_pScene;

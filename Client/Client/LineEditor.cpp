@@ -4,6 +4,8 @@
 
 CLineEditor::CLineEditor()
 {
+	iBackgroundWidth = 3000;
+	iBackgroundHeight = 2500;
 }
 
 
@@ -14,24 +16,24 @@ CLineEditor::~CLineEditor()
 void CLineEditor::Initialize()
 {
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Pridelands.bmp", L"Pridelands");
-	
 }
 
 void CLineEditor::Update()
 {
-	/*if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT))
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT))
 		CScrollMgr::Sum_ScrollX(-5.0f);
 	if (CKeyMgr::Get_Instance()->KeyPressing(VK_RIGHT))
 		CScrollMgr::Sum_ScrollX(+5.0f);
 	if (CKeyMgr::Get_Instance()->KeyPressing(VK_UP))
 		CScrollMgr::Sum_ScrollY(-5.0f);
 	if (CKeyMgr::Get_Instance()->KeyPressing(VK_DOWN))
-		CScrollMgr::Sum_ScrollY(+5.0f);*/
+		CScrollMgr::Sum_ScrollY(+5.0f);
 	CEditorLineMgr::Get_Instance()->Update();
 }
 
 void CLineEditor::LateUpdate()
 {
+	CScrollMgr::ScrollLock();
 }
 
 void CLineEditor::Render(HDC hDC)
