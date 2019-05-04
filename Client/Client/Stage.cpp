@@ -102,6 +102,11 @@ void CStage::Update()
 		pItem->Set_ID(CItem::ID::SAVE);
 		CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
 	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_F4))
+	{
+		iLife = 1;
+	}
 }
 
 void CStage::LateUpdate()
@@ -144,19 +149,57 @@ void CStage::Render(HDC hDC)
 	CObjMgr::Get_Instance()->Render(hDC);
 	CLineMgr::Get_Instance()->Render(hDC);
 
+	// HP, MP 표시
 	CPlayer* pPlayer = CObjMgr::Get_Instance()->Get_Player();
-	TCHAR lpOut[1024];
-	wsprintf(lpOut, L"HP: %d", pPlayer->Get_Hp());
-	TextOut(hDC, 50, 50, lpOut, lstrlen(lpOut));
+	int iHpLvl = pPlayer->Get_Hp() / 10;
+	HDC hHpDC = CBitmapMgr::Get_Instance()->FindImage(L"HP");
+	GdiTransparentBlt(hDC, // 실제 복사받을 DC
+		40, 40, //출력될 위치의 xy 좌표 
+		60, 28, // 출력할 비트맵의 가로세로 사이즈. 
+		hHpDC,
+		60 *iHpLvl, 0, // 시작 위치 
+		60, 28,// 출력할 비트맵의 전체 가로세로 길이. 
+		RGB(255,255,255)
+	);
 
-	wsprintf(lpOut, L"MP: %d", pPlayer->Get_Mp());
-	TextOut(hDC, WINCX - 100, 50, lpOut, lstrlen(lpOut));
+	int iMpLvl = pPlayer->Get_Mp() / 10;
+	HDC hMpDC = CBitmapMgr::Get_Instance()->FindImage(L"MP");
+	GdiTransparentBlt(hDC, // 실제 복사받을 DC
+		WINCX-60-40, 40, //출력될 위치의 xy 좌표 
+		60, 28, // 출력할 비트맵의 가로세로 사이즈. 
+		hMpDC,
+		60 * iMpLvl, 0, // 시작 위치 
+		60, 28,// 출력할 비트맵의 전체 가로세로 길이. 
+		RGB(255, 255, 255)
+	);
+	
+	// 목숨 표시
+	HDC hLionzKingDC = CBitmapMgr::Get_Instance()->FindImage(L"LIONKING");
+	GdiTransparentBlt(hDC, // 실제 복사받을 DC
+		40, WINCY - 80, //출력될 위치의 xy 좌표 
+		47, 63, // 출력할 비트맵의 가로세로 사이즈. 
+		hLionzKingDC,
+		0, 0, // 시작 위치 
+		47, 63,// 출력할 비트맵의 전체 가로세로 길이. 
+		RGB(0, 0, 0)
+	);
 
-	wsprintf(lpOut, L"Life: %d", iLife);
-	TextOut(hDC, 50, WINCY - 50, lpOut, lstrlen(lpOut));
+	HDC hLife = nullptr;
+	if (iLife >= 3) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_3");
+	else if (iLife == 2) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_2");
+	else if (iLife == 1) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_1");
+	GdiTransparentBlt(hDC, // 실제 복사받을 DC
+		90, WINCY - 60, //출력될 위치의 xy 좌표 
+		38, 38, // 출력할 비트맵의 가로세로 사이즈. 
+		hLife,
+		0, 0, // 시작 위치 
+		38, 38,// 출력할 비트맵의 전체 가로세로 길이. 
+		RGB(32, 81, 12)
+	);
 }
 
 void CStage::Release()
 {
 	CObjMgr::Get_Instance()->DeleteID(OBJID::MONSTER);
+	CObjMgr::Get_Instance()->DeleteID(OBJID::ITEM);
 }

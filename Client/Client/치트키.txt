@@ -30,6 +30,12 @@ Stage.cpp Update()
 	{
 		m_iHp = 1;
 	}
+	
+## F4 플레이어 생명 깎기
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_F4))
+	{
+		iLife = 1;
+	}
 
 // 1차 발표
 - 필요하면 A로 충돌체크 보여줌

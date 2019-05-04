@@ -5,6 +5,11 @@
 #include "Block.h"
 #include "AbstractFactory.h"
 #include "VerticalBlocck.h"
+#include "Fly.h"
+#include "Lizard.h"
+#include "HedgeHog.h"
+#include "Item.h"
+#include "Obj.h"
 
 CEditorLineMgr* CEditorLineMgr::m_pInstance = nullptr;
 
@@ -40,6 +45,13 @@ void CEditorLineMgr::Render(HDC hDC)
 	for (auto& pVBlock : m_listVerticalBlock)
 	{
 		pVBlock->Render(hDC);
+	}
+	for (int i = 0; i < ID::END; ++i)
+	{
+		for (auto& pObj : m_listEnum[i])
+		{
+			pObj->Render(hDC);
+		}
 	}
 }
 
@@ -166,6 +178,14 @@ void CEditorLineMgr::Update()
 	{
 		pVertex->Update();
 	}
+
+	for (int i = 0; i < ID::END; ++i)
+	{
+		for (auto& pObj : m_listEnum[i])
+		{
+			pObj->Update();
+		}
+	}
 }
 
 void CEditorLineMgr::Release()
@@ -205,6 +225,21 @@ void CEditorLineMgr::Release()
 		}
 	}
 
+	for (int i = 0; i < ID::END; ++i)
+	{
+		for (auto& iter = m_listEnum[i].begin()
+			; iter != m_listEnum[i].end()
+			; )
+		{
+			if (*iter)
+			{
+				delete *iter;
+				*iter = nullptr;
+				iter = m_listEnum[i].erase(iter);
+			}
+		}
+		m_listEnum[i].clear();
+	}
 	m_listLine.clear();
 	m_listVertex.clear();
 	m_listBlock.clear();

@@ -37,10 +37,10 @@ CPlayer::~CPlayer()
 void CPlayer::Initialize()
 {
 
-	m_iHp = 100;
-	m_iMaxHp = 100;
-	m_iMp = 100;
-	m_iMaxMp = 100;
+	m_iHp = 90;
+	m_iMaxHp = 90;
+	m_iMp = 90;
+	m_iMaxMp = 90;
 	
 
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_IDLE.bmp", L"PLAYER_IDLE");
@@ -109,8 +109,6 @@ void CPlayer::Initialize()
 	m_fJumpPower = 0.f;
 
 	m_bIsSaved = false;
-	m_fSaving_X = 0.f;
-	m_fSaving_Y = 0.f;
 
 	m_bIsSeeingDown = false;
 	m_bIsSeeingUp = false;
@@ -123,6 +121,9 @@ void CPlayer::Initialize()
 	
 	m_dwUp = GetTickCount();
 	m_dwDown = GetTickCount();
+
+	m_eNextState = STANDING_LAND;
+	m_pFrameKey = L"PLAYER_STANDING_LAND";
 }
 
 int CPlayer::Update()
@@ -185,20 +186,26 @@ void CPlayer::LateUpdate()
 		m_bIsRolling = false;
 		m_bIsJump = false;
 
+
+		int iScrollX = CScrollMgr::Get_ScrollX();
+		int iScrollY = CScrollMgr::Get_ScrollY();
+		m_tInfo.fX -= iScrollX;
+		m_tInfo.fY -= iScrollY;
+		CScrollMgr::Reset_Scroll();
 		CObj::UpdateRect();
-		
+
 		if (m_bIsRightDir)
 		{
 			m_eNextState = DIE;
 			m_pFrameKey = L"PLAYER_DEAD";
 		}
-		
+
 		else
 		{
 			m_eNextState = DIE_LEFT;
 			m_pFrameKey = L"PLAYER_DEAD_LEFT";
 		}
-	
+
 		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_DEAD);
 	}
 }
@@ -223,13 +230,13 @@ void CPlayer::Render(HDC hDC)
 	{
 		m_iHp = 1;
 	}
+	
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 
 	if (m_bIs_On_Another_Scene)
 	{
-		CObj::UpdateRect();
-		if (m_bIsRightDir)
+		if(m_bIsRightDir)
 		{
 			GdiTransparentBlt(hDC, // 실제 복사받을 DC
 				m_tRect.left, m_tRect.top, //출력될 위치의 xy 좌표 
@@ -273,7 +280,7 @@ void CPlayer::Render(HDC hDC)
 	}
 	else
 	{
-		GdiTransparentBlt(hDC, // 실제 복사받을 DC
+	 	GdiTransparentBlt(hDC, // 실제 복사받을 DC
 			m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 			m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 			hMemDC,
@@ -313,11 +320,6 @@ void CPlayer::IsJumping()
 			m_fVelY = m_fDeltaTime + m_fJumpPower;
 			m_tInfo.fY += m_fVelY;
 			m_fDeltaTime += 0.5f;
-
-			if (CKeyMgr::Get_Instance()->KeyPressing(VK_LBUTTON))
-			{
-				cout << "m_tInfo.fY: " << m_tInfo.fY << endl;
-			}
 
 			if (bIsColl && m_tInfo.fY >= fy)
 			{
@@ -415,6 +417,27 @@ void CPlayer::IsRecovering()
 
 void CPlayer::Is_On_Another_Scene()
 {
+	POINT pt = { m_tInfo.fX, m_tInfo.fY };
+	RECT rect = { WINCX / 2 - 10, WINCY / 2 - 10, WINCX/2 + 10, WINCY/2 + 10 };
+	
+	if (!PtInRect(&rect, pt))
+	{
+		int iTargetX = WINCX / 2;
+		int iTargetY = WINCY / 2;
+
+		float fDeltaX = m_tInfo.fX - iTargetX;
+		float fDeltaY = m_tInfo.fY - iTargetY;
+
+		float fTheta = atan2(fDeltaY, fDeltaX); // 호도법
+
+		m_tInfo.fX -= 5.f * cosf(fTheta);
+		m_tInfo.fY -= 5.f * sinf(fTheta);
+	}
+	else
+	{
+		m_tInfo.fX = WINCX / 2;
+		m_tInfo.fY = WINCY / 2;
+	}
 
 }
 
@@ -746,6 +769,8 @@ void CPlayer::KeyCheck()
 		if(m_fJumpPower > -13.5) m_fJumpPower -= 0.2f;
 	}
 
+
+	KEYDOWN_LBUTTON_AND_COUT(m_tInfo.fX << ", " << m_tInfo.fY);
 }
 
 void CPlayer::SceneChange()
@@ -917,6 +942,15 @@ void CPlayer::FrameMove()
 	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount())
 	{
 		++m_tFrame.iFrameStart_X;
+		if (m_bIs_On_Another_Scene)
+		{
+			if (m_tFrame.iFrameStart_X == 16)
+				m_tFrame.dwFrameSpeed = 500;
+			else if(m_tFrame.iFrameStart_X == m_tFrame.iFrameEnd_X-1)
+				m_tFrame.dwFrameSpeed = 800;
+			else
+				m_tFrame.dwFrameSpeed = 100;
+		}
 		m_tFrame.dwFrameTime = GetTickCount();
 	}
 
@@ -925,9 +959,18 @@ void CPlayer::FrameMove()
 		// 다른 Scene에 있는 경우(죽은 경우) stage scene으로 돌아오기
 		if (m_bIs_On_Another_Scene)
 		{
-			CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
-			this->Initialize();
-			this->Set_Pos(130, 340);
+			if(iLife>0)
+			{
+				CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
+				this->Initialize();
+				this->Set_Pos(m_fSaving_X, m_fSaving_Y);
+				m_eNextState = STANDING_LAND;
+				m_pFrameKey = L"PLAYER_STANDING_LAND";
+			}
+			else
+			{
+				CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_RESTART);
+			}
 		}
 
 		// 위나 아래를 보는 경우 마지막에서 프레임 유지
@@ -1031,43 +1074,6 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 			if ((m_eCurState == STANDING_JUMP || m_eCurState == STANDING_JUMP_LEFT)
 				&& m_tInfo.fY < pCounterObj->Get_Info().fY)
 			{
-				//	// 고슴도치가 뒤집혀 있던 경우
-				//	if (Is_Counter_One_Of(CHedgeHog))
-				//	{
-				//		if (static_cast<CHedgeHog*>(pCounterObj)->Get_IsDying())
-				//		{
-				//			m_bIsJump = true;
-				//			m_fJumpPower = -10.f;
-
-				//			if (m_bIsRightDir)
-				//			{
-				//				m_pFrameKey = L"PLAYER_STANDING_JUMP";
-				//				m_eNextState = STANDING_JUMP;
-				//			}
-				//			else
-				//			{
-				//				m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
-				//				m_eNextState = STANDING_JUMP_LEFT;
-				//			}
-				//		}
-				//	}
-				//	else
-				//	{
-				//		m_bIsJump = true;
-				//		m_fJumpPower = -10.f;
-				//		m_fDeltaTime = 0.f;
-
-				//		if (Is_Counter_One_Of(CHedgeHog))
-				//		{
-
-				//		}
-				//		else
-				//		{
-				//			pCounterObj->Set_Dead();
-				//		}
-				//	}
-				//}
-
 				// 우선 플레이어는 뛰고
 				m_bIsJump = true;
 				m_fJumpPower = -10.f;
@@ -1084,11 +1090,9 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_eNextState = STANDING_JUMP_LEFT;
 				}
 				
-				// 고슴도치의 경우
-				if (Is_Counter_One_Of(CHedgeHog))
+				// 고슴도치의 경우 뒤집혀 있어야 괜찮음
+				if (Is_Counter_One_Of(CHedgeHog) && static_cast<CHedgeHog*>(pCounterObj)->Get_UpsideState())
 				{
-					/*m_bIsJump = true;
-					m_fJumpPower = -10.f;*/
 				}
 
 				// 날파리의 경우
@@ -1189,8 +1193,8 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 
 		case CItem::SAVE:
 			m_bIsSaved = true;
-			m_fSaving_X = pCounterObj->Get_Info().fCX;
-			m_fSaving_Y = pCounterObj->Get_Info().fCY;
+ 			m_fSaving_X = pCounterObj->Get_Info().fX;
+			m_fSaving_Y = pCounterObj->Get_Info().fY;
 			break;
 		}
 	}
@@ -1248,7 +1252,6 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 	{
 		RECT rc = {};
 		IntersectRect(&rc, &m_tRect, &pCounterObj->Get_Rect());
-		KEYPRESSING_LBUTTON_AND_COUT(rc.right-rc.left);
 		if (m_tInfo.fX < pCounterObj->Get_Info().fX)
 		{
 			this->Set_Pos(m_tInfo.fX - (rc.right - rc.left), m_tInfo.fY);

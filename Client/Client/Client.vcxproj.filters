@@ -91,6 +91,12 @@
     <Filter Include="04. Scene\05. Restart">
       <UniqueIdentifier>{d9842d29-cad5-4b61-a2db-3b4589b3e328}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Obj\05. Cursor">
+      <UniqueIdentifier>{a1a807d5-caa6-499a-9e0f-32d0f70bbab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\06. NPC">
+      <UniqueIdentifier>{bb34ad9a-6d2c-42c2-ab52-9f43302536f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -210,6 +216,12 @@
     <ClInclude Include="RestartScene.h">
       <Filter>04. Scene\05. Restart</Filter>
     </ClInclude>
+    <ClInclude Include="Cursor.h">
+      <Filter>01. Obj\05. Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="MonkeyNPC.h">
+      <Filter>01. Obj\06. NPC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -301,6 +313,12 @@
     </ClCompile>
     <ClCompile Include="RestartScene.cpp">
       <Filter>04. Scene\05. Restart</Filter>
+    </ClCompile>
+    <ClCompile Include="Cursor.cpp">
+      <Filter>01. Obj\05. Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="MonkeyNPC.cpp">
+      <Filter>01. Obj\06. NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,11 @@ public:
 		, SAVE
 	};
 
+	enum STATE
+	{
+		IDLE, BLINK,
+	};
+
 public:
 	virtual void Collision_Proc(CObj* pCounterObj);
 
@@ -30,9 +35,13 @@ public:
 	virtual void Release() override;
 
 public:
+	virtual void FrameMove() override;
+	void StateChange();
 	CItem::ID Get_ID() { return m_eID; }
 
 private:
 	CItem::ID m_eID;
+	STATE m_eCurState;
+	STATE m_eNextState;
 };
 

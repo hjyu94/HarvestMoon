@@ -81,6 +81,7 @@ private:
 	DWORD m_dwNoCollision;
 	DWORD m_dwUp;
 	DWORD m_dwDown;
+	DWORD m_dwAnimation;
 	
 	bool m_bIsTransparent;
 	int m_iTransparentCount;
@@ -90,12 +91,3 @@ private:
 	float m_fSaving_X;
 	float m_fSaving_Y;
 };
-
-/*
-
-0~200		益顕しし
-200~400		いい
-400~600		しし
-600~800		いい
-
-*/

@@ -49,7 +49,6 @@ void CHedgeHog::Initialize()
 	m_dwWalking2 = GetTickCount(); // 천천히 걸어가도록 보정
 	
 	fRandTime = rand() % 2000 + 4500;
-	cout << fRandTime << endl;
 }
 
 int CHedgeHog::Update()
@@ -257,10 +256,8 @@ void CHedgeHog::Collision_Proc(CObj * pCounterObj)
 	{
 		if (m_bIsUpsidedown)
 		{
-			
 			if (static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP
-				|| static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP_LEFT
-				)
+				|| static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP_LEFT)
 			{
 				if (pCounterObj->Get_Rect().bottom < m_tInfo.fY)
 				{
@@ -269,6 +266,15 @@ void CHedgeHog::Collision_Proc(CObj * pCounterObj)
 						m_bIsDying = true;
 						m_fJumpPower = -8.f;
 					}
+				}
+			}
+			else if (static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::ROLLING
+				|| static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::ROLLING_LEFT)
+			{
+				if (!m_bIsDying)
+				{
+					m_bIsDying = true;
+					m_fJumpPower = -8.f;
 				}
 			}
 		}

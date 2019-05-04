@@ -152,6 +152,7 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CollisionMgr.h" />
+    <ClInclude Include="Cursor.h" />
     <ClInclude Include="DeadScene.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="EditorLineMgr.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Lizard.h" />
     <ClInclude Include="Logo.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="MonkeyNPC.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MyBitmap.h" />
     <ClInclude Include="Obj.h" />
@@ -192,6 +194,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="CollisionMgr.cpp" />
+    <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="DeadScene.cpp" />
     <ClCompile Include="EditorLineMgr.cpp" />
     <ClCompile Include="Fly.cpp" />
@@ -205,6 +208,7 @@
     <ClCompile Include="Lizard.cpp" />
     <ClCompile Include="Logo.cpp" />
     <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="MonkeyNPC.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MyBitmap.cpp" />
     <ClCompile Include="Obj.cpp" />

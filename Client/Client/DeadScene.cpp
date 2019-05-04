@@ -19,12 +19,6 @@ void CDeadScene::Initialize()
 void CDeadScene::Update()
 {
 	CObjMgr::Get_Instance()->Update();
-
-	/*if (CKeyMgr::Get_Instance()->KeyDown(VK_SPACE))
-	{
-		CObjMgr::Get_Instance()->DeleteID(OBJID::PLAYER);
-		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
-	}*/
 }
 
 void CDeadScene::LateUpdate()

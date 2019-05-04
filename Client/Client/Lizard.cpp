@@ -42,7 +42,6 @@ void CLizard::Initialize()
 	m_bIsStop = false;
 
 	fRandTime = rand() % 1000 + 1000;
-	cout << fRandTime << endl;
 }
 
 int CLizard::Update()
