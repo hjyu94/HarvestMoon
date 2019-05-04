@@ -14,8 +14,6 @@ CHedgeHog::~CHedgeHog()
 
 void CHedgeHog::Initialize()
 {
-	m_fSpeed = 0.5f;
-	m_bIsRightDir = true;
 	
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/HedgeHog_IDLE.bmp", L"HedgeHog_IDLE");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/HedgeHog_IDLE_LEFT.bmp", L"HedgeHog_IDLE_LEFT");
@@ -25,6 +23,7 @@ void CHedgeHog::Initialize()
 	m_pFrameKey = L"HedgeHog_IDLE";
 
 	m_fMoveDistance = 100.f;
+	m_fSpeed = 0.000000000005f;
 
 	m_tInfo.fCX = 70.f;
 	m_tInfo.fCY = 50.f;
@@ -34,25 +33,37 @@ void CHedgeHog::Initialize()
 	m_tFrame.iFrameEnd_X = 6;
 	m_tFrame.iFrameStart_Y = 0;
 
+	m_bIsRightDir = true;
 	m_bIsUpsidedown = false;
-	m_dwWalking = GetTickCount();
 	m_bIsStop = false;
+	m_bIsJump = true;
+	m_bIsDead = false;
 
-	m_bIsJump = false;
-	m_fSpeed = 1.f;
+	m_fSpeed = 5.f;
 	m_fDeltaTime = 0.f;
 	m_fVelY = 0.f;
-	m_fJumpPower = -10.f;
-
+	m_fJumpPower = 10.f;
+	
+	m_dwWalking = GetTickCount();
 	m_dwUpsidedown = GetTickCount();
+	m_dwWalking2 = GetTickCount(); // 천천히 걸어가도록 보정
+	
+	fRandTime = rand() % 2000 + 4500;
+	cout << fRandTime << endl;
 }
 
 int CHedgeHog::Update()
 {
+	// 좌우로 움직일때 움직이는 범위의 중간좌표
 	if (!m_bIsInit)
 	{
 		m_Center_fx = m_tInfo.fX;
 		m_Center_fy = m_tInfo.fY;
+
+		float fY_On_Line = 0.f;
+		CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fY_On_Line);
+		m_tInfo.fY = fY_On_Line;
+
 		m_bIsInit = true;
 	}
 
@@ -61,76 +72,76 @@ int CHedgeHog::Update()
 		return OBJ_DEAD;
 	}
 
-	// 죽기 전이면
-	if (m_eCurState != DIE)
-	{
-		if (m_tInfo.fX - m_Center_fx > m_fMoveDistance)
-		{
-			m_fSpeed *= -1;
-			m_pFrameKey = L"HedgeHog_IDLE_LEFT";
-			m_eNextState = IDLE_LEFT;
-			m_bIsRightDir = false;
-		}
-		else if (m_tInfo.fX - m_Center_fx < -m_fMoveDistance)
-		{
-			m_fSpeed *= -1;
-			m_pFrameKey = L"HedgeHog_IDLE";
-			m_eNextState = IDLE;
-			m_bIsRightDir = true;
-		}
+	float fy = 0.f;
+	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
-		// 뒤집어지기 전이면
-		if (!m_bIsUpsidedown)
+	// 이동 범위 끝에서 방향 바꾸기
+	if (m_tInfo.fX - m_Center_fx > m_fMoveDistance)
+	{
+		m_fSpeed *= -1;
+		m_pFrameKey = L"HedgeHog_IDLE_LEFT";
+		m_eNextState = IDLE_LEFT;
+		m_bIsRightDir = false;
+	}
+	else if (m_tInfo.fX - m_Center_fx < -m_fMoveDistance)
+	{
+		m_fSpeed *= -1;
+		m_pFrameKey = L"HedgeHog_IDLE";
+		m_eNextState = IDLE;
+		m_bIsRightDir = true;
+	}
+
+
+	// 죽지 않은 경우 상황이 바뀜
+	if (!m_bIsDying)
+	{
+		// 뒤집힌 상태에서 10초가 지나면
+		if (m_bIsUpsidedown)
 		{
-			if (m_dwWalking + 1500 > GetTickCount())
+			if (m_dwUpsidedown + 10000 < GetTickCount())
 			{
-				//if (m_eCurState == STATE::IDLE || m_eCurState == STATE::IDLE_LEFT)
-				m_tInfo.fX += m_fSpeed;
+				m_bIsUpsidedown = false;
+				Back_To_Idle();
+				m_dwUpsidedown = GetTickCount();
 			}
-			else if (m_dwWalking + 1500 < GetTickCount())
+		}
+		// 뒤집히지 않은 상태이면
+		else
+		{
+			// 0~1500: 걷기, 1500~5000: 정지(3.5초간 정지)
+			if (m_dwWalking + fRandTime < GetTickCount())
 			{
 				m_bIsStop = true;
-				if (m_dwWalking + 2500 < GetTickCount())
+			}
+
+			if (m_dwWalking + fRandTime + 3500 < GetTickCount())
+			{
+				m_dwWalking = GetTickCount();
+				m_bIsStop = false;
+			}
+
+			// 돌아다녀야 한다.
+			if (!m_bIsStop)
+			{
+				if (m_dwWalking2 + 100 < GetTickCount())
 				{
-					m_dwWalking = GetTickCount();
-					m_bIsStop = false;
+					m_tInfo.fX += m_fSpeed;
+					m_dwWalking2 = GetTickCount();
+					/*srand(unsigned(time(0)));
+					fRandTime = rand() % 2000 + 4500;*/
 				}
 			}
 		}
 	}
-	// 죽고 났는데 뒤집어진 후면
-	else if(m_bIsUpsidedown)
-	{
-		if (m_dwUpsidedown + 10000 < GetTickCount())
-		{
-			m_bIsUpsidedown = false;
 
-			if (m_bIsRightDir)
-			{
-				m_pFrameKey = L"HedgeHog_IDLE";
-				m_eNextState = IDLE;
-			}
-			else
-			{
-				m_pFrameKey = L"HedgeHog_IDLE_LEFT";
-				m_eNextState = IDLE_LEFT;
-			}
-			m_dwUpsidedown = GetTickCount();
-		}
-	}
-/*
-	if (m_eCurState == UPSIDE_DOWN
-		|| m_eCurState == UPSIDE_DOWN_LEFT)
-	{
-
-	}
+	if(!m_bIsDying)
+		IsJumping();
 	else
-		m_tInfo.fX += m_fSpeed;
-*/
-	IsJumping();
+		CHedgeHog::IsDying();
+	
 	CObj::UpdateRect();
 	StateChange();
-	CObj::FrameMove();
+	FrameMove();
 	return OBJ_NOEVENT;
 }
 
@@ -142,6 +153,16 @@ void CHedgeHog::Render(HDC hDC)
 {
 	float iScrollX = CScrollMgr::Get_ScrollX();
 	float iScrollY = CScrollMgr::Get_ScrollY();
+
+	// 치트키
+	if (CKeyMgr::Get_Instance()->KeyPressing('M'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
 
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
@@ -168,10 +189,33 @@ void CHedgeHog::Render(HDC hDC)
 			RGB(255, 255, 255)
 		);
 	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Ellipse(hDC, m_tInfo.fX - 5 - iScrollX, m_tInfo.fY - 5 + iScrollY, m_tInfo.fX + 5 - iScrollX, m_tInfo.fY + 5 + iScrollY);
+	}
 }
 
 void CHedgeHog::Release()
 {
+}
+
+void CHedgeHog::FrameMove()
+{
+	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount())
+	{
+		if (!m_bIsStop)
+		{
+			++m_tFrame.iFrameStart_X;
+		}
+		m_tFrame.dwFrameTime = GetTickCount();
+	}
+
+	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
+	{
+		m_tFrame.iFrameStart_X = 0;
+		m_bMotionEnd = true;
+	}
 }
 
 void CHedgeHog::StateChange()
@@ -213,15 +257,22 @@ void CHedgeHog::Collision_Proc(CObj * pCounterObj)
 	{
 		if (m_bIsUpsidedown)
 		{
+			
 			if (static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP
-				|| static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP_LEFT)
+				|| static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP_LEFT
+				)
 			{
-				m_eCurState = DIE;
-
-				m_bIsJump = true;
-				m_fJumpPower = -10.f;
+				if (pCounterObj->Get_Rect().bottom < m_tInfo.fY)
+				{
+					if (!m_bIsDying)
+					{
+						m_bIsDying = true;
+						m_fJumpPower = -8.f;
+					}
+				}
 			}
 		}
+		
 	}
 }
 
@@ -241,57 +292,42 @@ void CHedgeHog::Upside_Down()
 		}
 
 		m_bIsUpsidedown = true;
-
 		m_bIsJump = true;
 		m_fJumpPower = -10.f;
 		m_dwUpsidedown = GetTickCount();
 	}
 }
 
-void CHedgeHog::IsJumping()
+void CHedgeHog::IsDying()
 {
 	float fy = 0.f;
 	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
-	// 죽은 상황이 아니면
-	if (m_eCurState != DIE)
+	if (m_bIsDying)
 	{
-		if (m_bIsJump)
-		{
-			m_fVelY = m_fDeltaTime + m_fJumpPower;
-			m_tInfo.fY += m_fVelY;
-			m_fDeltaTime += 0.5f;
+		// 점프 후 내려간다(m_fJumpPower가 음수였다가 양수가 되면서 땅에 닿을때 스탑)
+		m_fVelY = m_fDeltaTime + m_fJumpPower;
+		m_tInfo.fY += m_fVelY;
+		m_fDeltaTime += 0.5f;
 
-			if (bIsColl && m_tInfo.fY > fy)
-			{
-				m_bIsJump = false;
-				m_fDeltaTime = 0.f;
-				m_fJumpPower = -10.f;
-				m_tInfo.fY = fy;
-			}
-		}
-		else if (bIsColl)
+		if (m_tInfo.fY > fy)
 		{
-			m_tInfo.fY = fy;
+			m_bIsDead = true;
 		}
 	}
-	// 죽은 상황이면
-	else if(m_eCurState == DIE)
-	{
-		if (m_bIsJump)
-		{
-			m_fVelY = m_fDeltaTime + m_fJumpPower;
-			m_tInfo.fY += m_fVelY;
-			m_fDeltaTime += 0.5f;
+}
 
-			if (bIsColl && m_fVelY > 0)
-			{
-				m_bIsJump = false;
-				m_fDeltaTime = 0.f;
-				m_fJumpPower = -10.f;
-				m_tInfo.fY = fy;
-				m_bIsDead = true;
-			}
-		}
+void CHedgeHog::Back_To_Idle()
+{
+	int i = 0;
+	if (m_bIsRightDir)
+	{
+		m_pFrameKey = L"HedgeHog_IDLE";
+		m_eNextState = IDLE;
+	}
+	else
+	{
+		m_pFrameKey = L"HedgeHog_IDLE_LEFT";
+		m_eNextState = IDLE_LEFT;
 	}
 }

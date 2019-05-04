@@ -1,0 +1,52 @@
+## Player.cpp
+## P 누르면 플레이어 사각형 보임
+	if (CKeyMgr::Get_Instance()->KeyPressing('P'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+
+## M 누르면 몬스터 사각형들 보임
+	if (CKeyMgr::Get_Instance()->KeyPressing('M'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+
+## A 누르면 플레이어, 몬스터 사각형 보임
+
+## L, H, F 몬스터 추가
+플레이어 시작 위치에 몬스터 추가해서 몬스터들 설명함
+Stage.cpp Update()
+	if (CKeyMgr::Get_Instance()->KeyDown('L'))
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(300, 390));
+
+	if (CKeyMgr::Get_Instance()->KeyDown('F'))
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CFly>::Create(300, 390));
+
+	if (CKeyMgr::Get_Instance()->KeyDown('H'))
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(300, 390));
+
+## F3 플레이어 체력 깎기
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_F3))
+	{
+		m_iHp = 1;
+	}
+
+// 1차 발표
+- 필요하면 A로 충돌체크 보여줌
+- 몬스터 패턴 하나씩 보여주고
+	날파리 폭탄 맞으면 플레이어 다치는거 보여줌
+- 종류에 따라 스턴, 뒤집혀짐
+- 아이템
+- 플레이어 조작 (아픔, 구름, 돌에 매달림)
+	돌에 매달릴때 밑에서 점프하면 안됨, 옆에서 점프해서 올라가야되는거 보여줘야됨
+	아프거나 구르거나 돌에 매달릴때 키보드 조작 막히는거 보여줌
+- 맵 타는거 보여줌
+
+
+// 구현할 것 (05/03)
+- 세이빙 포인트
+- 맵 수정 (ptInRect)
+- 1 스테이지 보스 만들고
+- 시간 있으면 2 스테이지 만들기
+- 발발이 치와와 bgm 넣기
+

@@ -37,11 +37,6 @@ void CLogo::LateUpdate()
 	{
 		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LINE_EDIT);
 	}
-	// T 누르면 라인 에디터 테스트 씬 시작
-	if (CKeyMgr::Get_Instance()->KeyDown('T'))
-	{
-		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LINE_TEST);
-	}
 }
 
 void CLogo::Render(HDC hDC)

@@ -11,10 +11,14 @@
 
 #include "HedgeHog.h"
 #include "Lizard.h"
+#include "Fly.h"
 
 #include "Item.h"
 
 #include "Vertex.h"
+#include "Block.h"
+#include "VerticalBlocck.h"
+
 
 CStage::CStage()
 {
@@ -30,51 +34,73 @@ CStage::~CStage()
 
 void CStage::Initialize()
 {
-	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Pridelands.bmp", L"Pridelands");
-	CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 370));
-	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(400, 370));
-	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(400, 370));
-
-	CItem* pItem;
-
-	// HP 아이템
-	pItem = CAbstractFactory<CItem>::Create(100, 200);
-	pItem->Set_ID(CItem::ID::HP);
-	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
-
-	// MP 아이템
-	pItem = CAbstractFactory<CItem>::Create(200, 200);
-	pItem->Set_ID(CItem::ID::MP);
-	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
-
-	// Save 아이템
-	pItem = CAbstractFactory<CItem>::Create(300, 200);
-	pItem->Set_ID(CItem::ID::LIFE);
-	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+	//CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Pridelands.bmp", L"Pridelands");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Stage/stage1.bmp", L"stage1");
 	
-	// Life 아이템
-	pItem = CAbstractFactory<CItem>::Create(400, 200);
-	pItem->Set_ID(CItem::ID::SAVE);
-	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+	if(nullptr == CObjMgr::Get_Instance()->Get_Player())
+		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 340));
 
-	CObjMgr::Get_Instance()->AddObject(OBJID::MAP, CAbstractFactory<CVertex>::Create(100, 200));
+	// 도마뱀
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(790, 390));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1320, 390));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1390, 26));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(500, -140));
+
+	// 고슴도치
+	CHedgeHog* pHedgeHog;
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(1700, 390));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(1980, 60));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(850, -50));
+	
+
+	// 날파리
+	CFly* pFly;
+	pFly = CAbstractFactory<CFly>::Create(873, -230);
+	pFly->Set_Distance(50.f);
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pFly);
+
 
 	CLineMgr::Get_Instance()->Initialize();
 
-	iLife = 3;
 }
 
 void CStage::Update()
 {
 	CObjMgr::Get_Instance()->Update();
 
-	if (CObjMgr::Get_Instance()->Get_Player()->Get_Hp() <= 0)
-	{
-		iLife--;
-		//CObjMgr::Get_Instance()->Get_Player()->Set_Hp(100);
+	if (CKeyMgr::Get_Instance()->KeyDown('L'))
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(300, 390));
 
-		CObjMgr::Get_Instance()->DeleteID(OBJID::PLAYER);
-		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 370));
+	if (CKeyMgr::Get_Instance()->KeyDown('F'))
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CFly>::Create(300, 390));
+
+	if (CKeyMgr::Get_Instance()->KeyDown('H'))
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(300, 390));
+
+
+	if (CKeyMgr::Get_Instance()->KeyDown('I'))
+	{
+		CItem* pItem;
+
+		// HP 아이템
+		pItem = CAbstractFactory<CItem>::Create(100, 200);
+		pItem->Set_ID(CItem::ID::HP);
+		CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+
+		// MP 아이템
+		pItem = CAbstractFactory<CItem>::Create(200, 200);
+		pItem->Set_ID(CItem::ID::MP);
+		CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+
+		// Save 아이템
+		pItem = CAbstractFactory<CItem>::Create(300, 200);
+		pItem->Set_ID(CItem::ID::LIFE);
+		CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+
+		// Life 아이템
+		pItem = CAbstractFactory<CItem>::Create(400, 200);
+		pItem->Set_ID(CItem::ID::SAVE);
+		CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
 	}
 }
 
@@ -87,6 +113,8 @@ void CStage::LateUpdate()
 	OBJLIST listMonster = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MONSTER);
 	OBJLIST listItem = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::ITEM);
 	OBJLIST listMap = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MAP);
+	OBJLIST listBlock = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::BLOCK);
+	OBJLIST listVerticalBlock = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::VERTICAL_BLOCK);
 
 	// 플레이어 ~ 몬스터
 	CCollisionMgr::CollisionRect(listPlayer, listMonster);
@@ -94,7 +122,10 @@ void CStage::LateUpdate()
 	CCollisionMgr::CollisionRect(listPlayer, listItem);
 	// 플레이어 ~ 맵(동글이)
 	CCollisionMgr::CollisionRect(listPlayer, listMap);
-
+	// 플레이어 ~ 블락(벽돌, 막음, 돌)
+	CCollisionMgr::CollisionRect(listPlayer, listBlock);
+	// 플레이어 ~ 가로 블락
+	CCollisionMgr::CollisionRect(listPlayer, listVerticalBlock);
 }
 
 void CStage::Render(HDC hDC)
@@ -104,13 +135,14 @@ void CStage::Render(HDC hDC)
 	int iScrollX = CScrollMgr::Get_ScrollX();
 	int iScrollY = CScrollMgr::Get_ScrollY();
 
-	HDC hMapDC = CBitmapMgr::Get_Instance()->FindImage(L"Pridelands");
-	/*BitBlt(hDC, 0, 0, WINCX, WINCY, hMapDC
+	HDC hStageDC = CBitmapMgr::Get_Instance()->FindImage(L"stage1");
+	
+	BitBlt(hDC, 0, 0, WINCX, WINCY, hStageDC
 		, 0 + iScrollX, 2050-iScrollY
-		, SRCCOPY);*/
+		, SRCCOPY);
+	
 	CObjMgr::Get_Instance()->Render(hDC);
 	CLineMgr::Get_Instance()->Render(hDC);
-
 
 	CPlayer* pPlayer = CObjMgr::Get_Instance()->Get_Player();
 	TCHAR lpOut[1024];
@@ -126,4 +158,5 @@ void CStage::Render(HDC hDC)
 
 void CStage::Release()
 {
+	CObjMgr::Get_Instance()->DeleteID(OBJID::MONSTER);
 }

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "ScrollMgr.h"
 #include "SceneMgr.h"
-float CScrollMgr::m_fScrollX = 0.f;
-float CScrollMgr::m_fScrollY = 0.f;
+
+int CScrollMgr::m_iScrollX = 0;
+int CScrollMgr::m_iScrollY = 0;
 
 CScrollMgr::CScrollMgr()
 {
@@ -17,9 +18,9 @@ void CScrollMgr::ScrollLock()
 {
 	POINT ptScene = CSceneMgr::Get_Instance()->Get_SceneRect();
 	
-	if (m_fScrollX < 0) m_fScrollX = 0;
-	if (m_fScrollX > ptScene.x - WINCX) m_fScrollX = ptScene.x - WINCX;
+	if (m_iScrollX < 0) m_iScrollX = 0;
+	if (m_iScrollX > ptScene.x - WINCX) m_iScrollX = ptScene.x - WINCX;
 	
-	if (m_fScrollY < 0) m_fScrollY = 0;
-	if (m_fScrollY > ptScene.y - WINCY) m_fScrollY = ptScene.y - WINCY;
+	if (m_iScrollY < 0) m_iScrollY = 0;
+	if (m_iScrollY > ptScene.y - WINCY) m_iScrollY = ptScene.y - WINCY;
 }

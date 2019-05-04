@@ -3,6 +3,11 @@
 #define WINCX 650
 #define WINCY 450
 
+#define TILESIZEX 64
+#define TILESIZEY 64
+#define TILEX 100
+#define TILEY 100
+
 #define OBJ_DEAD 1
 #define OBJ_NOEVENT 0
 
@@ -37,3 +42,15 @@ private:									\
 Class* Class::m_pInstance = nullptr; 
 
 #define Is_Counter_One_Of(Class) dynamic_cast<Class*>(pCounterObj) != nullptr
+
+#define KEYDOWN_LBUTTON_AND_COUT(content) \
+if (CKeyMgr::Get_Instance()->KeyDown(VK_LBUTTON)) \
+{ \
+	cout << content << endl; \
+}
+
+#define KEYPRESSING_LBUTTON_AND_COUT(content) \
+if (CKeyMgr::Get_Instance()->KeyPressing(VK_LBUTTON)) \
+{ \
+	cout << content << endl; \
+}

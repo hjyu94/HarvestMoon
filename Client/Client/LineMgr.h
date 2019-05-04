@@ -1,5 +1,6 @@
 #pragma once
 class CLine;
+class CVertex;
 class CLineMgr
 {
 private:
@@ -34,5 +35,6 @@ public:
 private:
 	static CLineMgr* m_pInstance;
 	list<CLine*> m_listLine;
+	list<CVertex*> m_listVertex;
 };
 

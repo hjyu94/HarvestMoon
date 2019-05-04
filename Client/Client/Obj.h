@@ -31,9 +31,14 @@ public:
 public:
 	void UpdateRect(); 
 	virtual void FrameMove();
+	virtual void IsJumping();
 	virtual void LateInit(); 
 	virtual void Collision_Proc(CObj* pCounterObj);
 	bool Is_Inside(float left, float top, float right, float bottom);
+	
+	void Set_Stun();
+	void IsStunning();
+
 public:
 	int Get_Hp() { return m_iHp; };
 	int Get_Mp() { return m_iMp; };
@@ -43,6 +48,11 @@ public:
 	void Set_Hp(int iHp) { m_iHp = iHp; }
 
 protected:
+	bool m_bIsJump;
+	float m_fDeltaTime;
+	float m_fVelY;
+	float m_fJumpPower;
+
 	INFO m_tInfo; 
 	RECT m_tRect; 
 
@@ -63,6 +73,9 @@ protected:
 	int m_iMaxHp;
 	int m_iMp;
 	int m_iMaxMp;
+	
+	bool m_bIsStun;
+	DWORD m_dwStun;
 
 };
 

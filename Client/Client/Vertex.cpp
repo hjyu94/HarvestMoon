@@ -29,7 +29,13 @@ void CVertex::LateUpdate()
 
 void CVertex::Render(HDC hDC)
 {
-	Ellipse(hDC, m_tRect.left, m_tRect.top, m_tRect.right, m_tRect.bottom);
+	int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
+
+	if(CKeyMgr::Get_Instance()->KeyPressing('A'))
+		Ellipse(hDC, m_tRect.left-iScrollX, m_tRect.top+iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+
+	//Ellipse(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
 }
 
 void CVertex::Release()

@@ -1,6 +1,14 @@
 #include "stdafx.h"
 #include "LineMgr.h"
+#include "AbstractFactory.h"
+
 #include "Line.h"
+#include "Vertex.h"
+#include "Block.h"
+#include "VerticalBlocck.h"
+#include "ObjMgr.h"
+#include "Player.h"
+
 CLineMgr* CLineMgr::m_pInstance = nullptr; 
 
 CLineMgr::CLineMgr()
@@ -22,6 +30,13 @@ void CLineMgr::Render(HDC hDC)
 {
 	for (auto& pLine : m_listLine)
 		pLine->Render(hDC);
+
+
+	for (auto& pVertex : m_listVertex)
+	{
+		pVertex->Update();
+		pVertex->Render(hDC);
+	}
 }
 
 void CLineMgr::Release()
@@ -35,6 +50,16 @@ void CLineMgr::Release()
 		}
 	}
 	m_listLine.clear();
+
+	for (auto& pVertex : m_listVertex)
+	{
+		if (pVertex)
+		{
+			delete pVertex;
+			pVertex = nullptr;
+		}
+	}
+	m_listVertex.clear();
 }
 
 bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY)
@@ -43,8 +68,10 @@ bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY)
 		return false;
 
 	CLine* pTarget = nullptr; 
-	float fMinDistY = 9999.f;
-	float fY_On_Target =0.f;
+	float fMinDistY = 9999.f; // 맵의 Height 보다 커야 함.
+	float fY_On_Target = 0.f;
+
+	//float fPlayerCY = CObjMgr::Get_Instance()->Get_Player()->Get_Info().fCY;
 
 	for (auto& pLine : m_listLine)
 	{
@@ -59,15 +86,17 @@ bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY)
 			float y1 = pLine->Get_LineInfo().tLeftPoint.fy;
 			float y2 = pLine->Get_LineInfo().tRightPoint.fy;
 
-			float fY_On_Line = ((y2 - y1) / (x2 - x1)) * (fInX - x1) + y1;
+			
+			float fY_On_Line = ((y2 - y1) / (x2 - x1)) * (fInX - x1) + y1/* - fPlayerCY/2*/;
 			float fDistY = fabs(fY_On_Line - fInY);
 
-			if (fDistY < 20.f)
+			if (fDistY < 40.f)
 			{
+			//if(fY_On_Line >= fInY)
 				if (fMinDistY >= fDistY)
 				{
 					pTarget = pLine;
-					fMinDistY = fY_On_Line - fInY;
+					fMinDistY = fDistY;
 					fY_On_Target = fY_On_Line;
 				}
 			}
@@ -83,26 +112,106 @@ bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY)
 
 void CLineMgr::LoadData()
 {
-	HANDLE hFile = CreateFile(L"../Data/Line.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+		HANDLE hFile = CreateFile(L"../Data/Line.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
 
-	if (INVALID_HANDLE_VALUE == hFile)
-	{
-		MessageBox(g_hWnd, L"라인 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
-		return;
-	}
-	LINEINFO tInfo = {}; 
-	DWORD dwByte = 0; 
-
-	while (true)
-	{
-		ReadFile(hFile, &tInfo, sizeof(LINEINFO), &dwByte, nullptr);
-		if (0 == dwByte)
+		if (INVALID_HANDLE_VALUE == hFile)
 		{
-			break;
+			MessageBox(g_hWnd, L"라인 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+			return;
 		}
-		m_listLine.emplace_back(new CLine(tInfo)); 
-	}
-	CloseHandle(hFile);
-	MessageBox(g_hWnd, L"라인 정보를 읽어왔습니다", L"로드 성공", MB_OK);
+		LINEINFO tLineInfo = {}; 
+		DWORD dwByte = 0; 
+
+		while (true)
+		{
+			ReadFile(hFile, &tLineInfo, sizeof(LINEINFO), &dwByte, nullptr);
+			if (0 == dwByte)
+			{
+				break;
+			}
+			m_listLine.emplace_back(new CLine(tLineInfo));
+		}
+		CloseHandle(hFile);
+
+		/********************************************************/
+
+		HANDLE hFile2 = CreateFile(L"../Data/Vertex.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+		if (INVALID_HANDLE_VALUE == hFile2)
+		{
+			MessageBox(g_hWnd, L"라인 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+			return;
+		}
+		INFO tInfo = {};
+		DWORD dwByte2 = 0;
+
+		while (true)
+		{
+			ReadFile(hFile2, &tInfo, sizeof(INFO), &dwByte, nullptr);
+			if (0 == dwByte)
+			{
+				break;
+			}
+			//m_listVertex.emplace_back(CAbstractFactory<CVertex>::Create(tInfo.fX, tInfo.fY));
+			CObjMgr::Get_Instance()->AddObject(OBJID::MAP, CAbstractFactory<CVertex>::Create(tInfo.fX, tInfo.fY));
+		}
+		CloseHandle(hFile2);
+
+		/********************************************************/
+	
+		HANDLE hFile3 = CreateFile(L"../Data/Block.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+		if (INVALID_HANDLE_VALUE == hFile3)
+		{
+			MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+			return;
+		}
+
+		INFO tInfo2 = {};
+		DWORD dwByte3 = 0;
+
+		while (true)
+		{
+			ReadFile(hFile3, &tInfo2, sizeof(INFO), &dwByte3, nullptr);
+			if (0 == dwByte3)
+			{
+				break;
+			}
+			CObjMgr::Get_Instance()->AddObject(OBJID::BLOCK, CAbstractFactory<CBlock>::Create(tInfo2.fX, tInfo2.fY));
+		}
+		CloseHandle(hFile3);
+
+		/********************************************************/
+	
+		HANDLE hFile4 = CreateFile(L"../Data/VerticalBlock.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+		if (INVALID_HANDLE_VALUE == hFile4)
+		{
+			MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+			return;
+		}
+
+		INFO tInfo3 = {};
+		DWORD dwByte4 = 0;
+
+		while (true)
+		{
+			ReadFile(hFile4, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
+			if (0 == dwByte4)
+			{
+				break;
+			}
+			CObjMgr::Get_Instance()->AddObject(OBJID::VERTICAL_BLOCK, CAbstractFactory<CVerticalBlocck>::Create(tInfo3.fX, tInfo3.fY));
+		}
+		CloseHandle(hFile4);
+		cout << CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::VERTICAL_BLOCK).size() << endl;
+		cout << CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::BLOCK).size() << endl;
+		cout << CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MAP).size() << endl;
+		cout << CLineMgr::Get_Instance()->m_listLine.size() << endl;
+		/********************************************************/
+		MessageBox(g_hWnd, L"라인 정보를 읽어왔습니다", L"로드 성공", MB_OK);
 }

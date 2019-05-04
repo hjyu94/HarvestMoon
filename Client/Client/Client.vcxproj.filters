@@ -73,17 +73,23 @@
     <Filter Include="96. Manager\EditorLineMgr">
       <UniqueIdentifier>{ecc48ef9-575f-4fbc-a24b-c674b36feeff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Scene\04. LineEditorTest">
-      <UniqueIdentifier>{9786736d-0103-4389-b4a8-b02b415ab38c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Obj\02. Monster">
       <UniqueIdentifier>{1fab8891-39a1-4eee-8b99-2c223e50f739}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Obj\03. Item">
       <UniqueIdentifier>{24b4073a-8200-4681-a251-4c106137abb8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Obj\04. Vertex">
+    <Filter Include="01. Obj\04. Map">
       <UniqueIdentifier>{f3dd7694-7672-433f-ad15-f6e449ac2bf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\RandMgr">
+      <UniqueIdentifier>{2a469c9f-08d1-455f-89cc-1b5f92225ed1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\04. Dead">
+      <UniqueIdentifier>{33d7e102-68cf-4751-b738-6303b979dc34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\05. Restart">
+      <UniqueIdentifier>{d9842d29-cad5-4b61-a2db-3b4589b3e328}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,10 +180,6 @@
     <ClInclude Include="EditorLineMgr.h">
       <Filter>96. Manager\EditorLineMgr</Filter>
     </ClInclude>
-    <ClInclude Include="LineEditorTest.h">
-      <Filter>04. Scene\04. LineEditorTest</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPlayer.h" />
     <ClInclude Include="HedgeHog.h">
       <Filter>01. Obj\02. Monster</Filter>
     </ClInclude>
@@ -191,7 +193,22 @@
       <Filter>01. Obj\03. Item</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
-      <Filter>01. Obj\04. Vertex</Filter>
+      <Filter>01. Obj\04. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Fly.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>01. Obj\04. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="VerticalBlocck.h">
+      <Filter>01. Obj\04. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadScene.h">
+      <Filter>04. Scene\04. Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="RestartScene.h">
+      <Filter>04. Scene\05. Restart</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -255,9 +272,6 @@
     <ClCompile Include="EditorLineMgr.cpp">
       <Filter>96. Manager\EditorLineMgr</Filter>
     </ClCompile>
-    <ClCompile Include="LineEditorTest.cpp">
-      <Filter>04. Scene\04. LineEditorTest</Filter>
-    </ClCompile>
     <ClCompile Include="HedgeHog.cpp">
       <Filter>01. Obj\02. Monster</Filter>
     </ClCompile>
@@ -270,9 +284,23 @@
     <ClCompile Include="Item.cpp">
       <Filter>01. Obj\03. Item</Filter>
     </ClCompile>
-    <ClCompile Include="TestPlayer.cpp" />
     <ClCompile Include="Vertex.cpp">
-      <Filter>01. Obj\04. Vertex</Filter>
+      <Filter>01. Obj\04. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Fly.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>01. Obj\04. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="VerticalBlocck.cpp">
+      <Filter>01. Obj\04. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="DeadScene.cpp">
+      <Filter>04. Scene\04. Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="RestartScene.cpp">
+      <Filter>04. Scene\05. Restart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,5 +321,6 @@
       <Filter>99. Default</Filter>
     </Text>
     <Text Include="0429 수업.txt" />
+    <Text Include="치트키.txt" />
   </ItemGroup>
 </Project>

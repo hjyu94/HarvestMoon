@@ -7,8 +7,8 @@ public:
 	enum STATE {
 		IDLE, IDLE_LEFT
 		, UPSIDE_DOWN, UPSIDE_DOWN_LEFT 
-		, DIE
 	};
+
 public:
 	CHedgeHog();
 	virtual ~CHedgeHog();
@@ -19,28 +19,33 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
+	virtual void FrameMove() override;
 	
 public:
 	void StateChange();
 	virtual void Collision_Proc(CObj* pCounterObj);
 
-
 public:
+	bool Get_IsDying() { return m_bIsDying; }
 	void Upside_Down();
-	void IsJumping();
+	void IsDying();
 	bool Get_UpsideState() { return m_bIsUpsidedown; }
-
+	void Back_To_Idle();
+	
 private:
 	STATE m_eNextState;
 	STATE m_eCurState;
 
+	float fRandTime;
 	DWORD m_dwUpsidedown;
-	bool m_bIsUpsidedown;
-	
 	DWORD m_dwWalking;
-	bool m_bIsStop;
+	DWORD m_dwWalking2;
 
+	bool m_bIsStop;
+	bool m_bIsUpsidedown;
 	bool m_bIsJump;
+	bool m_bIsDying;
+	
 	float m_fJumpPower;
 	float m_fDeltaTime;
 	float m_fVelY;

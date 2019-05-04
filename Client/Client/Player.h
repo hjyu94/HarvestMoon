@@ -15,9 +15,11 @@ public:
 		, LEDGE_DOWN, LEDGE_DOWN_LEFT
 		, STANDING_LAND, STANDING_LAND_LEFT
 		, STANDING_JUMP, STANDING_JUMP_LEFT
+		, CLIMBING_LEDGE, CLIMBING_LEDGE_LEFT
 		, GRABBING_LEDGE_FIRST, GRABBING_LEDGE_FIRST_LEFT
 		, GRABBING_LEDGE_SECOND, GRABBING_LEDGE_SECOND_LEFT
 		, HURT, HURT_LEFT
+		, DIE, DIE_LEFT
 	};
 
 public:
@@ -39,7 +41,9 @@ public:
 	void IsHurting();
 	void IsDanging();
 	void IsOffset();
+	void IsRecovering();
 
+	void Is_On_Another_Scene();
 
 	void KeyCheck(); 
 	void SceneChange();
@@ -48,26 +52,38 @@ public:
 	void BackToIdle();
 	STATE Get_CurState() { return m_eCurState; }
 
+public:
+	bool IsBetween(DWORD dwTime, float min, float max)
+	{
+		return (dwTime >= min && dwTime <= max);
+	}
+
 private:
 
 	// jump에 필요한 변수. 
-	bool m_bIsJump; 
-	float m_fJumpPower;
-	float m_fDeltaTime; 
-
 	float m_fVelX;
-	float m_fVelY;
 
 	bool m_bIsRolling;
 	bool m_bIsHurting;
 	bool m_bIsRoaring;
 	bool m_bIsDangling;
 
+	bool m_bIsSeeingDown;
+	bool m_bIsSeeingUp;
+	bool m_bIsScrollEffect;
+	bool m_bIsBlockCollision;
+	bool m_bIs_On_Another_Scene;
+
 	STATE m_eNextState;
 	STATE m_eCurState;
 
 	DWORD m_dwRecover;
 	DWORD m_dwNoCollision;
+	DWORD m_dwUp;
+	DWORD m_dwDown;
+	
+	bool m_bIsTransparent;
+	int m_iTransparentCount;
 
 private:
 	bool m_bIsSaved;
@@ -75,3 +91,11 @@ private:
 	float m_fSaving_Y;
 };
 
+/*
+
+0~200		그림ㅇㅇ
+200~400		ㄴㄴ
+400~600		ㅇㅇ
+600~800		ㄴㄴ
+
+*/

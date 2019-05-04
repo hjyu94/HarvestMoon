@@ -10,7 +10,8 @@ public:
 		SCENE_LOGO
 		, SCENE_LINE_EDIT
 		, SCENE_STAGE
-		, SCENE_LINE_TEST
+		, SCENE_DEAD
+		, SCENE_RESTART
 		, SCENE_END};
 
 public:

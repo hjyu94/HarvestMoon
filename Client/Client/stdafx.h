@@ -11,6 +11,15 @@
 // Windows Header Files:
 #include <windows.h>
 
+// 동영상
+#include <Vfw.h>
+#pragma comment(lib, "vfw32.lib")
+
+// 사운드
+#include <io.h>
+#include "fmod.h"
+#pragma comment(lib, "fmodex_vc.lib")
+
 // C RunTime Header Files
 #include <stdlib.h>
 #include <malloc.h>
@@ -24,6 +33,7 @@
 #include <algorithm>
 #include <iostream>
 using namespace std;
+#include <time.h>
 
 // TODO: reference additional headers your program requires here
 #include "Extern.h"

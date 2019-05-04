@@ -20,12 +20,13 @@ void CLizard::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/LIZARD_IDLE_LEFT.bmp", L"LIZARD_IDLE_LEFT");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/LIZARD_ATTACK.bmp", L"LIZARD_ATTACK");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/LIZARD_ATTACK_LEFT.bmp", L"LIZARD_ATTACK_LEFT");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/BombEffect.bmp", L"BombEffect");
 	
 	m_pFrameKey = L"LIZARD_IDLE";
 	m_tInfo.fCX = 70.f;
 	m_tInfo.fCY = 40.f;
 	m_eCurState = STATE::IDLE;
-	m_tFrame.dwFrameSpeed = 300;
+	m_tFrame.dwFrameSpeed = 150;
 	m_tFrame.dwFrameTime = GetTickCount();
 	m_tFrame.iFrameStart_X = 0;
 	m_tFrame.iFrameEnd_X = 7;
@@ -39,6 +40,9 @@ void CLizard::Initialize()
 	m_bIsRightDir = true;
 	m_bIsAttacking = false;
 	m_bIsStop = false;
+
+	fRandTime = rand() % 1000 + 1000;
+	cout << fRandTime << endl;
 }
 
 int CLizard::Update()
@@ -73,15 +77,16 @@ int CLizard::Update()
 
 	if (!m_bIsAttacking)
 	{
-		if (m_dwWalking + 1500 > GetTickCount())
+		if (m_dwWalking + fRandTime > GetTickCount())
 		{
 			if (m_eCurState == STATE::IDLE || m_eCurState == STATE::IDLE_LEFT)
-				m_tInfo.fX += m_fSpeed;
+				if(!m_bIsStun)
+					m_tInfo.fX += m_fSpeed;
 		}
-		else if (m_dwWalking + 1500 < GetTickCount())
+		else if (m_dwWalking + fRandTime < GetTickCount())
 		{
 			m_bIsStop = true;
-			if (m_dwWalking + 2500 < GetTickCount())
+			if (m_dwWalking + fRandTime + 1000 < GetTickCount())
 			{
 				m_dwWalking = GetTickCount();
 				m_bIsStop = false;
@@ -106,7 +111,9 @@ int CLizard::Update()
 		m_dwAttack = GetTickCount();
 	}
 	
-		
+	
+	IsJumping();
+	CObj::IsStunning();
 	CObj::UpdateRect();
 	CLizard::FrameMove();
 	CLizard::SceneChange();
@@ -123,7 +130,18 @@ void CLizard::Render(HDC hDC)
 	CObj::UpdateRect();
 	int iScrollX = CScrollMgr::Get_ScrollX();
 	int iScrollY = CScrollMgr::Get_ScrollY();
-
+	
+	// 치트키
+	if (CKeyMgr::Get_Instance()->KeyPressing('M'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	
+	
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 	if (m_eCurState == IDLE || m_eCurState == IDLE_LEFT)
@@ -158,7 +176,7 @@ void CLizard::Render(HDC hDC)
 				m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 				m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 				hMemDC,
-				m_tInfo.fCX * m_tFrame.iFrameStart_X + 54.f,
+				m_tInfo.fCX * m_tFrame.iFrameStart_X + 84.f,
 				m_tInfo.fCY* m_tFrame.iFrameStart_Y, // 시작 위치 
 				m_tInfo.fCX, m_tInfo.fCY,// 출력할 비트맵의 전체 가로세로 길이. 
 				RGB(255, 255, 255)
@@ -176,6 +194,11 @@ void CLizard::Render(HDC hDC)
 				RGB(255, 255, 255)
 			);
 		}
+	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Ellipse(hDC, m_tInfo.fX - 5 - iScrollX, m_tInfo.fY - 5 + iScrollY, m_tInfo.fX + 5 - iScrollX, m_tInfo.fY + 5 + iScrollY);
 	}
 }
 
@@ -197,7 +220,7 @@ void CLizard::SceneChange()
 		case CLizard::IDLE_LEFT:
 			m_tInfo.fCX = 70.f;
 			m_tInfo.fCY = 40.f;
-			m_tFrame.dwFrameSpeed = 300;
+			m_tFrame.dwFrameSpeed = 150;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 7;
@@ -208,7 +231,7 @@ void CLizard::SceneChange()
 		case CLizard::ATTACK_LEFT:
 			m_tInfo.fCX = 94.f;
 			m_tInfo.fCY = 54.f;
-			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameSpeed = 150;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 7;
@@ -222,7 +245,8 @@ void CLizard::SceneChange()
 void CLizard::FrameMove()
 {
 	int i = 0;
-	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount())
+	if (m_tFrame.dwFrameTime + m_tFrame.dwFrameSpeed < GetTickCount()
+		&& !m_bIsStun)
 	{
 		++m_tFrame.iFrameStart_X;
 		m_tFrame.dwFrameTime = GetTickCount();
@@ -232,12 +256,32 @@ void CLizard::FrameMove()
 	{
 		if (m_tFrame.iFrameStart_X == 5)
 		{
-			m_tInfo.fCX = 146.f;
+			m_tInfo.fCX = 176.f;
+			/*if (m_bIsRightDir)
+			{
+				m_tInfo.fX += 70.f;
+			}
+			else
+			{
+				m_tInfo.fX -= 70.f;
+			}*/
 		}
-		else
+		else if (m_tFrame.iFrameStart_X == 6)
 		{
 			m_tInfo.fCX = 94.f;
+			/*if (m_bIsRightDir)
+			{
+				m_tInfo.fX -= 70.f;
+			}
+			else
+			{
+				m_tInfo.fX += 70.f;
+			}*/
 		}
+		//else
+		//{
+		//	m_tInfo.fCX = 94.f;
+		//}
 
 		if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
 		{
@@ -262,12 +306,3 @@ void CLizard::FrameMove()
 	}
 }
 
-void CLizard::Collision_Proc(CObj * pCounterObj)
-{
-	if (Is_Counter_One_Of(CPlayer))
-	{
-		if (static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP
-			|| static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::STANDING_JUMP_LEFT)
-			m_bIsDead = true;
-	}
-}

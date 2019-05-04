@@ -25,7 +25,7 @@ public:
 	void KeyCheck();
 	void SceneChange();
 	virtual void FrameMove();
-	void Collision_Proc(CObj* pCounterObj);
+
 private:
 	STATE m_eNextState;
 	STATE m_eCurState;
@@ -34,5 +34,6 @@ private:
 	DWORD m_dwAttack;
 	bool m_bIsAttacking;
 	bool m_bIsStop;
-};
 
+	float fRandTime;
+};

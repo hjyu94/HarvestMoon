@@ -5,16 +5,18 @@ public:
 	CScrollMgr();
 	~CScrollMgr();
 public:
-	static float Get_ScrollX() { return m_fScrollX; }
-	static void Sum_ScrollX(float x) { m_fScrollX += x; }
+	static float Get_ScrollX() { return m_iScrollX; }
+	static void Sum_ScrollX(float x) { m_iScrollX += x; }
 		
-	static float Get_ScrollY() { return m_fScrollY; }
-	static void Sum_ScrollY(float y) { m_fScrollY += y; }
+	static float Get_ScrollY() { return m_iScrollY; }
+	static void Sum_ScrollY(float y) { m_iScrollY += y; }
+	
+	static void Reset_Scroll() { m_iScrollX = 0; m_iScrollY = 0; }
 
 	static void ScrollLock();
 
 private:
-	static float m_fScrollX;
-	static float m_fScrollY;
+	static int m_iScrollX;
+	static int m_iScrollY;
 };
 

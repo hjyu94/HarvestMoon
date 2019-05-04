@@ -4,7 +4,8 @@
 #include "Logo.h"
 #include "LineEditor.h"
 #include "Stage.h"
-#include "LineEditorTest.h"
+#include "DeadScene.h"
+#include "RestartScene.h"
 
 IMPLEMENT_SINGLETON(CSceneMgr)
 
@@ -36,6 +37,7 @@ void CSceneMgr::SceneChange(SCENEID eScene)
 		case CSceneMgr::SCENE_LOGO:
 			m_pScene = new CLogo; 
 			break;
+
 		case CSceneMgr::SCENE_STAGE:
 			m_pScene = new CStage;
 			break;
@@ -44,8 +46,12 @@ void CSceneMgr::SceneChange(SCENEID eScene)
 			m_pScene = new CLineEditor;
 			break;
 
-		case CSceneMgr::SCENE_LINE_TEST:
-			m_pScene = new CLineEditorTest;
+		case CSceneMgr::SCENE_DEAD:
+			m_pScene = new CDeadScene;
+			break;
+
+		case CSceneMgr::SCENE_RESTART:
+			m_pScene = new CRestartScene;
 			break;
 		}
 		

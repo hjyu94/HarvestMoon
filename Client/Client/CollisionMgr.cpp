@@ -2,6 +2,10 @@
 #include "CollisionMgr.h"
 #include "Obj.h"
 
+#include "Player.h"
+#include "Fly.h"
+#include "HedgeHog.h"
+#include "Lizard.h"
 
 CCollisionMgr::CCollisionMgr()
 {

@@ -1,5 +1,9 @@
 #pragma once
 class CLine;
+class CVertex;
+class CBlock;
+class CVerticalBlocck;
+
 class CEditorLineMgr
 {
 private:
@@ -30,11 +34,14 @@ public:
 
 private:
 	void SaveData();
+	void LoadData();
 
 private:
-	static CEditorLineMgr* m_pInstance;
-	list<CLine*> m_listLine;
-	
+	static CEditorLineMgr*	m_pInstance;
+	list<CLine*>			m_listLine;
+	list<CVertex*>			m_listVertex;
+	list<CBlock*>			m_listBlock;
+	list<CVerticalBlocck*>	m_listVerticalBlock;
 	DWORD m_dwPosRenderTime;
 };
 
