@@ -81,6 +81,7 @@ private:
 	DWORD m_dwUp;
 	DWORD m_dwDown;
 	DWORD m_dwAnimation;
+	DWORD m_dwKill;
 	
 	bool m_bIsTransparent;
 	int m_iTransparentCount;

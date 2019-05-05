@@ -79,9 +79,6 @@
     <Filter Include="01. Obj\04. Map">
       <UniqueIdentifier>{f3dd7694-7672-433f-ad15-f6e449ac2bf0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. Manager\RandMgr">
-      <UniqueIdentifier>{2a469c9f-08d1-455f-89cc-1b5f92225ed1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Scene\04. Dead">
       <UniqueIdentifier>{33d7e102-68cf-4751-b738-6303b979dc34}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,9 @@
     </Filter>
     <Filter Include="96. Manager\CollisionMgr">
       <UniqueIdentifier>{0917e1e7-8203-4d74-abce-ccce47d7df4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\SoundMgr">
+      <UniqueIdentifier>{439b4d65-4639-48ab-a0c7-b7d73a222396}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +231,9 @@
     <ClInclude Include="Hyena.h">
       <Filter>01. Obj\02. Monster</Filter>
     </ClInclude>
+    <ClInclude Include="SoundMgr.h">
+      <Filter>96. Manager\SoundMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -334,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="Hyena.cpp">
       <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMgr.cpp">
+      <Filter>96. Manager\SoundMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

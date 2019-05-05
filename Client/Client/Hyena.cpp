@@ -55,10 +55,17 @@ void CHyena::Initialize()
 
 	m_pTarget = CObjMgr::Get_Instance()->Get_Player();
 	m_bIsTired = false;
+
+	m_iHp = 3;
 }
 
 int CHyena::Update()
 {
+	if (m_iHp<=0)
+	{
+		return OBJ_DEAD;
+	}
+
 	if (!m_bIsInit)
 	{
 		// 0초~1초 그냥 등장
@@ -90,24 +97,26 @@ int CHyena::Update()
 	if (m_bIsInit)
 	{
 		if (!m_bIsStop) m_tInfo.fX += m_fSpeed;
-
 		if (m_dwPattern + 4000 < GetTickCount())
 		{
 			m_dwPattern = GetTickCount();
-			if (m_bIsRightDir)
+			if (m_eCurState != JUMP && m_eCurState != JUMP_LEFT)
 			{
-				m_eNextState = ROARING;
-				m_pFrameKey = L"HYENA_ROARING";
+				if (m_bIsRightDir)
+				{
+					m_eNextState = ROARING;
+					m_pFrameKey = L"HYENA_ROARING";
+				}
+				else
+				{
+					m_eNextState = ROARING_LEFT;
+					m_pFrameKey = L"HYENA_ROARING_LEFT";
+				}
+				m_bIsStop = true;
 			}
-			else
-			{
-				m_eNextState = ROARING_LEFT;
-				m_pFrameKey = L"HYENA_ROARING_LEFT";
-			}
-			m_bIsStop = true;
 		}
 
-		if (m_pTarget->Get_IsJumping() && !m_bIsJump && !m_bIsTired)
+		if (m_pTarget->Get_IsJumping() && !m_bIsJump && m_eCurState != TIRED && m_eCurState != TIRED_LEFT)
 		{
 			m_bIsJump = true;
 			m_bIsStop = false;
@@ -124,7 +133,6 @@ int CHyena::Update()
 				m_pFrameKey = L"HYENA_JUMP_LEFT";
 			}
 		}
-
 	}
 	
 	// 걸어다니다가 종종 짖음
@@ -133,6 +141,8 @@ int CHyena::Update()
 	// 지치고 나면 다시 걸음
 
 	CObj::UpdateRect();
+
+	if (m_tRect.right > 3000) m_tInfo.fX -= 20.f;
 	CHyena::IsJumping();
 	StateChange();
 	FrameMove();	
@@ -176,11 +186,10 @@ void CHyena::Render(HDC hDC)
 	{
 		Ellipse(hDC, m_tInfo.fX - 5 - iScrollX, m_tInfo.fY - 5 + iScrollY, m_tInfo.fX + 5 - iScrollX, m_tInfo.fY + 5 + iScrollY);
 	}
-	// 보스 앞으로 바로 감
-	if (CKeyMgr::Get_Instance()->KeyPressing('B'))
-	{
-		
-	}
+
+	WCHAR lpOut[1024] = L"";
+	wsprintf(lpOut, L"%d", m_iHp);
+	TextOut(hDC, WINCX / 2, 100, lpOut, lstrlen(lpOut));
 }
 
 void CHyena::Release()
@@ -253,7 +262,7 @@ void CHyena::StateChange()
 			m_bIsTired = true;
 			m_tInfo.fCX = 158.f;
 			m_tInfo.fCY = 102.f;
-			m_tFrame.dwFrameSpeed = 80;
+			m_tFrame.dwFrameSpeed = 300;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 8;

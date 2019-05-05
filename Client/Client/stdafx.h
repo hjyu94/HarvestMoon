@@ -20,6 +20,7 @@
 #include "fmod.h"
 #pragma comment(lib, "fmodex_vc.lib")
 
+
 // C RunTime Header Files
 #include <stdlib.h>
 #include <malloc.h>
@@ -44,3 +45,4 @@ using namespace std;
 #include "KeyMgr.h"
 #include "ScrollMgr.h"
 #include "Function.h"
+#include "SoundMgr.h"

@@ -40,7 +40,8 @@ void CStage::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Stage/stage1.bmp", L"stage1");
 	
 	if(nullptr == CObjMgr::Get_Instance()->Get_Player())
-		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(2000, -2000));
+		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 340));
+	//CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(2000, -2000));
 	
 	// Å×½ºÆ®
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHyena>::Create(300, 390));
@@ -71,9 +72,9 @@ void CStage::Initialize()
 
 
 	CLineMgr::Get_Instance()->Initialize();
-
+/*
 	CScrollMgr::Sum_ScrollX(2200);
-	CScrollMgr::Sum_ScrollY(2050);
+	CScrollMgr::Sum_ScrollY(2050);*/
 
 }
 

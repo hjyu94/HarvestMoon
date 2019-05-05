@@ -127,6 +127,7 @@ void CPlayer::Initialize()
 	m_eNextState = STANDING_LAND;
 	m_pFrameKey = L"PLAYER_STANDING_LAND";
 
+	m_dwKill = GetTickCount();
 }
 
 int CPlayer::Update()
@@ -1315,7 +1316,57 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 	{
 		CHyena* pHyena = static_cast<CHyena*>(pCounterObj);
 		CHyena::STATE eState = pHyena->Get_State();
-		// TODO::...
+
+		if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY && 
+			(eState == CHyena::STATE::TIRED || eState == CHyena::STATE::TIRED_LEFT))
+		{
+			m_bIsJump = true;
+			m_fJumpPower = -10.f;
+			m_fDeltaTime = 0.f;
+
+			if (m_bIsRightDir)
+			{
+				m_pFrameKey = L"PLAYER_STANDING_JUMP";
+				m_eNextState = STANDING_JUMP;
+			}
+			else
+			{
+				m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
+				m_eNextState = STANDING_JUMP_LEFT;
+			}
+			if (m_dwKill + 2000 < GetTickCount())
+			{
+				static_cast<CHyena*>(pCounterObj)->Get_Damage();
+				m_dwKill = GetTickCount();
+			}
+		}
+		else
+		{
+			// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
+			if (m_dwNoCollision + 2000 < GetTickCount())
+			{
+				m_iHp -= 10;
+				m_dwNoCollision = GetTickCount();
+
+				m_bIsJump = true;
+				m_fJumpPower = -10.f;
+
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
+
+				m_fVelY = -10.f;
+				m_bIsHurting = true;
+				m_bIsRolling = false;
+			}
+		}
 	}
 
 	if (Is_Counter_One_Of(CItem))

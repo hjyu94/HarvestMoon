@@ -33,6 +33,7 @@ public:
 	virtual void Collision_Proc(CObj* pCounterObj);
 	STATE Get_State();
 	virtual void FrameMove();
+	void Get_Damage() { --m_iHp; }
 
 private:
 	STATE m_eNextState;
@@ -44,8 +45,9 @@ private:
 	PATTERN m_ePattern;
 
 	bool m_bIsAlreadyColl;
-
 	CPlayer* m_pTarget;
+
+	int m_iHp;
 };
 
 
