@@ -31,6 +31,8 @@ public:
 	}
 	OBJLIST Get_OBJLIST(OBJID::ID eID) { return m_Objlist[eID]; }
 	CObj* Get_Target(CObj* pSrc, OBJID::ID eID);
+	void Set_Boss(CObj* pBoss);
+	CObj* Get_Boss();
 
 public:
 	void AddObject(OBJID::ID eID, CObj* pObj);
@@ -39,8 +41,10 @@ public:
 	void Render(HDC hDC); 
 	void Release(); 
 	void DeleteID(OBJID::ID eID);
+
 private:
 	static CObjMgr* m_pInstance;
 	OBJLIST m_Objlist[OBJID::END];
+	CObj* m_pBoss;
 };
 

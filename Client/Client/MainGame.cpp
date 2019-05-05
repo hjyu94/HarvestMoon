@@ -48,7 +48,8 @@ void CMainGame::LateUpdate()
 {
 	CSceneMgr::Get_Instance()->LateUpdate();
 	CKeyMgr::Get_Instance()->KeyUpdate();
-	CScrollMgr::ScrollLock();
+	if(CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
+		CScrollMgr::ScrollLock();
 }
 
 void CMainGame::Render()

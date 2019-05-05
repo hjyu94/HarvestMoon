@@ -37,6 +37,12 @@ Stage.cpp Update()
 		iLife = 1;
 	}
 
+## B 보스 앞으로 바로 가기
+	if (CKeyMgr::Get_Instance()->KeyPressing('B'))
+	{
+		
+	}
+
 // 1차 발표
 - 필요하면 A로 충돌체크 보여줌
 - 몬스터 패턴 하나씩 보여주고

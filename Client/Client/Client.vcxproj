@@ -161,7 +161,9 @@
     <ClInclude Include="Fly.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="Giraffe.h" />
+    <ClInclude Include="Grass.h" />
     <ClInclude Include="HedgeHog.h" />
+    <ClInclude Include="Hyena.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="Line.h" />
@@ -199,7 +201,9 @@
     <ClCompile Include="EditorLineMgr.cpp" />
     <ClCompile Include="Fly.cpp" />
     <ClCompile Include="Giraffe.cpp" />
+    <ClCompile Include="Grass.cpp" />
     <ClCompile Include="HedgeHog.cpp" />
+    <ClCompile Include="Hyena.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="Line.cpp" />

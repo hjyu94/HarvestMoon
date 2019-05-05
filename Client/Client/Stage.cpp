@@ -12,6 +12,7 @@
 #include "HedgeHog.h"
 #include "Lizard.h"
 #include "Fly.h"
+#include "Hyena.h"
 
 #include "Item.h"
 
@@ -24,6 +25,7 @@ CStage::CStage()
 {
 	iBackgroundWidth = 3000;
 	iBackgroundHeight = 2500;
+	m_bIsBossInit = false;
 }
 
 
@@ -38,7 +40,10 @@ void CStage::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Stage/stage1.bmp", L"stage1");
 	
 	if(nullptr == CObjMgr::Get_Instance()->Get_Player())
-		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 340));
+		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(2000, -2000));
+	
+	// 테스트
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHyena>::Create(300, 390));
 
 	// 도마뱀
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(790, 390));
@@ -60,7 +65,15 @@ void CStage::Initialize()
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pFly);
 
 
+	CItem* pItem = CAbstractFactory<CItem>::Create(800, -300);
+	pItem->Set_ID(CItem::ID::SAVE);
+	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
+
+
 	CLineMgr::Get_Instance()->Initialize();
+
+	CScrollMgr::Sum_ScrollX(2200);
+	CScrollMgr::Sum_ScrollY(2050);
 
 }
 
@@ -107,12 +120,23 @@ void CStage::Update()
 	{
 		iLife = 1;
 	}
+
+
+	CPlayer* pPlayer = CObjMgr::Get_Instance()->Get_Player();
+	if (pPlayer->Get_Info().fX > 2600 && pPlayer->Get_Info().fY < -1500)
+	{
+		if (!m_bIsBossInit)
+		{
+			CHyena* pHyena = CAbstractFactory<CHyena>::Create(3000 - 77, -1600);
+			CObjMgr::Get_Instance()->Set_Boss(pHyena);
+			CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pHyena);
+			m_bIsBossInit = true;
+		}
+	}
 }
 
 void CStage::LateUpdate()
 {
-	CObjMgr::Get_Instance()->LateUpdate();
-
 	//CPlayer* pPlayer = CObjMgr::Get_Instance()->Get_Player();
 	OBJLIST listPlayer = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::PLAYER);
 	OBJLIST listMonster = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MONSTER);
@@ -120,6 +144,7 @@ void CStage::LateUpdate()
 	OBJLIST listMap = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MAP);
 	OBJLIST listBlock = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::BLOCK);
 	OBJLIST listVerticalBlock = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::VERTICAL_BLOCK);
+
 
 	// 플레이어 ~ 몬스터
 	CCollisionMgr::CollisionRect(listPlayer, listMonster);
@@ -129,8 +154,14 @@ void CStage::LateUpdate()
 	CCollisionMgr::CollisionRect(listPlayer, listMap);
 	// 플레이어 ~ 블락(벽돌, 막음, 돌)
 	CCollisionMgr::CollisionRect(listPlayer, listBlock);
-	// 플레이어 ~ 가로 블락
+	// 플레이어 ~ 세로 블락
 	CCollisionMgr::CollisionRect(listPlayer, listVerticalBlock);
+
+	// 하이에나 ~ 세로블락
+	CCollisionMgr::CollisionRect(listMonster, listVerticalBlock);
+	
+	CObjMgr::Get_Instance()->LateUpdate();
+
 }
 
 void CStage::Render(HDC hDC)

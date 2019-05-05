@@ -39,6 +39,16 @@ CObj * CObjMgr::Get_Target(CObj * pSrc, OBJID::ID eID)
 	return pTarget; 
 }
 
+void CObjMgr::Set_Boss(CObj * pBoss)
+{
+	m_pBoss = pBoss;
+}
+
+CObj * CObjMgr::Get_Boss()
+{
+	return m_pBoss;
+}
+
 void CObjMgr::AddObject(OBJID::ID eID, CObj * pObj)
 {
 	m_Objlist[eID].emplace_back(pObj);

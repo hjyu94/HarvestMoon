@@ -50,6 +50,8 @@ public:
 	virtual void FrameMove();
 	virtual void Collision_Proc(CObj* pCounterObj);
 	void BackToIdle();
+	
+public:
 	STATE Get_CurState() { return m_eCurState; }
 
 public:
@@ -59,9 +61,6 @@ public:
 	}
 
 private:
-
-	// jump에 필요한 변수. 
-	float m_fVelX;
 
 	bool m_bIsRolling;
 	bool m_bIsHurting;

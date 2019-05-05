@@ -33,10 +33,10 @@ void CBlock::Render(HDC hDC)
 
 	CObj::UpdateRect();
 
-	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
-		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	/*if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);*/
 
-	//Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
 }
 
 void CBlock::Release()

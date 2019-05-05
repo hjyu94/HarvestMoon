@@ -17,6 +17,8 @@
 #include "Monster.h"
 #include "HedgeHog.h"
 #include "Fly.h"
+#include "Hyena.h"
+#include "Lizard.h"
 
 #include "Item.h"
 #include "Vertex.h"
@@ -124,6 +126,7 @@ void CPlayer::Initialize()
 
 	m_eNextState = STANDING_LAND;
 	m_pFrameKey = L"PLAYER_STANDING_LAND";
+
 }
 
 int CPlayer::Update()
@@ -186,11 +189,12 @@ void CPlayer::LateUpdate()
 		m_bIsRolling = false;
 		m_bIsJump = false;
 
-
 		int iScrollX = CScrollMgr::Get_ScrollX();
 		int iScrollY = CScrollMgr::Get_ScrollY();
+
 		m_tInfo.fX -= iScrollX;
-		m_tInfo.fY -= iScrollY;
+		m_tInfo.fY += iScrollY;
+
 		CScrollMgr::Reset_Scroll();
 		CObj::UpdateRect();
 
@@ -216,7 +220,8 @@ void CPlayer::Render(HDC hDC)
 
 	float iScrollX = CScrollMgr::Get_ScrollX();
 	float iScrollY = CScrollMgr::Get_ScrollY();
-	
+
+		
 	// 치트키 : 충돌하는 Rect 출력
 	if (CKeyMgr::Get_Instance()->KeyPressing('P'))
 	{
@@ -263,6 +268,7 @@ void CPlayer::Render(HDC hDC)
 
 		
 	}
+	// 반짝이느 효과
 	else if (m_bIsHurting)
 	{
 		if (m_iTransparentCount %4 ==0)
@@ -505,7 +511,7 @@ void CPlayer::KeyCheck()
 		}
 	}
 
-	else if (m_bIsDangling)
+	if (m_bIsDangling)
 	{
 		if (m_bIsRightDir) // 오른쪽을 보고 있는 경우, 아래키랑 오른쪽 키만 먹는다
 		{
@@ -516,6 +522,7 @@ void CPlayer::KeyCheck()
 				m_eNextState = CPlayer::CLIMBING_LEDGE;
 				m_tInfo.fY += 50.f; // 애니메이션 효과때문에 좀 아래로 그림을 내림
 				// m_bIsDangling = false; // 모션 끝에서 false로 바꿔줌 여기서 안함
+				m_tInfo.fX += 10.f;
 			}
 		}
 
@@ -527,6 +534,7 @@ void CPlayer::KeyCheck()
 				m_eNextState = CPlayer::CLIMBING_LEDGE_LEFT;
 				m_tInfo.fY += 50.f; // 애니메이션 효과때문에 좀 아래로 그림을 내림
 				// m_bIsDangling = false; // 모션 끝에서 false로 바꿔줌 여기서 안함
+				m_tInfo.fX -= 10.f;
 			}
 		}
 		
@@ -565,7 +573,7 @@ void CPlayer::KeyCheck()
 	else
 	{
 		// 아래나 위를 보고 있다가 키를 떼면 IDLE로 돌아온다.
-		// 스크롤 값을 바꾼 경우는 다시 돌려놓는다.
+		// 스크롤 값을 바꾼 경우는 다시 돌려놓는다.                            
 		if (CKeyMgr::Get_Instance()->KeyUP(VK_DOWN))
 		{
 			BackToIdle();
@@ -576,10 +584,12 @@ void CPlayer::KeyCheck()
 				m_bIsScrollEffect = false;
 			}
 		}
+
 		if (CKeyMgr::Get_Instance()->KeyUP(VK_UP))
 		{
 			BackToIdle();
 			m_bIsSeeingUp = false;
+
 			if (m_bIsScrollEffect)
 			{
 				CScrollMgr::Sum_ScrollY(-30.f);
@@ -717,57 +727,33 @@ void CPlayer::KeyCheck()
 			m_bIsRightDir = true;
 		}
 
-		//// 스페이스바를 꾸욱 누르면 더 높게 뛴다.
-		//if (CKeyMgr::Get_Instance()->KeyPressing(VK_SPACE))
-		//{
-		//	// 처음 속도는 -12.f
-		//	if (!m_bIsJump)
-		//	{
-		//		m_fJumpPower = -12.f;
-		//		
-		//		if (m_bIsRightDir)
-		//		{
-		//			m_pFrameKey = L"PLAYER_STANDING_JUMP";
-		//			m_eNextState = STANDING_JUMP;
-		//		}
-		//		else
-		//		{
-		//			m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
-		//			m_eNextState = STANDING_JUMP_LEFT;
-		//		}
-	
-		//		m_bIsJump = true;
-		//	}
-		//	m_fJumpPower -= 0.5f;
-		//	cout << m_fJumpPower << ", " << m_bIsJump << endl;
-		//}
-		// m_bIsJump 가 아닐때만 들어가기 때문에 여기에 적으면 안됨
-	}
-
-	// 스페이스바를 꾸욱 누르면 더 높게 뛴다.
-	if (CKeyMgr::Get_Instance()->KeyPressing(VK_SPACE))
-	{
-		// 처음 속도는 -12.f
-		if (!m_bIsJump)
+		// 스페이스바를 꾸욱 누르면 더 높게 뛴다.
+		// 대롱대롱 매달려 있을땐 뛰면 안됨
+		if (CKeyMgr::Get_Instance()->KeyPressing(VK_SPACE))
 		{
-			m_fJumpPower = -12.f;
-
-			if (m_bIsRightDir)
+			// 처음 속도는 -12.f
+			if (!m_bIsJump)
 			{
-				m_pFrameKey = L"PLAYER_STANDING_JUMP";
-				m_eNextState = STANDING_JUMP;
-			}
-			else
-			{
-				m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
-				m_eNextState = STANDING_JUMP_LEFT;
+				m_fJumpPower = -12.f;
+
+				if (m_bIsRightDir)
+				{
+					m_pFrameKey = L"PLAYER_STANDING_JUMP";
+					m_eNextState = STANDING_JUMP;
+				}
+				else
+				{
+					m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
+					m_eNextState = STANDING_JUMP_LEFT;
+				}
+
+				m_bIsJump = true;
 			}
 
-			m_bIsJump = true;
+			if(m_fJumpPower > -13) m_fJumpPower -= 0.1f;
 		}
-
-		if(m_fJumpPower > -13.5) m_fJumpPower -= 0.2f;
 	}
+
 
 
 	KEYDOWN_LBUTTON_AND_COUT(m_tInfo.fX << ", " << m_tInfo.fY);
@@ -920,6 +906,7 @@ void CPlayer::SceneChange()
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 8;
 			m_tFrame.iFrameStart_Y = 0;
+			break;
 
 		case CPlayer::DIE:
 		case CPlayer::DIE_LEFT:
@@ -964,6 +951,9 @@ void CPlayer::FrameMove()
 				CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
 				this->Initialize();
 				this->Set_Pos(m_fSaving_X, m_fSaving_Y);
+				CScrollMgr::Reset_Scroll();
+				CScrollMgr::Sum_ScrollX(m_fSaving_X - 340-100);
+				CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 +100);
 				m_eNextState = STANDING_LAND;
 				m_pFrameKey = L"PLAYER_STANDING_LAND";
 			}
@@ -1059,26 +1049,73 @@ void CPlayer::FrameMove()
 			m_tFrame.iFrameStart_X = 0;
 		}
 	}
-
 }
 
 
 void CPlayer::Collision_Proc(CObj * pCounterObj)
 {
-	if (Is_Counter_One_Of(CMonster))
+	if (Is_Counter_One_Of(CLizard))
 	{
-		if (pCounterObj->Get_Info().fY - 15.f < m_tInfo.fY
-			&& m_tInfo.fY < pCounterObj->Get_Info().fY + 15.f)
+		if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
 		{
-			// 플레이어가 몬스터를 죽인 경우
-			if ((m_eCurState == STANDING_JUMP || m_eCurState == STANDING_JUMP_LEFT)
-				&& m_tInfo.fY < pCounterObj->Get_Info().fY)
+			m_bIsJump = true;
+			m_fJumpPower = -10.f;
+			m_fDeltaTime = 0.f;
+						
+			if (m_bIsRightDir)
 			{
-				// 우선 플레이어는 뛰고
+				m_pFrameKey = L"PLAYER_STANDING_JUMP";
+				m_eNextState = STANDING_JUMP;
+			}
+			else
+			{
+				m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
+				m_eNextState = STANDING_JUMP_LEFT;
+			}
+
+			pCounterObj->Set_Dead();
+		}
+		else
+		{
+			// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
+			if (m_dwNoCollision + 2000 < GetTickCount())
+			{
+				m_iHp -= 10;
+				m_dwNoCollision = GetTickCount();
+
+				m_bIsJump = true;
+				m_fJumpPower = -10.f;
+
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
+
+				m_fVelY = -10.f;
+				m_bIsHurting = true;
+				m_bIsRolling = false;
+			}
+		}
+	}
+
+	if (Is_Counter_One_Of(CHedgeHog))
+	{
+		CHedgeHog* pHedgeHog = static_cast<CHedgeHog*>(pCounterObj);
+
+		if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
+		{
+			if (pHedgeHog->Get_UpsideState())
+			{
 				m_bIsJump = true;
 				m_fJumpPower = -10.f;
 				m_fDeltaTime = 0.f;
-				
+
 				if (m_bIsRightDir)
 				{
 					m_pFrameKey = L"PLAYER_STANDING_JUMP";
@@ -1089,64 +1126,52 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
 					m_eNextState = STANDING_JUMP_LEFT;
 				}
-				
-				// 고슴도치의 경우 뒤집혀 있어야 괜찮음
-				if (Is_Counter_One_Of(CHedgeHog) && static_cast<CHedgeHog*>(pCounterObj)->Get_UpsideState())
-				{
-				}
-
-				// 날파리의 경우
-				else if (Is_Counter_One_Of(CFly))
-				{
-					CFly* pFly = static_cast<CFly*>(pCounterObj);
-					CFly::STATE eState = pFly->Get_State();
-					
-					if (eState == CFly::STATE::BOMB)
-					{
-						// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
-						if (m_dwNoCollision + 2000 < GetTickCount())
-						{
-							m_iHp -= 10;
-							
-							m_dwNoCollision = GetTickCount();
-
-							m_bIsJump = true;
-							m_fJumpPower = -10.f;
-
-							if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-							{
-								m_pFrameKey = L"PLAYER_HURT";
-								m_eNextState = HURT;
-							}
-							else // 왼쪽을 보고 있는 경우
-							{
-								m_pFrameKey = L"PLAYER_HURT_LEFT";
-								m_eNextState = HURT_LEFT;
-							}
-
-							m_fVelY = -10.f;
-							m_bIsHurting = true;
-							m_bIsRolling = false;
-						}
-					}
-					else if(eState == CFly::STATE::IDLE || eState == CFly::STATE::IDLE_LEFT)
-						pFly->Bombing();
-				}
-
-				// 도마뱀의 경우
-				else
-				{
-					pCounterObj->Set_Dead();
-				}
+				//pHedgeHog->Set_Dead();
 			}
-
-			// 플레이어가 다친 경우
 			else
 			{
 				// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
 				if (m_dwNoCollision + 2000 < GetTickCount())
 				{
 					m_iHp -= 10;
+					m_dwNoCollision = GetTickCount();
+
+					m_bIsJump = true;
+					m_fJumpPower = -10.f;
+					m_fDeltaTime = 0.f;
+
+					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT";
+						m_eNextState = HURT;
+					}
+					else // 왼쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT_LEFT";
+						m_eNextState = HURT_LEFT;
+					}
+
+					m_fVelY = -10.f;
+					m_bIsHurting = true;
+					m_bIsRolling = false;
+				}
+			}
+		}
+
+		else if (m_eCurState == ROLLING || m_eCurState == ROLLING_LEFT)
+		{
+			if (pHedgeHog->Get_UpsideState())
+			{
+				//pHedgeHog->Set_Dead();
+				// 고슴도치 클래스에서 알아서 함
+			}
+			else
+			{
+				// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
+				if (m_dwNoCollision + 2000 < GetTickCount())
+				{
+					m_iHp -= 10;
+
 					m_dwNoCollision = GetTickCount();
 
 					m_bIsJump = true;
@@ -1169,63 +1194,206 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				}
 			}
 		}
+
+		else
+		{
+			// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
+			if (m_dwNoCollision + 2000 < GetTickCount())
+			{
+				m_iHp -= 10;
+
+				m_dwNoCollision = GetTickCount();
+
+				m_bIsJump = true;
+				m_fJumpPower = -10.f;
+
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
+
+				m_fVelY = -10.f;
+				m_bIsHurting = true;
+				m_bIsRolling = false;
+			}
+		}
 	}
+
+
+	if (Is_Counter_One_Of(CFly))
+	{
+		CFly* pFly = static_cast<CFly*>(pCounterObj);
+		CFly::STATE eState = pFly->Get_State();
+		
+		if (eState == CFly::STATE::BOMB)
+		{
+			// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
+			if (m_dwNoCollision + 2000 < GetTickCount())
+			{
+				m_iHp -= 10;
+
+				m_dwNoCollision = GetTickCount();
+
+				m_bIsJump = true;
+				m_fJumpPower = -10.f;
+				m_fDeltaTime = 0.f;
+
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
+
+				m_bIsHurting = true;
+				m_bIsRolling = false;
+			}
+		}
+		else if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
+		{
+			m_bIsJump = true;
+			m_fJumpPower = -10.f;
+			m_fDeltaTime = 0.f;
+
+			if (m_bIsRightDir)
+			{
+				m_pFrameKey = L"PLAYER_STANDING_JUMP";
+				m_eNextState = STANDING_JUMP;
+			}
+			else
+			{
+				m_pFrameKey = L"PLAYER_STANDING_JUMP_LEFT";
+				m_eNextState = STANDING_JUMP_LEFT;
+			}
+
+			if ((eState == CFly::STATE::IDLE || eState == CFly::STATE::IDLE_LEFT))
+			{
+				pFly->Bombing();
+			}
+		}
+		else
+		{
+			// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
+			if (m_dwNoCollision + 2000 < GetTickCount())
+			{
+				m_iHp -= 10;
+
+				m_dwNoCollision = GetTickCount();
+
+				m_bIsJump = true;
+				m_fJumpPower = -10.f;
+
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
+
+				m_fVelY = -10.f;
+				m_bIsHurting = true;
+				m_bIsRolling = false;
+			}
+		}
+	}
+
+	if (Is_Counter_One_Of(CHyena))
+	{
+		CHyena* pHyena = static_cast<CHyena*>(pCounterObj);
+		CHyena::STATE eState = pHyena->Get_State();
+		// TODO::...
+	}
+
 	if (Is_Counter_One_Of(CItem))
 	{
-		CItem::ID eID = static_cast<CItem*>(pCounterObj)->Get_ID();
-		switch (eID)
+		int iTargetX = pCounterObj->Get_Info().fX;
+		int iTargetY = pCounterObj->Get_Info().fY;
+
+		if (iTargetX - 20 <= m_tInfo.fX && m_tInfo.fX <= iTargetX + 20 && iTargetY - 20 <= m_tInfo.fY && m_tInfo.fY <= iTargetY + 20)
 		{
-		case CItem::HP:
-			m_iHp += 10;
-			if (m_iHp > m_iMaxHp)
-				m_iHp = m_iMaxHp;
-			break;
+			CItem::ID eID = static_cast<CItem*>(pCounterObj)->Get_ID();
+			switch (eID)
+			{
+			case CItem::HP:
+				m_iHp += 10;
+				if (m_iHp > m_iMaxHp)
+					m_iHp = m_iMaxHp;
+				break;
 
-		case CItem::MP:
-			m_iMp += 10;
-			if (m_iMp > m_iMaxMp)
-				m_iMp = m_iMaxMp;
-			break;
+			case CItem::MP:
+				m_iMp += 10;
+				if (m_iMp > m_iMaxMp)
+					m_iMp = m_iMaxMp;
+				break;
 
-		case CItem::LIFE:
-			iLife++;
-			break;
+			case CItem::LIFE:
+				iLife++;
+				break;
 
-		case CItem::SAVE:
-			m_bIsSaved = true;
- 			m_fSaving_X = pCounterObj->Get_Info().fX;
-			m_fSaving_Y = pCounterObj->Get_Info().fY;
-			break;
+			case CItem::SAVE:
+				m_bIsSaved = true;
+				m_fSaving_X = pCounterObj->Get_Info().fX;
+				m_fSaving_Y = pCounterObj->Get_Info().fY;
+				break;
+			}
 		}
 	}
 
 	if (Is_Counter_One_Of(CVertex))
 	{
-		int i = 0;
-		if (!m_bIsDangling
-			&& (m_eCurState == STANDING_JUMP || m_eCurState == STANDING_JUMP_LEFT))
+		if (!m_bIsDangling)
 		{
-			// 절벽 끝에 매달리 경우 아래키, 위쪽키, 왼쪽, 오른쪽키만 사용 가능
 			float fTargetX = pCounterObj->Get_Info().fX;
 			float fTargetY = pCounterObj->Get_Info().fY;
 
-			if (fTargetX - 20 <= m_tInfo.fX && m_tInfo.fX <= fTargetX + 20
-				&& fTargetY - 20 <= m_tInfo.fY-10 && m_tInfo.fY-10 <= fTargetY + 20)
+			if (m_bIsJump
+				&& fTargetX - 10 <= m_tInfo.fX && m_tInfo.fX <= fTargetX + 10
+				&& fTargetY - 10 <= m_tInfo.fY && m_tInfo.fY <= fTargetY + 10)
 			{
-				if (m_bIsRightDir)
+				CVertex::DIR eDir = static_cast<CVertex*>(pCounterObj)->Get_Dir();	
+	
+				if (m_bIsRightDir && eDir == CVertex::L)
 				{
 					m_pFrameKey = L"PLAYER_GRABBING_LEDGE_FIRST";
 					m_eNextState = GRABBING_LEDGE_FIRST;
+
+					m_tInfo.fX = fTargetX;
+					m_tInfo.fY = fTargetY;
+
+					m_bIsDangling = true;
+					m_bIsJump = false;
+
+					m_fJumpPower = 0.f;
+					m_fDeltaTime = 0.f;
 				}
-				else
+
+				else if(!m_bIsRightDir && eDir == CVertex::R)
 				{
 					m_pFrameKey = L"PLAYER_GRABBING_LEDGE_FIRST_LEFT";
 					m_eNextState = GRABBING_LEDGE_FIRST_LEFT;
+
+					m_bIsDangling = true;
+					m_bIsJump = false;
+
+					m_tInfo.fX = fTargetX;
+					m_tInfo.fY = fTargetY;
+					m_fJumpPower = 0.f;
+					m_fDeltaTime = 0.f;
 				}
-				m_bIsDangling = true;
-				m_bIsJump = false;
-				m_tInfo.fY = fTargetY;
-				m_tInfo.fX = fTargetX;
 			}
 		}
 	}
@@ -1281,4 +1449,6 @@ void CPlayer::BackToIdle()
 	m_bIsRolling = false;
 	m_bIsJump = false;
 	m_bIsRoaring = false;
+	m_fJumpPower = 0.f;
+	m_fDeltaTime = 0.f;
 }

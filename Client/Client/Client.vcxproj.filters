@@ -49,9 +49,6 @@
     <Filter Include="96. Manager\Keymgr">
       <UniqueIdentifier>{d94d01f2-b581-4cf4-9175-8bae910bdaf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. Manager\CollisionMgr">
-      <UniqueIdentifier>{0917e1e7-8203-4d74-abce-ccce47d7df4c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. Manager\ObjMgr">
       <UniqueIdentifier>{c4882cbe-a6dd-4516-9bc6-969997500057}</UniqueIdentifier>
     </Filter>
@@ -96,6 +93,12 @@
     </Filter>
     <Filter Include="01. Obj\06. NPC">
       <UniqueIdentifier>{bb34ad9a-6d2c-42c2-ab52-9f43302536f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Obj\07. GRASS_TREE">
+      <UniqueIdentifier>{623cada1-77dd-4787-b42e-2f1fd597402c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Manager\CollisionMgr">
+      <UniqueIdentifier>{0917e1e7-8203-4d74-abce-ccce47d7df4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +225,12 @@
     <ClInclude Include="MonkeyNPC.h">
       <Filter>01. Obj\06. NPC</Filter>
     </ClInclude>
+    <ClInclude Include="Grass.h">
+      <Filter>01. Obj\07. GRASS_TREE</Filter>
+    </ClInclude>
+    <ClInclude Include="Hyena.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -319,6 +328,12 @@
     </ClCompile>
     <ClCompile Include="MonkeyNPC.cpp">
       <Filter>01. Obj\06. NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Grass.cpp">
+      <Filter>01. Obj\07. GRASS_TREE</Filter>
+    </ClCompile>
+    <ClCompile Include="Hyena.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

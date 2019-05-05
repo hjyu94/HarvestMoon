@@ -42,7 +42,7 @@ private:
 
 	enum ID
 	{
-		FLY, LIZARD, HEDGEHOG, ITEM, END	
+		FLY, LIZARD, HEDGEHOG, ITEM_HP, ITEM_MP, ITEM_SAVE, ITEM_LIFE, GRASS, END	
 	};
 
 private:
@@ -53,6 +53,7 @@ private:
 	list<CVerticalBlocck*>	m_listVerticalBlock;
 
 	OBJLIST m_listEnum[ID::END];
+
 	DWORD m_dwPosRenderTime;
 };
 

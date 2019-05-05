@@ -159,9 +159,9 @@ void CFly::StateChange()
 
 		case STATE::BOMB:
 			m_pFrameKey = L"FLY_BOMB";
-			m_tInfo.fCX = 52.f;
-			m_tInfo.fCY = 52.f;
-			m_tFrame.dwFrameSpeed = 150;
+			m_tInfo.fCX = 70.f;
+			m_tInfo.fCY = 70.f;
+			m_tFrame.dwFrameSpeed = 100;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 4;

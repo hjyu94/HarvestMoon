@@ -10,6 +10,7 @@
 #include "HedgeHog.h"
 #include "Item.h"
 #include "Obj.h"
+#include "Grass.h"
 
 CEditorLineMgr* CEditorLineMgr::m_pInstance = nullptr;
 
@@ -97,6 +98,24 @@ void CEditorLineMgr::Update()
 		pVertex->Set_Pos(float(pt.x), float(pt.y));
 		m_listVertex.emplace_back(pVertex);
 	}
+	// 엔터로 옵션 바꾸기
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_RETURN))
+	{
+		for (auto& pVertex : m_listVertex)
+		{
+			if (PtInRect(&pVertex->Get_Rect(), pt))
+			{
+				if (pVertex->Get_Dir() == CVertex::DIR::L)
+				{
+					pVertex->Set_Dir(CVertex::R);
+				}
+				else
+				{
+					pVertex->Set_Dir(CVertex::L);
+				}
+			}
+		}
+	}
 
 	// 'B' 누르면 마우스 위치에 block 추가
 	if (CKeyMgr::Get_Instance()->KeyDown('B'))
@@ -113,6 +132,71 @@ void CEditorLineMgr::Update()
 		m_listVerticalBlock.emplace_back(pBlock);
 	}
 
+	// 'Z'로 lizard 추가
+	if (CKeyMgr::Get_Instance()->KeyDown('Z'))
+	{
+		CLizard* pObj = CAbstractFactory<CLizard>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		m_listEnum[ID::LIZARD].emplace_back(pObj);
+	}
+
+	// 'F'로 Fly 추가
+	if (CKeyMgr::Get_Instance()->KeyDown('F'))
+	{
+		CFly* pObj = CAbstractFactory<CFly>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		m_listEnum[ID::FLY].emplace_back(pObj);
+	}
+
+	// 'H'로 hedgehog 추가
+	if (CKeyMgr::Get_Instance()->KeyDown('H'))
+	{
+		CHedgeHog* pObj = CAbstractFactory<CHedgeHog>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		m_listEnum[ID::HEDGEHOG].emplace_back(pObj);
+	}
+
+	// 'G'로 GRASS 추가
+	if (CKeyMgr::Get_Instance()->KeyDown('G'))
+	{
+		CGrass* pObj = CAbstractFactory<CGrass>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		m_listEnum[ID::GRASS].emplace_back(pObj);
+	}
+
+	// F1~F4 로 Item 추가
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_F1))
+	{
+		CItem* pObj = CAbstractFactory<CItem>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		pObj->Set_ID(CItem::ID::HP);
+		m_listEnum[ID::ITEM_HP].emplace_back(pObj);
+	}
+
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_F2))
+	{
+		CItem* pObj = CAbstractFactory<CItem>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		pObj->Set_ID(CItem::ID::MP);
+		m_listEnum[ID::ITEM_MP].emplace_back(pObj);
+	}
+
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_F3))
+	{
+		CItem* pObj = CAbstractFactory<CItem>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		pObj->Set_ID(CItem::ID::LIFE);
+		m_listEnum[ID::ITEM_LIFE].emplace_back(pObj);
+	}
+	
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_F4))
+	{
+		CItem* pObj = CAbstractFactory<CItem>::Create(float(pt.x), float(pt.y));
+		pObj->UpdateRect();
+		pObj->Set_ID(CItem::ID::SAVE);
+		m_listEnum[ID::ITEM_SAVE].emplace_back(pObj);
+	}
+	
 	//### 지우기
 	if (CKeyMgr::Get_Instance()->KeyDown(VK_DELETE))
 	{
@@ -156,6 +240,23 @@ void CEditorLineMgr::Update()
 			}
 			else
 				iter++;
+		}
+
+		for (int i = 0; i < ID::END; ++i)
+		{
+			for (auto& iter = m_listEnum[i].begin()
+				; iter != m_listEnum[i].end()
+				; )
+			{
+				if (PtInRect(&(*iter)->Get_Rect(), pt))
+				{
+					delete *iter;
+					*iter = nullptr;
+					iter = m_listEnum[i].erase(iter);
+				}
+				else
+					iter++;
+			}
 		}
 	}
 
@@ -287,6 +388,7 @@ void CEditorLineMgr::SaveData()
 	for (auto& pVertex : m_listVertex)
 	{
 		WriteFile(hFile2, &pVertex->Get_Info(), sizeof(INFO), &dwByte2, nullptr);
+		WriteFile(hFile2, &pVertex->Get_Dir(), sizeof(CVertex::DIR), &dwByte2, nullptr);
 	}
 	CloseHandle(hFile2);
 
@@ -326,8 +428,6 @@ void CEditorLineMgr::SaveData()
 
 	DWORD dwByte4 = 0;
 
-	cout << m_listVerticalBlock.size() << endl;
-
 	for (auto& pVerticalBlock : m_listVerticalBlock)
 	{
 		WriteFile(hFile3, &pVerticalBlock->Get_Info(), sizeof(INFO), &dwByte4, nullptr);
@@ -336,6 +436,175 @@ void CEditorLineMgr::SaveData()
 	
 	/********************************************************/
 	
+	HANDLE hFileLizard = CreateFile(
+		L"../Data/Lizard.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileLizard)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+	cout << m_listVerticalBlock.size() << endl;
+
+	for (auto& pObj : m_listEnum[ID::LIZARD])
+	{
+		WriteFile(hFileLizard, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileLizard);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+
+	/********************************************************/
+
+	HANDLE hFileFly = CreateFile(
+		L"../Data/Fly.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileFly)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+	for (auto& pObj : m_listEnum[ID::FLY])
+	{
+		WriteFile(hFileFly, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileFly);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+
+	/********************************************************/
+
+	HANDLE hFileHedgehog = CreateFile(
+		L"../Data/Hedgehog.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileHedgehog)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+
+	for (auto& pObj : m_listEnum[ID::HEDGEHOG])
+	{
+		WriteFile(hFileHedgehog, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileHedgehog);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+
+	/********************************************************/
+
+	HANDLE hFileGrass = CreateFile(
+		L"../Data/Grass.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileGrass)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+
+	for (auto& pObj : m_listEnum[ID::GRASS])
+	{
+		WriteFile(hFileGrass, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileGrass);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+
+	/********************************************************/
+
+	HANDLE hFileItem_HP = CreateFile(
+		L"../Data/Item_HP.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileItem_HP)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+
+	for (auto& pObj : m_listEnum[ID::ITEM_HP])
+	{
+		WriteFile(hFileItem_HP, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileItem_HP);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+	/********************************************************/
+
+	HANDLE hFileItem_MP = CreateFile(
+		L"../Data/Item_MP.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileItem_MP)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+
+	for (auto& pObj : m_listEnum[ID::ITEM_MP])
+	{
+		WriteFile(hFileItem_MP, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileItem_MP);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+	/********************************************************/
+
+	HANDLE hFileItem_LIFE = CreateFile(
+		L"../Data/Item_LIFE.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileItem_LIFE)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+
+	for (auto& pObj : m_listEnum[ID::ITEM_LIFE])
+	{
+		WriteFile(hFileItem_LIFE, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileItem_LIFE);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+	/********************************************************/
+
+	HANDLE hFileItem_SAVE = CreateFile(
+		L"../Data/Item_SAVE.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hFileItem_SAVE)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+
+	for (auto& pObj : m_listEnum[ID::ITEM_SAVE])
+	{
+		WriteFile(hFileItem_SAVE, &pObj->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hFileItem_SAVE);
+
 	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
 }
 

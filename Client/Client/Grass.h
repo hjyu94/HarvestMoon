@@ -1,20 +1,18 @@
 #pragma once
-#include "Scene.h"
-class CStage :
-	public CScene
+#include "Obj.h"
+class CGrass :
+	public CObj
 {
 public:
-	CStage();
-	virtual ~CStage();
+	CGrass();
+	virtual ~CGrass();
+
 public:
-	// CScene을(를) 통해 상속됨
+	// Inherited via CObj
 	virtual void Initialize() override;
-	virtual void Update() override;
+	virtual int Update() override;
 	virtual void LateUpdate() override;
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
-
-private:
-	bool m_bIsBossInit;
 };
 

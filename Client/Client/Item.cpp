@@ -15,12 +15,18 @@ void CItem::Collision_Proc(CObj * pCounterObj)
 {
 	if (Is_Counter_One_Of(CPlayer))
 	{
-		if(m_eID != SAVE)
-			m_bIsDead = true;
-		
-		else if (m_eID == SAVE)
+		int iTargetX = pCounterObj->Get_Info().fX;
+		int iTargetY = pCounterObj->Get_Info().fY;
+
+		if (iTargetX - 20 <= m_tInfo.fX && m_tInfo.fX <= iTargetX + 20 && iTargetY - 20 <= m_tInfo.fY && m_tInfo.fY <= iTargetY + 20)
 		{
-			m_eNextState = BLINK;
+			if (m_eID != SAVE)
+				m_bIsDead = true;
+
+			else if (m_eID == SAVE)
+			{
+				m_eNextState = BLINK;
+			}
 		}
 	}
 }
@@ -137,10 +143,8 @@ void CItem::FrameMove()
 		{
 			m_eNextState = IDLE;
 		}
-		else
-		{
-			m_tFrame.iFrameStart_X = 0;
-		}
+		
+		m_tFrame.iFrameStart_X = 0;
 	}
 }
 

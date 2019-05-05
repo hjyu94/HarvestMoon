@@ -43,6 +43,7 @@ public:
 	int Get_Hp() { return m_iHp; };
 	int Get_Mp() { return m_iMp; };
 	bool Get_IsRightDir() { return m_bIsRightDir; }
+	bool Get_IsJumping() { return m_bIsJump; }
 
 public:
 	void Set_Hp(int iHp) { m_iHp = iHp; }
