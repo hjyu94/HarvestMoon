@@ -61,11 +61,6 @@ void CHyena::Initialize()
 
 int CHyena::Update()
 {
-	if (m_iHp<=0)
-	{
-		return OBJ_DEAD;
-	}
-
 	if (!m_bIsInit)
 	{
 		// 0초~1초 그냥 등장
@@ -90,17 +85,18 @@ int CHyena::Update()
 			m_bIsInit = true;
 			m_Center_fx = WINCY - 300.f;
 			m_dwPattern = GetTickCount();
-			m_fSpeed = -3.f;
+			m_fSpeed = 3.f;
 		}
 	}
 
-	if (m_bIsInit)
+	if (m_bIsInit && m_eCurState != DIE && m_eCurState != DIE_LEFT)
 	{
-		if (!m_bIsStop) m_tInfo.fX += m_fSpeed;
+		// 4초마다 한번씩 짖는다
 		if (m_dwPattern + 4000 < GetTickCount())
 		{
 			m_dwPattern = GetTickCount();
-			if (m_eCurState != JUMP && m_eCurState != JUMP_LEFT)
+
+			if (!m_bIsJump)
 			{
 				if (m_bIsRightDir)
 				{
@@ -113,39 +109,81 @@ int CHyena::Update()
 					m_pFrameKey = L"HYENA_ROARING_LEFT";
 				}
 				m_bIsStop = true;
+				m_bIsJump = false;
 			}
 		}
 
-		if (m_pTarget->Get_IsJumping() && !m_bIsJump && m_eCurState != TIRED && m_eCurState != TIRED_LEFT)
-		{
-			m_bIsJump = true;
-			m_bIsStop = false;
-			m_fJumpPower = -10.f;
 
-			if (m_bIsRightDir)
+		// ##1 타겟이 있을 때
+		if (nullptr != m_pTarget)
+		{
+			if (!m_bIsTired)
 			{
-				m_eNextState = JUMP;
-				m_pFrameKey = L"HYENA_JUMP";
+
+				// 1) 플레이어가 있는 방향으로 움직임
+				if (!m_bIsStop)
+				{
+					float fTargetX = m_pTarget->Get_Info().fX;
+					float fTargetY = m_pTarget->Get_Info().fY;
+
+					float fDeltaX = fTargetX - m_tInfo.fX;
+					float fDeltaY = fTargetY - m_tInfo.fY;
+
+					float fTheta = atan2(fDeltaY, fDeltaX); // 호도법
+
+					m_tInfo.fX += m_fSpeed * cosf(fTheta);
+
+					if (fTargetX > m_tInfo.fX)
+					{
+						m_eNextState = IDLE;
+						m_pFrameKey = L"HYENA_IDLE";
+					}
+					else
+					{
+						m_eNextState = IDLE_LEFT;
+						m_pFrameKey = L"HYENA_IDLE_LEFT";
+					}
+				}
+
+				// 2) 플레이어가 뛰면 같이 뛴다.
+				if (m_pTarget->Get_IsJumping()
+					&& !m_pTarget->Get_IsHurt()
+					&& !m_bIsJump
+					&& (m_eCurState == IDLE || m_eCurState == IDLE_LEFT)
+					)
+				{
+					m_bIsJump = true;
+					m_bIsStop = false;
+					m_fJumpPower = -10.f;
+
+					if (m_bIsRightDir)
+					{
+						m_eNextState = JUMP;
+						m_pFrameKey = L"HYENA_JUMP";
+					}
+					else
+					{
+						m_eNextState = JUMP_LEFT;
+						m_pFrameKey = L"HYENA_JUMP_LEFT";
+					}
+				}
 			}
-			else
-			{
-				m_eNextState = JUMP_LEFT;
-				m_pFrameKey = L"HYENA_JUMP_LEFT";
-			}
+		}
+
+		// ##2 타겟이 없을 때
+		else if (nullptr == m_pTarget)
+		{
+
 		}
 	}
-	
-	// 걸어다니다가 종종 짖음
-	// 플레이어가 점프하면 따라서 점프함
-	// 점프하고 나면 지침
-	// 지치고 나면 다시 걸음
 
 	CObj::UpdateRect();
-
-	if (m_tRect.right > 3000) m_tInfo.fX -= 20.f;
+	TargetCheck();
+	PosLock();
 	CHyena::IsJumping();
 	StateChange();
 	FrameMove();	
+
 	return 0;
 }
 
@@ -196,6 +234,12 @@ void CHyena::Release()
 {
 }
 
+void CHyena::PosLock()
+{
+	if (m_tInfo.fX <= 2400) m_tInfo.fX = 2400.f;
+	if (m_tInfo.fX >= 2930) m_tInfo.fX = 2930.f;
+}
+
 void CHyena::StateChange()
 {
 	if (m_eCurState != m_eNextState)
@@ -227,7 +271,7 @@ void CHyena::StateChange()
 		case STATE::DIE_LEFT:
 			m_tInfo.fCX = 172.f;
 			m_tInfo.fCY = 128.f;
-			m_tFrame.dwFrameSpeed = 80;
+			m_tFrame.dwFrameSpeed = 150;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 10;
@@ -293,6 +337,20 @@ void CHyena::IsJumping()
 			m_fDeltaTime = 0.f;
 			m_fJumpPower = 0.f;
 			m_tInfo.fY = fy_On_Line - 30;
+
+			if (m_bIsRightDir)
+			{
+				m_eNextState = TIRED;
+				m_pFrameKey = L"HYENA_TIRED";
+			}
+			else
+			{
+				m_eNextState = TIRED_LEFT;
+				m_pFrameKey = L"HYENA_TIRED_LEFT";
+			}
+
+			m_bIsStop = true;
+			m_bIsTired = true;
 		}
 	}
 }
@@ -304,7 +362,7 @@ CHyena::STATE CHyena::Get_State()
 
 void CHyena::Collision_Proc(CObj * pCounterObj)
 {
-	if (!m_bIsAlreadyColl)
+	/*if (!m_bIsAlreadyColl)
 	{
 		if (Is_Counter_One_Of(CVerticalBlocck))
 		{
@@ -328,7 +386,7 @@ void CHyena::Collision_Proc(CObj * pCounterObj)
 			}
 		}
 		m_bIsAlreadyColl = true;
-	}
+	}*/
 }
 
 void CHyena::FrameMove()
@@ -337,31 +395,25 @@ void CHyena::FrameMove()
 	{
 		++m_tFrame.iFrameStart_X;
 		m_tFrame.dwFrameTime = GetTickCount();
+		
+		if (m_eCurState == DIE || m_eCurState == DIE_LEFT)
+		{
+			if (m_tFrame.iFrameStart_X == m_tFrame.iFrameEnd_X - 1)
+			{
+				m_tFrame.dwFrameSpeed = 2000;
+			}
+			else
+			{
+				m_tFrame.dwFrameSpeed = 150;
+			}
+		}
 	}
 
 	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
 	{
-		// 점프하고 나면 지침
-		if (m_eCurState == JUMP || m_eCurState == JUMP_LEFT)
-		{
-			if (m_bIsRightDir)
-			{
-				m_eNextState = TIRED;
-				m_pFrameKey = L"HYENA_TIRED";
-			}
-			else
-			{
- 				m_eNextState = TIRED_LEFT;
-				m_pFrameKey = L"HYENA_TIRED_LEFT";
-			}
-
-			m_bIsStop = true;
-			m_bIsTired = true;
-		} 
-
 		// 지쳐하다가 다시 걸음
 		// 짖다가 다시 걸음
-		else if (m_eCurState == ROARING 
+		if (m_eCurState == ROARING 
 			|| m_eCurState == ROARING_LEFT
 			|| m_eCurState == TIRED
 			|| m_eCurState == TIRED_LEFT)
@@ -381,6 +433,47 @@ void CHyena::FrameMove()
 			m_bIsTired = false;
 		}
 
+		else if (m_eCurState == DIE || m_eCurState == DIE_LEFT)
+		{
+			m_bIsDead = true;
+		}
+
 		m_tFrame.iFrameStart_X = 0;
 	}
 }
+
+void CHyena::Get_Damage()
+{
+	--m_iHp;
+
+	if (m_iHp <= 0)
+	{
+		if (m_bIsRightDir)
+		{
+			m_eNextState = DIE;
+			m_pFrameKey = L"HYENA_DIE";
+		}
+		else
+		{
+			m_eNextState = DIE_LEFT;
+			m_pFrameKey = L"HYENA_DIE_LEFT";
+		}
+	}
+}
+
+void CHyena::TargetCheck()
+{
+	CPlayer* pPlayer = CObjMgr::Get_Instance()->Get_Player();
+	RECT tMyViewRect = { m_tInfo.fX - 360, m_tInfo.fY - 133, m_tInfo.fX + 360, m_tInfo.fY + 133 };
+	RECT tTempRect = {};
+	
+	if (IntersectRect(&tTempRect, &pPlayer->Get_Rect(), &tMyViewRect))
+	{
+		m_pTarget = pPlayer;
+	}
+	else
+	{
+		m_pTarget = nullptr;
+	}
+}
+

@@ -3,6 +3,7 @@
 // are changed infrequently
 //
 
+
 #pragma once
 
 #include "targetver.h"
@@ -10,16 +11,14 @@
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #include <windows.h>
+//
+//#include <Vfw.h>
+//#pragma comment(lib, "vfw32.lib")
 
-// 동영상
-#include <Vfw.h>
-#pragma comment(lib, "vfw32.lib")
-
-// 사운드
 #include <io.h>
+
 #include "fmod.h"
 #pragma comment(lib, "fmodex_vc.lib")
-
 
 // C RunTime Header Files
 #include <stdlib.h>
@@ -45,4 +44,4 @@ using namespace std;
 #include "KeyMgr.h"
 #include "ScrollMgr.h"
 #include "Function.h"
-#include "SoundMgr.h"
+//#include "SoundMgr.h"

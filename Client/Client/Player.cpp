@@ -43,14 +43,14 @@ void CPlayer::Initialize()
 	m_iMaxHp = 90;
 	m_iMp = 90;
 	m_iMaxMp = 90;
-	
+
 
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_IDLE.bmp", L"PLAYER_IDLE");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_IDLE_LEFT.bmp", L"PLAYER_IDLE_LEFT");
-	
+
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROARING.bmp", L"PLAYER_ROARING");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROARING_LEFT.bmp", L"PLAYER_ROARING_LEFT");
-	
+
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DOWN.bmp", L"PLAYER_DOWN");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DOWN_LEFT.bmp", L"PLAYER_DOWN_LEFT");
 
@@ -59,7 +59,7 @@ void CPlayer::Initialize()
 
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_RUNNING.bmp", L"PLAYER_RUNNING");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_RUNNING_LEFT.bmp", L"PLAYER_RUNNING_LEFT");
-	
+
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROLLING.bmp", L"PLAYER_ROLLING");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_ROLLING_LEFT.bmp", L"PLAYER_ROLLING_LEFT");
 
@@ -89,6 +89,7 @@ void CPlayer::Initialize()
 	m_bIsRoaring = false;
 	m_bIsDangling = false;
 
+
 	m_pFrameKey = L"PLAYER_STANDING_LAND";
 	m_eCurState = STANDING_LAND;
 	m_tInfo.fCX = 88.f;
@@ -98,7 +99,7 @@ void CPlayer::Initialize()
 	m_tFrame.iFrameStart_X = 0;
 	m_tFrame.iFrameEnd_X = 5;
 	m_tFrame.iFrameStart_Y = 0;
-	
+
 
 	m_dwRecover = GetTickCount();
 	m_dwNoCollision = GetTickCount();
@@ -120,7 +121,7 @@ void CPlayer::Initialize()
 
 	m_bIsTransparent = false;
 	m_iTransparentCount = 0;
-	
+
 	m_dwUp = GetTickCount();
 	m_dwDown = GetTickCount();
 
@@ -160,7 +161,15 @@ int CPlayer::Update()
 		m_bIsRolling = false;
 		m_bIsJump = false;
 	}
-
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_F5))
+	{
+		m_tInfo.fX = 2200.f;
+		m_tInfo.fY = -2000.f;
+		CScrollMgr::Reset_Scroll();
+		CScrollMgr::Sum_ScrollX(1900.f);
+		CScrollMgr::Sum_ScrollY(2200.f);
+	}
+	
 	return 0;
 }
 
@@ -182,7 +191,7 @@ void CPlayer::LateUpdate()
 	if (m_iHp <= 0 && !m_bIs_On_Another_Scene)
 	{
 		iLife--;
-		
+
 		m_bIs_On_Another_Scene = true;
 		m_bIsDangling = false;
 		m_bIsHurting = false;
@@ -222,7 +231,7 @@ void CPlayer::Render(HDC hDC)
 	float iScrollX = CScrollMgr::Get_ScrollX();
 	float iScrollY = CScrollMgr::Get_ScrollY();
 
-		
+
 	// 치트키 : 충돌하는 Rect 출력
 	if (CKeyMgr::Get_Instance()->KeyPressing('P'))
 	{
@@ -236,13 +245,15 @@ void CPlayer::Render(HDC hDC)
 	{
 		m_iHp = 1;
 	}
-	
+
+
+
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 
 	if (m_bIs_On_Another_Scene)
 	{
-		if(m_bIsRightDir)
+		if (m_bIsRightDir)
 		{
 			GdiTransparentBlt(hDC, // 실제 복사받을 DC
 				m_tRect.left, m_tRect.top, //출력될 위치의 xy 좌표 
@@ -267,12 +278,12 @@ void CPlayer::Render(HDC hDC)
 			);
 		}
 
-		
+
 	}
 	// 반짝이느 효과
 	else if (m_bIsHurting)
 	{
-		if (m_iTransparentCount %4 ==0)
+		if (m_iTransparentCount % 4 == 0)
 		{
 			GdiTransparentBlt(hDC, // 실제 복사받을 DC
 				m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
@@ -287,7 +298,7 @@ void CPlayer::Render(HDC hDC)
 	}
 	else
 	{
-	 	GdiTransparentBlt(hDC, // 실제 복사받을 DC
+		GdiTransparentBlt(hDC, // 실제 복사받을 DC
 			m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 			m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 			hMemDC,
@@ -318,7 +329,9 @@ void CPlayer::IsJumping()
 	float fy = 0.f;
 	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
-	if (fabs(m_tInfo.fY - fy) > 10.f) m_bIsJump = true;
+	if(!m_bIsDangling)
+		if (fabs(m_tInfo.fY - fy) > 30.f) 
+			m_bIsJump = true;
 
 	if (!m_bIsDangling)
 	{
@@ -358,7 +371,7 @@ void CPlayer::IsHurting()
 {
 	if (m_bIsHurting)
 	{
-		if (!m_bIsRightDir)	
+		if (!m_bIsRightDir)
 		{
 			m_tInfo.fX += m_fSpeed;
 		}
@@ -391,22 +404,22 @@ void CPlayer::IsOffset()
 		CScrollMgr::Sum_ScrollX(+m_fSpeed);
 	if (iOffsetX - 60 > m_tInfo.fX - iScrollX)
 		CScrollMgr::Sum_ScrollX(-m_fSpeed);
-	
-	if (iOffsetY-100 > m_tInfo.fY + iScrollY)
+
+	if (iOffsetY - 100 > m_tInfo.fY + iScrollY)
 		CScrollMgr::Sum_ScrollY(m_fSpeed);
-	if (iOffsetY+100 < m_tInfo.fY + iScrollY)
+	if (iOffsetY + 100 < m_tInfo.fY + iScrollY)
 		CScrollMgr::Sum_ScrollY(-m_fSpeed);
- 
+
 	/*if (iOffsetY - 100 > m_tInfo.fY + iScrollY)
 	{
-		if (m_bIsJump)
-			CScrollMgr::Sum_ScrollY(+m_fVelY);
-		else
-			CScrollMgr::Sum_ScrollY(+m_fSpeed);
+	if (m_bIsJump)
+	CScrollMgr::Sum_ScrollY(+m_fVelY);
+	else
+	CScrollMgr::Sum_ScrollY(+m_fSpeed);
 	}
 	if (iOffsetY + 100 < m_tInfo.fY + iScrollY)
 	{
-		CScrollMgr::Sum_ScrollY(-m_fSpeed);
+	CScrollMgr::Sum_ScrollY(-m_fSpeed);
 	}*/
 }
 
@@ -425,8 +438,8 @@ void CPlayer::IsRecovering()
 void CPlayer::Is_On_Another_Scene()
 {
 	POINT pt = { m_tInfo.fX, m_tInfo.fY };
-	RECT rect = { WINCX / 2 - 10, WINCY / 2 - 10, WINCX/2 + 10, WINCY/2 + 10 };
-	
+	RECT rect = { WINCX / 2 - 10, WINCY / 2 - 10, WINCX / 2 + 10, WINCY / 2 + 10 };
+
 	if (!PtInRect(&rect, pt))
 	{
 		int iTargetX = WINCX / 2;
@@ -470,7 +483,7 @@ void CPlayer::IsRoaring()
 					{
 						pMonster->Set_Stun();
 					}
-					
+
 				}
 			}
 		}
@@ -522,23 +535,23 @@ void CPlayer::KeyCheck()
 				m_pFrameKey = L"PLAYER_CLIMBING_LEDGE";
 				m_eNextState = CPlayer::CLIMBING_LEDGE;
 				m_tInfo.fY += 50.f; // 애니메이션 효과때문에 좀 아래로 그림을 내림
-				// m_bIsDangling = false; // 모션 끝에서 false로 바꿔줌 여기서 안함
+									// m_bIsDangling = false; // 모션 끝에서 false로 바꿔줌 여기서 안함
 				m_tInfo.fX += 10.f;
 			}
 		}
 
-		else if(!m_bIsRightDir) // 왼쪽을 보고 있는 경우, 아래키랑 왼쪽 키만 먹는다
+		else if (!m_bIsRightDir) // 왼쪽을 보고 있는 경우, 아래키랑 왼쪽 키만 먹는다
 		{
 			if (CKeyMgr::Get_Instance()->KeyDown(VK_LEFT))
 			{
 				m_pFrameKey = L"PLAYER_CLIMBING_LEDGE_LEFT";
 				m_eNextState = CPlayer::CLIMBING_LEDGE_LEFT;
 				m_tInfo.fY += 50.f; // 애니메이션 효과때문에 좀 아래로 그림을 내림
-				// m_bIsDangling = false; // 모션 끝에서 false로 바꿔줌 여기서 안함
+									// m_bIsDangling = false; // 모션 끝에서 false로 바꿔줌 여기서 안함
 				m_tInfo.fX -= 10.f;
 			}
 		}
-		
+
 		if (CKeyMgr::Get_Instance()->KeyDown(VK_DOWN))
 		{
 			m_tInfo.fY += 40.f;
@@ -601,7 +614,7 @@ void CPlayer::KeyCheck()
 		// 왼쪽을 꾹 누르면 달린다.
 		if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT))
 		{
- 			m_pFrameKey = L"PLAYER_RUNNING_LEFT";
+			m_pFrameKey = L"PLAYER_RUNNING_LEFT";
 			m_eNextState = RUNNING_LEFT;
 			m_bIsRightDir = false;
 			m_tInfo.fX -= m_fSpeed;
@@ -751,13 +764,9 @@ void CPlayer::KeyCheck()
 				m_bIsJump = true;
 			}
 
-			if(m_fJumpPower > -13) m_fJumpPower -= 0.1f;
+			if (m_fJumpPower > -13) m_fJumpPower -= 0.1f;
 		}
 	}
-
-
-
-	KEYDOWN_LBUTTON_AND_COUT(m_tInfo.fX << ", " << m_tInfo.fY);
 }
 
 void CPlayer::SceneChange()
@@ -934,7 +943,7 @@ void CPlayer::FrameMove()
 		{
 			if (m_tFrame.iFrameStart_X == 16)
 				m_tFrame.dwFrameSpeed = 500;
-			else if(m_tFrame.iFrameStart_X == m_tFrame.iFrameEnd_X-1)
+			else if (m_tFrame.iFrameStart_X == m_tFrame.iFrameEnd_X - 1)
 				m_tFrame.dwFrameSpeed = 800;
 			else
 				m_tFrame.dwFrameSpeed = 100;
@@ -947,14 +956,14 @@ void CPlayer::FrameMove()
 		// 다른 Scene에 있는 경우(죽은 경우) stage scene으로 돌아오기
 		if (m_bIs_On_Another_Scene)
 		{
-			if(iLife>0)
+			if (iLife>0)
 			{
 				CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
 				this->Initialize();
 				this->Set_Pos(m_fSaving_X, m_fSaving_Y);
 				CScrollMgr::Reset_Scroll();
-				CScrollMgr::Sum_ScrollX(m_fSaving_X - 340-100);
-				CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 +100);
+				CScrollMgr::Sum_ScrollX(m_fSaving_X - 340 - 100);
+				CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 + 100);
 				m_eNextState = STANDING_LAND;
 				m_pFrameKey = L"PLAYER_STANDING_LAND";
 			}
@@ -972,10 +981,10 @@ void CPlayer::FrameMove()
 			if (!m_bIsSeeingDown) m_dwDown = GetTickCount();
 			m_bIsSeeingDown = true;
 		}
-		else if(m_eCurState == UP
+		else if (m_eCurState == UP
 			|| m_eCurState == UP_LEFT)
 		{
-			m_tFrame.iFrameStart_X = m_tFrame.iFrameEnd_X-1;
+			m_tFrame.iFrameStart_X = m_tFrame.iFrameEnd_X - 1;
 			if (!m_bIsSeeingUp && !m_bIsScrollEffect)
 			{
 				CScrollMgr::Sum_ScrollY(+30.f);
@@ -1062,7 +1071,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 			m_bIsJump = true;
 			m_fJumpPower = -10.f;
 			m_fDeltaTime = 0.f;
-						
+
 			if (m_bIsRightDir)
 			{
 				m_pFrameKey = L"PLAYER_STANDING_JUMP";
@@ -1098,9 +1107,9 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_eNextState = HURT_LEFT;
 				}
 
-				m_fVelY = -10.f;
 				m_bIsHurting = true;
 				m_bIsRolling = false;
+				m_bIsDangling = false;
 			}
 		}
 	}
@@ -1141,20 +1150,20 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_fJumpPower = -10.f;
 					m_fDeltaTime = 0.f;
 
-					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT";
-						m_eNextState = HURT;
-					}
-					else // 왼쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT_LEFT";
-						m_eNextState = HURT_LEFT;
-					}
+						if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+						{
+							m_pFrameKey = L"PLAYER_HURT";
+							m_eNextState = HURT;
+						}
+						else // 왼쪽을 보고 있는 경우
+						{
+							m_pFrameKey = L"PLAYER_HURT_LEFT";
+							m_eNextState = HURT_LEFT;
+						}
 
-					m_fVelY = -10.f;
 					m_bIsHurting = true;
 					m_bIsRolling = false;
+					m_bIsDangling = false;
 				}
 			}
 		}
@@ -1178,20 +1187,20 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_bIsJump = true;
 					m_fJumpPower = -10.f;
 
-					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT";
-						m_eNextState = HURT;
-					}
-					else // 왼쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT_LEFT";
-						m_eNextState = HURT_LEFT;
-					}
+						if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+						{
+							m_pFrameKey = L"PLAYER_HURT";
+							m_eNextState = HURT;
+						}
+						else // 왼쪽을 보고 있는 경우
+						{
+							m_pFrameKey = L"PLAYER_HURT_LEFT";
+							m_eNextState = HURT_LEFT;
+						}
 
-					m_fVelY = -10.f;
 					m_bIsHurting = true;
 					m_bIsRolling = false;
+					m_bIsDangling = false;
 				}
 			}
 		}
@@ -1208,20 +1217,20 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				m_bIsJump = true;
 				m_fJumpPower = -10.f;
 
-				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-				{
-					m_pFrameKey = L"PLAYER_HURT";
-					m_eNextState = HURT;
-				}
-				else // 왼쪽을 보고 있는 경우
-				{
-					m_pFrameKey = L"PLAYER_HURT_LEFT";
-					m_eNextState = HURT_LEFT;
-				}
+					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT";
+						m_eNextState = HURT;
+					}
+					else // 왼쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT_LEFT";
+						m_eNextState = HURT_LEFT;
+					}
 
-				m_fVelY = -10.f;
 				m_bIsHurting = true;
 				m_bIsRolling = false;
+				m_bIsDangling = false;
 			}
 		}
 	}
@@ -1231,7 +1240,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 	{
 		CFly* pFly = static_cast<CFly*>(pCounterObj);
 		CFly::STATE eState = pFly->Get_State();
-		
+
 		if (eState == CFly::STATE::BOMB)
 		{
 			// m_dwNoCollision 동안은 부딪혀도 다치지 않음.
@@ -1245,19 +1254,20 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				m_fJumpPower = -10.f;
 				m_fDeltaTime = 0.f;
 
-				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-				{
-					m_pFrameKey = L"PLAYER_HURT";
-					m_eNextState = HURT;
-				}
-				else // 왼쪽을 보고 있는 경우
-				{
-					m_pFrameKey = L"PLAYER_HURT_LEFT";
-					m_eNextState = HURT_LEFT;
-				}
+					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT";
+						m_eNextState = HURT;
+					}
+					else // 왼쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT_LEFT";
+						m_eNextState = HURT_LEFT;
+					}
 
 				m_bIsHurting = true;
 				m_bIsRolling = false;
+				m_bIsDangling = false;
 			}
 		}
 		else if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
@@ -1294,20 +1304,20 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				m_bIsJump = true;
 				m_fJumpPower = -10.f;
 
-				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-				{
-					m_pFrameKey = L"PLAYER_HURT";
-					m_eNextState = HURT;
-				}
-				else // 왼쪽을 보고 있는 경우
-				{
-					m_pFrameKey = L"PLAYER_HURT_LEFT";
-					m_eNextState = HURT_LEFT;
-				}
+					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT";
+						m_eNextState = HURT;
+					}
+					else // 왼쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT_LEFT";
+						m_eNextState = HURT_LEFT;
+					}
 
-				m_fVelY = -10.f;
 				m_bIsHurting = true;
 				m_bIsRolling = false;
+				m_bIsDangling = false;
 			}
 		}
 	}
@@ -1317,7 +1327,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 		CHyena* pHyena = static_cast<CHyena*>(pCounterObj);
 		CHyena::STATE eState = pHyena->Get_State();
 
-		if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY && 
+		if (m_bIsJump && m_tRect.bottom < pCounterObj->Get_Info().fY &&
 			(eState == CHyena::STATE::TIRED || eState == CHyena::STATE::TIRED_LEFT))
 		{
 			m_bIsJump = true;
@@ -1362,9 +1372,9 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_eNextState = HURT_LEFT;
 				}
 
-				m_fVelY = -10.f;
 				m_bIsHurting = true;
 				m_bIsRolling = false;
+				m_bIsDangling = false;
 			}
 		}
 	}
@@ -1406,7 +1416,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 
 	if (Is_Counter_One_Of(CVertex))
 	{
-		if (!m_bIsDangling)
+		if (!m_bIsDangling && !m_bIsHurting)
 		{
 			float fTargetX = pCounterObj->Get_Info().fX;
 			float fTargetY = pCounterObj->Get_Info().fY;
@@ -1415,8 +1425,8 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				&& fTargetX - 10 <= m_tInfo.fX && m_tInfo.fX <= fTargetX + 10
 				&& fTargetY - 10 <= m_tInfo.fY && m_tInfo.fY <= fTargetY + 10)
 			{
-				CVertex::DIR eDir = static_cast<CVertex*>(pCounterObj)->Get_Dir();	
-	
+				CVertex::DIR eDir = static_cast<CVertex*>(pCounterObj)->Get_Dir();
+
 				if (m_bIsRightDir && eDir == CVertex::L)
 				{
 					m_pFrameKey = L"PLAYER_GRABBING_LEDGE_FIRST";
@@ -1432,7 +1442,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_fDeltaTime = 0.f;
 				}
 
-				else if(!m_bIsRightDir && eDir == CVertex::R)
+				else if (!m_bIsRightDir && eDir == CVertex::R)
 				{
 					m_pFrameKey = L"PLAYER_GRABBING_LEDGE_FIRST_LEFT";
 					m_eNextState = GRABBING_LEDGE_FIRST_LEFT;
@@ -1454,7 +1464,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 		if (m_eCurState == STANDING_JUMP
 			|| m_eCurState == STANDING_JUMP_LEFT)
 		{
-			if (pCounterObj->Get_Rect().top-10 <= m_tInfo.fY
+			if (pCounterObj->Get_Rect().top - 10 <= m_tInfo.fY
 				&& m_tInfo.fY <= pCounterObj->Get_Rect().bottom)
 			{
 				if (!m_bIsBlockCollision)
@@ -1466,7 +1476,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 			}
 		}
 	}
-	
+
 	if (Is_Counter_One_Of(CVerticalBlocck))
 	{
 		RECT rc = {};
@@ -1477,7 +1487,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 		}
 		else
 		{
-			this->Set_Pos(m_tInfo.fX+(rc.right - rc.left), m_tInfo.fY);
+			this->Set_Pos(m_tInfo.fX + (rc.right - rc.left), m_tInfo.fY);
 		}
 	}
 

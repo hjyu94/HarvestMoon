@@ -18,7 +18,6 @@ void CLogo::Initialize()
 {
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Logo/Logo_1.bmp", L"Logo_1");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Logo/Logo_2.bmp", L"Logo_2");
-	CSoundMgr::Get_Instance()->PlayBGM(L"Intro.mp3");
 	m_dwIntro = GetTickCount();
 }
 

@@ -43,8 +43,6 @@ void CStage::Initialize()
 		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 340));
 	//CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(2000, -2000));
 	
-	// 테스트
-	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHyena>::Create(300, 390));
 
 	// 도마뱀
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(790, 390));
@@ -132,6 +130,16 @@ void CStage::Update()
 			CObjMgr::Get_Instance()->Set_Boss(pHyena);
 			CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pHyena);
 			m_bIsBossInit = true;
+		}
+	}
+
+	// 보스 나온 뒤, 보스가 죽으면 Scene change
+	if (m_bIsBossInit)
+	{
+		if (static_cast<CHyena*>(CObjMgr::Get_Instance()->Get_Boss())->Get_IsDead())
+		{
+			CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_BRIDGE);
+			//CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE_2);
 		}
 	}
 }
@@ -234,4 +242,8 @@ void CStage::Release()
 {
 	CObjMgr::Get_Instance()->DeleteID(OBJID::MONSTER);
 	CObjMgr::Get_Instance()->DeleteID(OBJID::ITEM);
+	CObjMgr::Get_Instance()->DeleteID(OBJID::BLOCK);
+	CObjMgr::Get_Instance()->DeleteID(OBJID::VERTICAL_BLOCK);
+	CObjMgr::Get_Instance()->DeleteID(OBJID::MAP);
+	CObjMgr::Get_Instance()->DeleteID(OBJID::ETC);
 }

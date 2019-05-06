@@ -28,12 +28,15 @@ public:
 	virtual void Release() override;
 
 public:
+	void PosLock();
 	void StateChange();
 	virtual void IsJumping() override;
 	virtual void Collision_Proc(CObj* pCounterObj);
 	STATE Get_State();
 	virtual void FrameMove();
-	void Get_Damage() { --m_iHp; }
+	void Get_Damage();
+	bool Get_IsDead() { return m_bIsDead; }
+	void TargetCheck();
 
 private:
 	STATE m_eNextState;

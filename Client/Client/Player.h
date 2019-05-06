@@ -53,7 +53,7 @@ public:
 	
 public:
 	STATE Get_CurState() { return m_eCurState; }
-
+	bool Get_IsHurt() { return m_bIsHurting; }
 public:
 	bool IsBetween(DWORD dwTime, float min, float max)
 	{

@@ -6,6 +6,8 @@
 #include "Stage.h"
 #include "DeadScene.h"
 #include "RestartScene.h"
+#include "BridgeScene.h"
+#include "Stage_2.h"
 
 IMPLEMENT_SINGLETON(CSceneMgr)
 
@@ -52,6 +54,14 @@ void CSceneMgr::SceneChange(SCENEID eScene)
 
 		case CSceneMgr::SCENE_RESTART:
 			m_pScene = new CRestartScene;
+			break;
+
+		case CSceneMgr::SCENE_BRIDGE:
+			m_pScene = new CBridgeScene;
+			break;
+
+		case CSceneMgr::SCENE_STAGE_2:
+			m_pScene = new CStage_2;
 			break;
 		}
 		

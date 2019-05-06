@@ -150,6 +150,7 @@
     <ClInclude Include="AbstractFactory.h" />
     <ClInclude Include="BitmapMgr.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BridgeScene.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="Cursor.h" />
@@ -183,8 +184,8 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="ScrollMgr.h" />
-    <ClInclude Include="SoundMgr.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="Stage_2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="targetver.h" />
@@ -195,6 +196,7 @@
   <ItemGroup>
     <ClCompile Include="BitmapMgr.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BridgeScene.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="Cursor.cpp" />
@@ -223,8 +225,8 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="ScrollMgr.cpp" />
-    <ClCompile Include="SoundMgr.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Stage_2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

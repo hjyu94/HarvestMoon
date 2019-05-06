@@ -33,16 +33,16 @@ void CVertex::Render(HDC hDC)
 	int iScrollX = CScrollMgr::Get_ScrollX();
 	int iScrollY = CScrollMgr::Get_ScrollY();
 
-	/*if(CKeyMgr::Get_Instance()->KeyPressing('A'))
-		Ellipse(hDC, m_tRect.left-iScrollX, m_tRect.top+iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
-*/
-	if (m_eDir == L)
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
 	{
-		Ellipse(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
-	}
-	else
-	{
-		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+		if (m_eDir == L)
+		{
+			Ellipse(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+		}
+		else
+		{
+			Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+		}
 	}
 }
 

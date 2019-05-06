@@ -98,7 +98,13 @@
       <UniqueIdentifier>{0917e1e7-8203-4d74-abce-ccce47d7df4c}</UniqueIdentifier>
     </Filter>
     <Filter Include="96. Manager\SoundMgr">
-      <UniqueIdentifier>{439b4d65-4639-48ab-a0c7-b7d73a222396}</UniqueIdentifier>
+      <UniqueIdentifier>{19b7d7ca-5943-410c-8f8b-429d4dbb057f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\06. Bridge">
+      <UniqueIdentifier>{c16ab1bf-e36a-4266-83d2-83f0b874c85b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Scene\07. Stage2">
+      <UniqueIdentifier>{8391201b-109c-4f2b-a290-617e606f55a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,8 +237,11 @@
     <ClInclude Include="Hyena.h">
       <Filter>01. Obj\02. Monster</Filter>
     </ClInclude>
-    <ClInclude Include="SoundMgr.h">
-      <Filter>96. Manager\SoundMgr</Filter>
+    <ClInclude Include="Stage_2.h">
+      <Filter>04. Scene\07. Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="BridgeScene.h">
+      <Filter>04. Scene\06. Bridge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -338,8 +347,11 @@
     <ClCompile Include="Hyena.cpp">
       <Filter>01. Obj\02. Monster</Filter>
     </ClCompile>
-    <ClCompile Include="SoundMgr.cpp">
-      <Filter>96. Manager\SoundMgr</Filter>
+    <ClCompile Include="Stage_2.cpp">
+      <Filter>04. Scene\07. Stage2</Filter>
+    </ClCompile>
+    <ClCompile Include="BridgeScene.cpp">
+      <Filter>04. Scene\06. Bridge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
