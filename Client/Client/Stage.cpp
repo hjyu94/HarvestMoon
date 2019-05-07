@@ -41,6 +41,8 @@ void CStage::Initialize()
 	
 	if(nullptr == CObjMgr::Get_Instance()->Get_Player())
 		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(130, 340));
+	CObjMgr::Get_Instance()->Get_Player()->Set_CurStage(1);
+
 	//CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(2000, -2000));
 	
 

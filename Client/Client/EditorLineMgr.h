@@ -48,6 +48,11 @@ private:
 	{
 		FLY, LIZARD, HEDGEHOG, ITEM_HP, ITEM_MP, ITEM_SAVE, ITEM_LIFE, GRASS, END	
 	};
+	
+	enum STAGE2
+	{
+		S2_GIRAFFE, S2_END
+	};
 
 private:
 	static CEditorLineMgr*	m_pInstance;
@@ -57,6 +62,8 @@ private:
 	list<CVerticalBlocck*>	m_listVerticalBlock;
 
 	OBJLIST m_listEnum[ID::END];
+
+	OBJLIST m_listStage2[STAGE2::S2_END];
 
 	DWORD m_dwPosRenderTime;
 };

@@ -25,6 +25,9 @@ public:
 public:
 	void StateChange();
 	virtual void FrameMove() override;
+	virtual void Collision_Proc(CObj* pCounterObj);
+	
+public:
 	void Set_State(STATE eState) { m_eNextState = eState; }
 	STATE Get_State() { return m_eCurState; }
 

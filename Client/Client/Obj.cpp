@@ -43,7 +43,6 @@ void CObj::FrameMove()
 	{
 
 		m_tFrame.iFrameStart_X = 0;
-		m_bMotionEnd = true;
 	}
 }
 

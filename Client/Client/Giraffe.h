@@ -1,5 +1,8 @@
 #pragma once
 #include "Obj.h"
+
+class CLine;
+
 class CGiraffe :
 	public CObj
 {
@@ -18,12 +21,18 @@ public:
 	virtual void Release() override;
 
 public:
-	void KeyCheck();
 	void SceneChange();
+	virtual void Collision_Proc(CObj* pCounterObj);
+	virtual void FrameMove();
+
 
 private:
 	TCHAR* m_pFrameKey;
 	STATE m_eNextState;
 	STATE m_eCurState;
+	CLine* m_pLine;
+
+	DWORD m_dwTiltDelay;
+	bool m_bIs_Collision_With_Player;
 };
 

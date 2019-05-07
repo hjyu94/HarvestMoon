@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "RhinoHead.h"
-
+#include "Player.h"
 
 CRhinoHead::CRhinoHead()
 {
@@ -34,6 +34,7 @@ int CRhinoHead::Update()
 {
 	CObj::UpdateRect();
 	FrameMove();
+	StateChange();
 	return OBJ_NOEVENT;
 }
 
@@ -43,10 +44,24 @@ void CRhinoHead::LateUpdate()
 
 void CRhinoHead::Render(HDC hDC)
 {
+	CObj::UpdateRect();
+	int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
+	
+	// 치트키
+	if (CKeyMgr::Get_Instance()->KeyPressing('M'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 	GdiTransparentBlt(hDC, // 실제 복사받을 DC
-		m_tRect.left, m_tRect.top, //출력될 위치의 xy 좌표 
+		m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 		m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 		hMemDC,
 		m_tInfo.fCX * m_tFrame.iFrameStart_X,
@@ -81,7 +96,7 @@ void CRhinoHead::StateChange()
 			m_pFrameKey = L"RHINO_HEAD_UP";
 			m_tInfo.fCX = 138.f;
 			m_tInfo.fCY = 216.f;
-			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameSpeed = 150;
 			m_tFrame.dwFrameTime = GetTickCount();
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 4;
@@ -103,6 +118,29 @@ void CRhinoHead::FrameMove()
 
 	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
 	{
+
+		if (m_eCurState == UP)
+		{
+			m_eNextState = IDLE;
+			m_pFrameKey = L"RHINO_HEAD_IDLE";
+		}
+
 		m_tFrame.iFrameStart_X = 0;
+	}
+}
+
+void CRhinoHead::Collision_Proc(CObj * pCounterObj)
+{
+	if (Is_Counter_One_Of(CPlayer))
+	{
+		float fPlayerY = pCounterObj->Get_Info().fY;
+		if (static_cast<CPlayer*>(pCounterObj)->Get_CurState() == CPlayer::ROLLING
+			&& m_tRect.top <= fPlayerY && fPlayerY <= m_tInfo.fY
+			&& m_tInfo.fX -20 <= pCounterObj->Get_Info().fX && pCounterObj->Get_Info().fX <= m_tInfo.fX+20)
+		{
+			m_eNextState = UP;
+			m_pFrameKey = L"RHINO_HEAD_UP";
+			static_cast<CPlayer*>(pCounterObj)->Drag_Jump();
+		}
 	}
 }

@@ -2,6 +2,7 @@
 #include "RhinoTail.h"
 #include "TailVertex.h"
 #include "AbstractFactory.h"
+#include "ObjMgr.h"
 
 CRhinoTail::CRhinoTail()
 {
@@ -27,6 +28,7 @@ void CRhinoTail::Initialize()
 
 	m_fDist = 30.f;
 	m_pTailVertex = CAbstractFactory<CTailVertex>::Create();
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, m_pTailVertex);
 }
 
 int CRhinoTail::Update()
@@ -88,10 +90,25 @@ void CRhinoTail::LateUpdate()
 
 void CRhinoTail::Render(HDC hDC)
 {
+
+		CObj::UpdateRect();
+	int iScrollX = CScrollMgr::Get_ScrollX();
+	int iScrollY = CScrollMgr::Get_ScrollY();
+	
+	// 치트키
+	if (CKeyMgr::Get_Instance()->KeyPressing('M'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Rectangle(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
+	
 	HDC hMemDC = CBitmapMgr::Get_Instance()->FindImage(m_pFrameKey);
 
 	GdiTransparentBlt(hDC, // 실제 복사받을 DC
-		m_tRect.left, m_tRect.top, //출력될 위치의 xy 좌표 
+		m_tRect.left - iScrollX, m_tRect.top + iScrollY, //출력될 위치의 xy 좌표 
 		m_tInfo.fCX, m_tInfo.fCY, // 출력할 비트맵의 가로세로 사이즈. 
 		hMemDC,
 		m_tInfo.fCX * m_tFrame.iFrameStart_X,

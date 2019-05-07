@@ -20,6 +20,7 @@ public:
 		, GRABBING_LEDGE_SECOND, GRABBING_LEDGE_SECOND_LEFT
 		, HURT, HURT_LEFT
 		, DIE, DIE_LEFT
+		, SWING
 	};
 
 public:
@@ -50,15 +51,22 @@ public:
 	virtual void FrameMove();
 	virtual void Collision_Proc(CObj* pCounterObj);
 	void BackToIdle();
+	void Drag_Jump();
 	
 public:
 	STATE Get_CurState() { return m_eCurState; }
 	bool Get_IsHurt() { return m_bIsHurting; }
+	bool Get_Dangling_With_Rhino() { return m_bIsDangling_with_Rhino; }
+
 public:
 	bool IsBetween(DWORD dwTime, float min, float max)
 	{
 		return (dwTime >= min && dwTime <= max);
 	}
+	
+	int Get_CurStage() { return m_iCurStage; }
+	void Set_CurStage(int iStage) { m_iCurStage = iStage; }
+
 
 private:
 
@@ -66,6 +74,7 @@ private:
 	bool m_bIsHurting;
 	bool m_bIsRoaring;
 	bool m_bIsDangling;
+	bool m_bIsDangling_with_Rhino;
 
 	bool m_bIsSeeingDown;
 	bool m_bIsSeeingUp;
@@ -82,9 +91,13 @@ private:
 	DWORD m_dwDown;
 	DWORD m_dwAnimation;
 	DWORD m_dwKill;
+	DWORD m_dwDangling_with_Rhino;
 	
 	bool m_bIsTransparent;
 	int m_iTransparentCount;
+
+	float m_fVelX;
+	int m_iCurStage;
 
 private:
 	bool m_bIsSaved;

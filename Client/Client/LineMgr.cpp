@@ -15,6 +15,8 @@
 #include "Obj.h"
 #include "Grass.h"
 #include "SceneMgr.h"
+#include "Giraffe.h"
+
 CLineMgr* CLineMgr::m_pInstance = nullptr; 
 
 CLineMgr::CLineMgr()
@@ -27,11 +29,13 @@ CLineMgr::~CLineMgr()
 	Release(); 
 }
 
+void CLineMgr::AddLine(CLine * pLine)
+{
+	m_listLine.emplace_back(pLine);
+}
+
 void CLineMgr::Initialize()
 {
-	CSceneMgr::SCENEID eID = CSceneMgr::Get_Instance()->Get_SCENEID();
-	eID;
-
 	if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
 	{
 		LoadData();
@@ -415,6 +419,7 @@ void CLineMgr::LoadData()
 
 void CLineMgr::LoadData_for_stage_2()
 {
+	// ## 라인 로드
 	HANDLE hLineFile = CreateFile(L"../Data/Stage2/Line.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
 
@@ -434,5 +439,33 @@ void CLineMgr::LoadData_for_stage_2()
 	}
 
 	CloseHandle(hLineFile);
+
+	// ## 기린 로드
+	HANDLE hGiraffeFile = CreateFile(L"../Data/Stage2/Giraffe.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+	if (INVALID_HANDLE_VALUE == hGiraffeFile)
+	{
+		MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+		return;
+	}
+
+	INFO tInfo = {};
+	bool bIsRightDir;
+
+	while (true)
+	{
+		ReadFile(hGiraffeFile, &tInfo, sizeof(INFO), &dwByte, nullptr);
+		ReadFile(hGiraffeFile, &bIsRightDir, sizeof(bool), &dwByte, nullptr);
+		
+		if (0 == dwByte) break;
+		
+		CGiraffe* pGiraffe = CAbstractFactory<CGiraffe>::Create(tInfo.fX, tInfo.fY);
+		pGiraffe->Set_Dir(bIsRightDir);
+		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pGiraffe);
+	}
+	CloseHandle(hGiraffeFile);
+
+
 	MessageBox(g_hWnd, L"로드했습니다", L"stage 2", MB_OK);
 }

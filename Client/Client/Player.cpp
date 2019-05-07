@@ -24,6 +24,7 @@
 #include "Vertex.h"
 #include "Block.h"
 #include "VerticalBlocck.h"
+#include "TailVertex.h"
 
 CPlayer::CPlayer()
 	: m_eNextState(IDLE)
@@ -84,6 +85,8 @@ void CPlayer::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DEAD.bmp", L"PLAYER_DEAD");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DEAD_LEFT.bmp", L"PLAYER_DEAD_LEFT");
 
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_SWING.bmp", L"PLAYER_SWING");
+
 	m_bIsRightDir = true;
 	m_bIsRolling = false;
 	m_bIsRoaring = false;
@@ -118,6 +121,7 @@ void CPlayer::Initialize()
 	m_bIsScrollEffect = false;
 	m_bIsBlockCollision = false;
 	m_bIs_On_Another_Scene = false;
+	m_bIsDangling_with_Rhino = false;
 
 	m_bIsTransparent = false;
 	m_iTransparentCount = 0;
@@ -129,11 +133,12 @@ void CPlayer::Initialize()
 	m_pFrameKey = L"PLAYER_STANDING_LAND";
 
 	m_dwKill = GetTickCount();
+	m_dwDangling_with_Rhino = GetTickCount();
 
-	if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
-		Set_Pos(130.f, 340.f);
-	else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE_2)
-		Set_Pos(0.f, 0.f);
+	//if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
+	//	Set_Pos(130.f, 340.f);
+	//else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE_2)
+	//	Set_Pos(0.f, 0.f);
 }
 
 int CPlayer::Update()
@@ -194,7 +199,9 @@ void CPlayer::LateUpdate()
 		if (WINCY < m_tRect.bottom + iScrollY) m_tInfo.fY -= m_fSpeed;
 	}
 
-	if (m_iHp <= 0 && !m_bIs_On_Another_Scene)
+	if ((m_iHp <= 0 && !m_bIs_On_Another_Scene)
+		/*|| (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENE_STAGE_2
+			&& m_tRect.bottom<=0 && CScrollMgr::Get_ScrollY() == 0)*/)
 	{
 		iLife--;
 
@@ -336,11 +343,11 @@ void CPlayer::IsJumping()
 	
 	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
-	if(!m_bIsDangling)
+	if(!m_bIsDangling && !m_bIsDangling_with_Rhino)
 		if (fabs(m_tInfo.fY - fy) > 30.f) 
 			m_bIsJump = true;
 
-	if (!m_bIsDangling)
+	if (!m_bIsDangling && !m_bIsDangling_with_Rhino)
 	{
 		if (m_bIsJump)
 		{
@@ -352,10 +359,13 @@ void CPlayer::IsJumping()
 			{
 				m_bIsJump = false;
 				m_bIsHurting = false;
+				m_bIsRolling = false;
+
 				m_fDeltaTime = 0.f;
 				m_fJumpPower = 0.f;
 				m_tInfo.fY = fy;
-
+				
+				
 				m_bIsBlockCollision = false;
 
 				/*BackToIdle();*/
@@ -444,6 +454,7 @@ void CPlayer::IsRecovering()
 	}
 }
 
+
 void CPlayer::Is_On_Another_Scene()
 {
 	POINT pt = { m_tInfo.fX, m_tInfo.fY };
@@ -507,9 +518,9 @@ void CPlayer::IsRolling()
 	{
 		CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_ROLLING.MP3.MP3", CSoundMgr::PLAYER);
 			
-		if (m_bIsRightDir)
+		if (m_eCurState == ROLLING)
 			m_tInfo.fX += m_fSpeed;
-		else
+		else if(m_eCurState == ROLLING_LEFT)
 			m_tInfo.fX -= m_fSpeed;
 	}
 }
@@ -581,6 +592,53 @@ void CPlayer::KeyCheck()
 			}
 		}
 	}
+
+	// 코뿔소 꼬리에 매달려 있는 경우
+	else if (m_bIsDangling_with_Rhino)
+	{
+		if (CKeyMgr::Get_Instance()->KeyDown(VK_SPACE))
+		{
+			m_bIsDangling_with_Rhino = false;
+			m_dwDangling_with_Rhino = GetTickCount();
+
+			if (m_tFrame.iFrameStart_X <= 2)
+			{
+				m_fJumpPower = 0.f;
+			}
+			else if (m_tFrame.iFrameStart_X <= 7)
+			{
+				m_fJumpPower = -12.f;
+			}
+			else
+			{
+				m_fJumpPower = 0.f;
+			}
+
+			//m_fJumpPower = -15.f;
+			m_fDeltaTime = 0.f;
+
+			// 왼쪽으로 갈지 오른쪽으로 갈지
+			if (m_tFrame.iFrameStart_X <= 3)
+			{
+				m_eNextState = ROLLING_LEFT;
+				m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+			}
+			else if(m_tFrame.iFrameStart_X <= 7)
+			{
+				m_eNextState = ROLLING;
+				m_pFrameKey = L"PLAYER_ROLLING";
+			}
+			else
+			{
+				m_eNextState = ROLLING_LEFT;
+				m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+			}
+
+			m_bIsRolling = true;
+			m_bIsJump = true;
+		}
+	}
+
 	else if (m_bIsHurting)
 	{
 		if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT))
@@ -940,6 +998,17 @@ void CPlayer::SceneChange()
 			m_tFrame.iFrameStart_X = 0;
 			m_tFrame.iFrameEnd_X = 23;
 			m_tFrame.iFrameStart_Y = 0;
+			break;
+
+		case CPlayer::SWING:
+			m_tInfo.fCX = 280.f;
+			m_tInfo.fCY = 240.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 11;
+			m_tFrame.iFrameStart_Y = 0;
+			break;
 
 		}
 		m_eCurState = m_eNextState;
@@ -971,14 +1040,29 @@ void CPlayer::FrameMove()
 		{
 			if (iLife>0)
 			{
-				CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
-				this->Initialize();
-				this->Set_Pos(m_fSaving_X, m_fSaving_Y);
-				CScrollMgr::Reset_Scroll();
-				CScrollMgr::Sum_ScrollX(m_fSaving_X - 340 - 100);
-				CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 + 100);
-				m_eNextState = STANDING_LAND;
-				m_pFrameKey = L"PLAYER_STANDING_LAND";
+				if (m_iCurStage == 1)
+				{
+					CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
+					this->Initialize();
+					this->Set_Pos(m_fSaving_X, m_fSaving_Y);
+					CScrollMgr::Reset_Scroll();
+					CScrollMgr::Sum_ScrollX(m_fSaving_X - 340 - 100);
+					CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 + 100);
+					m_eNextState = STANDING_LAND;
+					m_pFrameKey = L"PLAYER_STANDING_LAND";
+				}
+				else if (m_iCurStage == 2)
+				{
+					CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE_2);
+					this->Initialize();
+					this->Set_Pos(125.f, 220.f);
+					CScrollMgr::Reset_Scroll();
+					//CScrollMgr::Sum_ScrollX(m_fSaving_X - 340 - 100);
+					//CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 + 100);
+					m_eNextState = STANDING_LAND;
+					m_pFrameKey = L"PLAYER_STANDING_LAND";
+				}
+
 			}
 			else
 			{
@@ -1505,6 +1589,25 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 		}
 	}
 
+	if (Is_Counter_One_Of(CTailVertex))
+	{
+		if (m_dwDangling_with_Rhino + 3000 < GetTickCount())
+		{
+			float fTargetX = pCounterObj->Get_Info().fX;
+			float fTargetY = pCounterObj->Get_Info().fY;
+			/*
+					if (fTargetX - 5 <= m_tInfo.fX && m_tInfo.fX <= fTargetX + 5
+						&& fTargetY - 5 <= m_tInfo.fY && m_tInfo.fY <= fTargetY + 5)
+					{*/
+			m_tInfo.fX = pCounterObj->Get_Info().fX;
+			m_tInfo.fY = pCounterObj->Get_Info().fY;
+			m_eNextState = SWING;
+			m_pFrameKey = L"PLAYER_SWING";
+			m_bIsDangling_with_Rhino = true;
+			//}
+		}
+	}
+
 }
 
 void CPlayer::BackToIdle()
@@ -1525,5 +1628,13 @@ void CPlayer::BackToIdle()
 	m_bIsJump = false;
 	m_bIsRoaring = false;
 	m_fJumpPower = 0.f;
+	m_fDeltaTime = 0.f;
+}
+
+void CPlayer::Drag_Jump()
+{
+	m_bIsJump = true;
+	m_bIsRoaring = false;
+	m_fJumpPower = -20.f;
 	m_fDeltaTime = 0.f;
 }

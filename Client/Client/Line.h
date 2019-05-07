@@ -10,6 +10,11 @@ public:
 public:
 	void Render(HDC hDC);
 	void Set_LineInfo(LINEPOS& rRightPoint) { m_tInfo.tRightPoint = rRightPoint; }
+	void Set_LineInfo(LINEPOS& rLeftPoint, LINEPOS& rRightPoint) 
+	{
+		m_tInfo.tLeftPoint = rLeftPoint;
+		m_tInfo.tRightPoint = rRightPoint;
+	}
 
 private:
 	LINEINFO m_tInfo; 

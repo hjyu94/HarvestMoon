@@ -134,7 +134,11 @@ int CHyena::Update()
 
 					float fTheta = atan2(fDeltaY, fDeltaX); // 호도법
 
-					m_tInfo.fX += m_fSpeed * cosf(fTheta);
+					// 뛰는 중엔 더 빨리 움직임
+					if (m_bIsJump) 
+						m_tInfo.fX += m_fSpeed * cosf(fTheta) * 2.f;
+					else 
+						m_tInfo.fX += m_fSpeed * cosf(fTheta);
 
 					if (fTargetX > m_tInfo.fX)
 					{

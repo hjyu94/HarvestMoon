@@ -24,6 +24,7 @@ public:
 	}
 
 public:
+	void AddLine(CLine* pLine);
 	void Initialize();
 	void Render(HDC hDC);
 	void Release(); 
