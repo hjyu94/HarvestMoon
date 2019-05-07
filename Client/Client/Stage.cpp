@@ -70,15 +70,16 @@ void CStage::Initialize()
 
 	CSoundMgr::Get_Instance()->PlayBGM(L"Intro.mp3");
 
-	CLineMgr::Get_Instance()->Initialize();
-/*
-	CScrollMgr::Sum_ScrollX(2200);
-	CScrollMgr::Sum_ScrollY(2050);*/
-
 }
 
 void CStage::Update()
 {
+	if (!m_bIsInit)
+	{
+		CLineMgr::Get_Instance()->Initialize();
+		m_bIsInit = true;
+	}
+
 	CObjMgr::Get_Instance()->Update();
 
 	if (CKeyMgr::Get_Instance()->KeyDown('L'))
@@ -249,4 +250,5 @@ void CStage::Release()
 	CObjMgr::Get_Instance()->DeleteID(OBJID::VERTICAL_BLOCK);
 	CObjMgr::Get_Instance()->DeleteID(OBJID::MAP);
 	CObjMgr::Get_Instance()->DeleteID(OBJID::ETC);
+	CLineMgr::Get_Instance()->Release();
 }

@@ -27,14 +27,15 @@ void CLogo::Update()
 
 void CLogo::LateUpdate()
 {
-	// 치트키
-	// Q 누르면 스테이지1 시작
-	if (CKeyMgr::Get_Instance()->KeyDown('Q'))
+	// ## 치트키
+	// 1 누르면 스테이지 1 시작
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_NUMPAD1))
 	{
 		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_STAGE);
 	}
-	// W 누르면 스테이지 2 시작
-	if (CKeyMgr::Get_Instance()->KeyDown('W'))
+
+	// 2 누르면 스테이지 2 시작
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_NUMPAD2))
 	{
 		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_STAGE_2);
 	}

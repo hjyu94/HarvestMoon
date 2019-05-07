@@ -14,7 +14,7 @@
 #include "Item.h"
 #include "Obj.h"
 #include "Grass.h"
-
+#include "SceneMgr.h"
 CLineMgr* CLineMgr::m_pInstance = nullptr; 
 
 CLineMgr::CLineMgr()
@@ -29,7 +29,17 @@ CLineMgr::~CLineMgr()
 
 void CLineMgr::Initialize()
 {
-	LoadData();
+	CSceneMgr::SCENEID eID = CSceneMgr::Get_Instance()->Get_SCENEID();
+	eID;
+
+	if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
+	{
+		LoadData();
+	}
+	else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE_2)
+	{
+		LoadData_for_stage_2();
+	}
 }
 
 void CLineMgr::Render(HDC hDC)
@@ -401,4 +411,28 @@ void CLineMgr::LoadData()
 	cout << CLineMgr::Get_Instance()->m_listLine.size() << endl;
 	/********************************************************/
 	MessageBox(g_hWnd, L"라인 정보를 읽어왔습니다", L"로드 성공", MB_OK);
+}
+
+void CLineMgr::LoadData_for_stage_2()
+{
+	HANDLE hLineFile = CreateFile(L"../Data/Stage2/Line.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+	if (INVALID_HANDLE_VALUE == hLineFile)
+	{
+		MessageBox(g_hWnd, L"라인 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+		return;
+	}
+	LINEINFO tLineInfo = {};
+	DWORD dwByte = 0;
+
+	while (true)
+	{
+		ReadFile(hLineFile, &tLineInfo, sizeof(LINEINFO), &dwByte, nullptr);
+		if (0 == dwByte) break;
+		m_listLine.emplace_back(new CLine(tLineInfo));
+	}
+
+	CloseHandle(hLineFile);
+	MessageBox(g_hWnd, L"로드했습니다", L"stage 2", MB_OK);
 }

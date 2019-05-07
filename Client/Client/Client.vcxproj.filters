@@ -58,9 +58,6 @@
     <Filter Include="96. Manager\ScrollMgr">
       <UniqueIdentifier>{3046ab61-e51f-44e4-88db-34768749a6be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Obj\Giraffe">
-      <UniqueIdentifier>{3bed5c68-ccc3-4236-8d5d-a0bffa07a798}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Scene\02. Stage">
       <UniqueIdentifier>{42773b38-44c1-4b92-a0a6-41fc68f97f1b}</UniqueIdentifier>
     </Filter>
@@ -108,9 +105,6 @@
     </Filter>
     <Filter Include="04. Scene\08. Stage2Editor">
       <UniqueIdentifier>{76c5cc0e-136d-495d-a9aa-bc1bd8067fe3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="96. Manager\Stage2EditorMgr">
-      <UniqueIdentifier>{6e1fbc40-2665-4c19-a9b4-e6daebd935ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +183,6 @@
     <ClInclude Include="ScrollMgr.h">
       <Filter>96. Manager\ScrollMgr</Filter>
     </ClInclude>
-    <ClInclude Include="Giraffe.h">
-      <Filter>01. Obj\Giraffe</Filter>
-    </ClInclude>
     <ClInclude Include="Stage.h">
       <Filter>04. Scene\02. Stage</Filter>
     </ClInclude>
@@ -252,9 +243,6 @@
     <ClInclude Include="Stage2Editor.h">
       <Filter>04. Scene\08. Stage2Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Stage2EditorMgr.h">
-      <Filter>96. Manager\Stage2EditorMgr</Filter>
-    </ClInclude>
     <ClInclude Include="RhinoHead.h">
       <Filter>01. Obj\02. Monster</Filter>
     </ClInclude>
@@ -266,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="TailVertex.h">
       <Filter>01. Obj\04. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Giraffe.h">
+      <Filter>01. Obj\02. Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -316,9 +307,6 @@
     </ClCompile>
     <ClCompile Include="ScrollMgr.cpp">
       <Filter>96. Manager\ScrollMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Giraffe.cpp">
-      <Filter>01. Obj\Giraffe</Filter>
     </ClCompile>
     <ClCompile Include="Stage.cpp">
       <Filter>04. Scene\02. Stage</Filter>
@@ -380,9 +368,6 @@
     <ClCompile Include="Stage2Editor.cpp">
       <Filter>04. Scene\08. Stage2Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Stage2EditorMgr.cpp">
-      <Filter>96. Manager\Stage2EditorMgr</Filter>
-    </ClCompile>
     <ClCompile Include="RhinoHead.cpp">
       <Filter>01. Obj\02. Monster</Filter>
     </ClCompile>
@@ -394,6 +379,9 @@
     </ClCompile>
     <ClCompile Include="TailVertex.cpp">
       <Filter>01. Obj\04. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Giraffe.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

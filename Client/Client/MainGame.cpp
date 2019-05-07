@@ -8,6 +8,8 @@
 #include "BitmapMgr.h"
 #include "LineMgr.h"
 #include "SceneMgr.h"
+#include "EditorLineMgr.h"
+
 CMainGame::CMainGame()
 {
 }
@@ -75,4 +77,5 @@ void CMainGame::Release()
 	CBitmapMgr::Destroy_Instance(); 
 	CSceneMgr::Destroy_Instance();
 	CObjMgr::Destory_Instance();
+	CEditorLineMgr::Destroy_Instance();
 }

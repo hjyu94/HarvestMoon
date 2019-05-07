@@ -31,6 +31,7 @@ public:
 public:
 	bool LineCollision(float fInX, float fInY, float* pOutY);
 	void LoadData(); 
+	void LoadData_for_stage_2();
 
 private:
 	static CLineMgr* m_pInstance;

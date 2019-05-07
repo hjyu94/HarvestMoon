@@ -1,15 +1,16 @@
 #include "stdafx.h"
 #include "Stage_2.h"
 #include "Player.h"
-#include "Stage2EditorMgr.h"
-
 #include "RhinoHead.h"
 #include "RhinoTail.h"
 
+#include "LineMgr.h"
+
 CStage_2::CStage_2()
 {
+	iBackgroundWidth = 15000;
+	iBackgroundHeight = 842;
 }
-
 
 CStage_2::~CStage_2()
 {
@@ -22,12 +23,11 @@ void CStage_2::Initialize()
 	
 	CScrollMgr::Reset_Scroll();
 
-	CStage2EditorMgr::Get_Instance()->Initialize();
-
-	//if (CObjMgr::Get_Instance()->Get_Player() == nullptr)
-	//{
-	//	CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(125, 220));
-	//}
+	
+	if (CObjMgr::Get_Instance()->Get_Player() == nullptr)
+	{
+		CObjMgr::Get_Instance()->AddObject(OBJID::PLAYER, CAbstractFactory<CPlayer>::Create(125, 220));
+	}
 
 	CObjMgr::Get_Instance()->AddObject(OBJID::ETC, CAbstractFactory<CRhinoTail>::Create(290, 282));
 	CObjMgr::Get_Instance()->AddObject(OBJID::ETC, CAbstractFactory<CRhinoHead>::Create(462, 307));
@@ -37,16 +37,13 @@ void CStage_2::Initialize()
 
 void CStage_2::Update()
 {
-	if (CKeyMgr::Get_Instance()->KeyPressing(VK_LEFT))
-		CScrollMgr::Sum_ScrollX(-10.0f);
-	if (CKeyMgr::Get_Instance()->KeyPressing(VK_RIGHT))
-		CScrollMgr::Sum_ScrollX(+10.0f);
-	if (CKeyMgr::Get_Instance()->KeyPressing(VK_UP))
-		CScrollMgr::Sum_ScrollY(+10.0f);
-	if (CKeyMgr::Get_Instance()->KeyPressing(VK_DOWN))
-		CScrollMgr::Sum_ScrollY(-10.0f);
-
+	if (!m_bIsInit)
+	{
+		CLineMgr::Get_Instance()->Initialize();
+		m_bIsInit = true;
+	}
 	CObjMgr::Get_Instance()->Update();
+	CScrollMgr::ScrollLock();
 }
 
 void CStage_2::LateUpdate()
@@ -67,7 +64,7 @@ void CStage_2::Render(HDC hDC)
 		, 0 + iScrollX, 392 - iScrollY
 		, SRCCOPY);
 
-	CStage2EditorMgr::Get_Instance()->Render(hDC);
+	CLineMgr::Get_Instance()->Render(hDC);
 	CObjMgr::Get_Instance()->Render(hDC);
 
 }

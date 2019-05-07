@@ -166,6 +166,7 @@ int CPlayer::Update()
 		m_bIsRolling = false;
 		m_bIsJump = false;
 	}
+	// 치트키: 보스 앞으로 가도록
 	if (CKeyMgr::Get_Instance()->KeyDown(VK_F5))
 	{
 		m_tInfo.fX = 2200.f;
@@ -332,6 +333,7 @@ void CPlayer::Release()
 void CPlayer::IsJumping()
 {
 	float fy = 0.f;
+	
 	bool bIsColl = CLineMgr::Get_Instance()->LineCollision(m_tInfo.fX, m_tInfo.fY, &fy);
 
 	if(!m_bIsDangling)

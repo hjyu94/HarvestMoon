@@ -11,6 +11,7 @@
 #include "Item.h"
 #include "Obj.h"
 #include "Grass.h"
+#include "SceneMgr.h"
 
 CEditorLineMgr* CEditorLineMgr::m_pInstance = nullptr;
 
@@ -26,7 +27,15 @@ CEditorLineMgr::~CEditorLineMgr()
 void CEditorLineMgr::Initialize()
 {
 	m_dwPosRenderTime = GetTickCount();
-	LoadData();
+
+	if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_LINE_EDIT)
+	{
+		LoadData();
+	}
+	else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_LINE_EDIT_2)
+	{
+		LoadData_for_stage_2();
+	}
 }
 
 void CEditorLineMgr::Render(HDC hDC)
@@ -260,12 +269,26 @@ void CEditorLineMgr::Update()
 
 	if (CKeyMgr::Get_Instance()->KeyDown('L'))
 	{
-		LoadData();
+		if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_LINE_EDIT)
+		{
+			LoadData();
+		}
+		else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_LINE_EDIT_2)
+		{
+			LoadData_for_stage_2();
+		}
 	}
 
 	if (CKeyMgr::Get_Instance()->KeyDown('S'))
 	{
-		SaveData();
+		if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_LINE_EDIT)
+		{
+			SaveData();
+		}
+		else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_LINE_EDIT_2)
+		{
+			SaveData_for_stage_2();
+		}
 	}
 
 	for (auto& pVertex : m_listVertex)
@@ -601,6 +624,30 @@ void CEditorLineMgr::SaveData()
 	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
 }
 
+void CEditorLineMgr::SaveData_for_stage_2()
+{
+	HANDLE hLineFile = CreateFile(
+		L"../Data/Stage2/Line.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hLineFile)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"라인 저장 실패", MB_OK);
+	}
+
+	DWORD dwByte = 0;
+
+	for (auto& pLine : m_listLine)
+	{
+		WriteFile(hLineFile, &pLine->Get_LineInfo(), sizeof(LINEINFO), &dwByte, nullptr);
+	}
+	CloseHandle(hLineFile);
+
+	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
+}
+
 void CEditorLineMgr::LoadData()
 {
 	HANDLE hFile = CreateFile(L"../Data/Line.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -702,3 +749,28 @@ void CEditorLineMgr::LoadData()
 	/********************************************************/
 	MessageBox(g_hWnd, L"라인 정보를 읽어왔습니다", L"로드 성공", MB_OK);
 }
+
+void CEditorLineMgr::LoadData_for_stage_2()
+{
+	HANDLE hLineFile = CreateFile(L"../Data/Stage2/Line.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+	if (INVALID_HANDLE_VALUE == hLineFile)
+	{
+		MessageBox(g_hWnd, L"라인 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+		return;
+	}
+	LINEINFO tLineInfo = {};
+	DWORD dwByte = 0;
+
+	while (true)
+	{
+		ReadFile(hLineFile, &tLineInfo, sizeof(LINEINFO), &dwByte, nullptr);
+		if (0 == dwByte) break;
+		m_listLine.emplace_back(new CLine(tLineInfo));
+	}
+
+	CloseHandle(hLineFile);
+	MessageBox(g_hWnd, L"로드했습니다", L"stage 2", MB_OK);
+}
+

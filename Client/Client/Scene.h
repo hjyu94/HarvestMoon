@@ -24,5 +24,6 @@ public:
 protected:
 	int iBackgroundWidth;
 	int iBackgroundHeight;
+	bool m_bIsInit;
 };
 

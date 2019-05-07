@@ -13,6 +13,7 @@ class CEditorLineMgr
 private:
 	CEditorLineMgr();
 	~CEditorLineMgr();
+
 public:
 	static CEditorLineMgr* Get_Instance()
 	{
@@ -38,7 +39,10 @@ public:
 
 private:
 	void SaveData();
+	void SaveData_for_stage_2();
+
 	void LoadData();
+	void LoadData_for_stage_2();
 
 	enum ID
 	{
