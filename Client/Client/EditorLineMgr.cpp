@@ -68,13 +68,6 @@ void CEditorLineMgr::Update()
 	pt.x += iScrollX;
 	pt.y -= iScrollY;
 
-	//if (m_dwPosRenderTime + 1000 < GetTickCount())
-	//{
-	//	cout << pt.x << ", " << pt.y << endl;
-	//	m_dwPosRenderTime = GetTickCount();
-	//}
-
-
 	// 왼쪽 버튼으로 선을 그어서 리스트에 추가
 	if (CKeyMgr::Get_Instance()->KeyDown(VK_LBUTTON))
 	{

@@ -27,16 +27,31 @@ void CLogo::Update()
 
 void CLogo::LateUpdate()
 {
-	// 엔터 누르면 스테이지 시작
-	if (CKeyMgr::Get_Instance()->KeyDown(VK_RETURN))
+	// 치트키
+	// Q 누르면 스테이지1 시작
+	if (CKeyMgr::Get_Instance()->KeyDown('Q'))
 	{
 		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_STAGE);
 	}
+	// W 누르면 스테이지 2 시작
+	if (CKeyMgr::Get_Instance()->KeyDown('W'))
+	{
+		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_STAGE_2);
+	}
+
 	// L 누르면 라인 에디터 시작
 	if (CKeyMgr::Get_Instance()->KeyDown('L'))
 	{
 		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LINE_EDIT);
 	}
+
+	// T 누르면 stage2 라인 에디터 시작
+	if (CKeyMgr::Get_Instance()->KeyDown('T'))
+	{
+		CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LINE_EDIT_2);
+	}
+	
+	
 }
 
 void CLogo::Render(HDC hDC)

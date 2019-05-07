@@ -68,6 +68,7 @@ void CStage::Initialize()
 	pItem->Set_ID(CItem::ID::SAVE);
 	CObjMgr::Get_Instance()->AddObject(OBJID::ITEM, pItem);
 
+	CSoundMgr::Get_Instance()->PlayBGM(L"Intro.mp3");
 
 	CLineMgr::Get_Instance()->Initialize();
 /*
@@ -138,6 +139,7 @@ void CStage::Update()
 	{
 		if (static_cast<CHyena*>(CObjMgr::Get_Instance()->Get_Boss())->Get_IsDead())
 		{
+			CSoundMgr::Get_Instance()->StopAll();
 			CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_BRIDGE);
 			//CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE_2);
 		}
@@ -225,7 +227,8 @@ void CStage::Render(HDC hDC)
 	);
 
 	HDC hLife = nullptr;
-	if (iLife >= 3) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_3");
+	if(iLife>=4) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_4");
+	else if (iLife >= 3) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_3");
 	else if (iLife == 2) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_2");
 	else if (iLife == 1) hLife = CBitmapMgr::Get_Instance()->FindImage(L"NUM_1");
 	GdiTransparentBlt(hDC, // 실제 복사받을 DC

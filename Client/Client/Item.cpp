@@ -25,6 +25,8 @@ void CItem::Collision_Proc(CObj * pCounterObj)
 
 			else if (m_eID == SAVE)
 			{
+				CSoundMgr::Get_Instance()->PlaySound(L"ITEM_SAVE.MP3", CSoundMgr::EFFECT);
+				
 				m_eNextState = BLINK;
 			}
 		}

@@ -32,6 +32,7 @@ void CMainGame::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/NUM_1.bmp", L"NUM_1");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/NUM_2.bmp", L"NUM_2");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/NUM_3.bmp", L"NUM_3");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/NUM_4.bmp", L"NUM_4");
 
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/HP.bmp", L"HP");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/MP.bmp", L"MP");

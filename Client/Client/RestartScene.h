@@ -13,5 +13,9 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
+
+private:
+	DWORD m_dwContinueSelect;
+	bool m_bIsCountinueSelect;
 };
 

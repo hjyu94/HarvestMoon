@@ -68,6 +68,7 @@ int CHedgeHog::Update()
 
 	if (m_bIsDead)
 	{
+		CSoundMgr::Get_Instance()->PlaySound(L"MONSTER_HURT.MP3", CSoundMgr::MONSTER);
 		return OBJ_DEAD;
 	}
 

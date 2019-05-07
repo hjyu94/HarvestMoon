@@ -14,6 +14,7 @@ public:
 		, SCENE_RESTART
 		, SCENE_BRIDGE // STAGE1 ~ BRIDGE ~ STAGE2
 		, SCENE_STAGE_2
+		, SCENE_LINE_EDIT_2
 		, SCENE_END};
 
 public:

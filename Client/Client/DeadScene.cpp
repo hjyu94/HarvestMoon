@@ -9,11 +9,14 @@ CDeadScene::CDeadScene()
 
 CDeadScene::~CDeadScene()
 {
+	Release();
 }
 
 void CDeadScene::Initialize()
 {
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/BLACK_BACKGROUND.bmp", L"BLACK_BACKGROUND");
+	CSoundMgr::Get_Instance()->StopAll();
+	CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_DEAD.MP3", CSoundMgr::CHANNELID::BGM);
 }
 
 void CDeadScene::Update()
@@ -35,4 +38,5 @@ void CDeadScene::Render(HDC hDC)
 
 void CDeadScene::Release()
 {
+	CSoundMgr::Get_Instance()->StopAll();
 }

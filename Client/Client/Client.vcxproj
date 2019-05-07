@@ -181,13 +181,19 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RestartScene.h" />
+    <ClInclude Include="RhinoHead.h" />
+    <ClInclude Include="RhinoTail.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="ScrollMgr.h" />
+    <ClInclude Include="SoundMgr.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="Stage2Editor.h" />
+    <ClInclude Include="Stage2EditorMgr.h" />
     <ClInclude Include="Stage_2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Struct.h" />
+    <ClInclude Include="TailVertex.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Typedef.h" />
     <ClInclude Include="Vertex.h" />
@@ -222,10 +228,15 @@
     <ClCompile Include="ObjMgr.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RestartScene.cpp" />
+    <ClCompile Include="RhinoHead.cpp" />
+    <ClCompile Include="RhinoTail.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="ScrollMgr.cpp" />
+    <ClCompile Include="SoundMgr.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Stage2Editor.cpp" />
+    <ClCompile Include="Stage2EditorMgr.cpp" />
     <ClCompile Include="Stage_2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -233,6 +244,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TailVertex.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VerticalBlocck.cpp" />
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include "RestartScene.h"
 #include "BridgeScene.h"
 #include "Stage_2.h"
+#include "Stage2Editor.h"
 
 IMPLEMENT_SINGLETON(CSceneMgr)
 
@@ -62,6 +63,10 @@ void CSceneMgr::SceneChange(SCENEID eScene)
 
 		case CSceneMgr::SCENE_STAGE_2:
 			m_pScene = new CStage_2;
+			break;
+
+		case CSceneMgr::SCENE_LINE_EDIT_2:
+			m_pScene = new CStage2Editor;
 			break;
 		}
 		

@@ -28,10 +28,13 @@ void CHyena::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/HYENA_TIRED.bmp", L"HYENA_TIRED");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Monster/HYENA_TIRED_LEFT.bmp", L"HYENA_TIRED_LEFT");
 
+	CSoundMgr::Get_Instance()->StopAll();
+	CSoundMgr::Get_Instance()->PlayBGM(L"HyenaBGM.mp3");
+
 	m_pFrameKey = L"HYENA_START";
 
 	m_fMoveDistance = 300.f;
-	m_fSpeed = 5.f;
+	m_fSpeed = 10.f;
 
 	m_tInfo.fCX = 154.f;
 	m_tInfo.fCY = 154.f;
@@ -154,7 +157,7 @@ int CHyena::Update()
 				{
 					m_bIsJump = true;
 					m_bIsStop = false;
-					m_fJumpPower = -10.f;
+					m_fJumpPower = -15.f;
 
 					if (m_bIsRightDir)
 					{
@@ -225,9 +228,6 @@ void CHyena::Render(HDC hDC)
 		Ellipse(hDC, m_tInfo.fX - 5 - iScrollX, m_tInfo.fY - 5 + iScrollY, m_tInfo.fX + 5 - iScrollX, m_tInfo.fY + 5 + iScrollY);
 	}
 
-	WCHAR lpOut[1024] = L"";
-	wsprintf(lpOut, L"%d", m_iHp);
-	TextOut(hDC, WINCX / 2, 100, lpOut, lstrlen(lpOut));
 }
 
 void CHyena::Release()
@@ -291,6 +291,7 @@ void CHyena::StateChange()
 
 		case STATE::ROARING:
 		case STATE::ROARING_LEFT:
+			CSoundMgr::Get_Instance()->PlaySound(L"HYENA_ROARING.MP3", CSoundMgr::MONSTER);
 			m_tInfo.fCX = 140.f;
 			m_tInfo.fCY = 106.f;
 			m_tFrame.dwFrameSpeed = 80;

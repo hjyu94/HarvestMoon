@@ -41,7 +41,7 @@ void CPlayer::Initialize()
 
 	m_iHp = 90;
 	m_iMaxHp = 90;
-	m_iMp = 90;
+	m_iMp = 30;
 	m_iMaxMp = 90;
 
 
@@ -129,6 +129,11 @@ void CPlayer::Initialize()
 	m_pFrameKey = L"PLAYER_STANDING_LAND";
 
 	m_dwKill = GetTickCount();
+
+	if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
+		Set_Pos(130.f, 340.f);
+	else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE_2)
+		Set_Pos(0.f, 0.f);
 }
 
 int CPlayer::Update()
@@ -371,6 +376,8 @@ void CPlayer::IsHurting()
 {
 	if (m_bIsHurting)
 	{
+		CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_HURT.MP3", CSoundMgr::PLAYER);
+	
 		if (!m_bIsRightDir)
 		{
 			m_tInfo.fX += m_fSpeed;
@@ -465,6 +472,8 @@ void CPlayer::IsRoaring()
 {
 	if (m_eCurState == ROARING || m_eCurState == ROARING_LEFT)
 	{
+		CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_ROARING.MP3", CSoundMgr::PLAYER);
+
 		if (m_iMp > 30)
 		{
 			OBJLIST listMonster = CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MONSTER);
@@ -494,6 +503,8 @@ void CPlayer::IsRolling()
 {
 	if (m_bIsRolling)
 	{
+		CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_ROLLING.MP3.MP3", CSoundMgr::PLAYER);
+			
 		if (m_bIsRightDir)
 			m_tInfo.fX += m_fSpeed;
 		else
@@ -1084,6 +1095,7 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 			}
 
 			pCounterObj->Set_Dead();
+
 		}
 		else
 		{

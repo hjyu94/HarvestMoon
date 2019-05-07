@@ -44,4 +44,4 @@ using namespace std;
 #include "KeyMgr.h"
 #include "ScrollMgr.h"
 #include "Function.h"
-//#include "SoundMgr.h"
+#include "SoundMgr.h"

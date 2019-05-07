@@ -51,6 +51,7 @@ int CFly::Update()
 
 	if (m_bIsDead)
 	{
+		CSoundMgr::Get_Instance()->PlaySound(L"FLY_BOMB.MP3", CSoundMgr::MONSTER);
 		return OBJ_DEAD;
 	}
 	
@@ -148,6 +149,7 @@ void CFly::StateChange()
 
 		case STATE::DIE:
 		case STATE::DIE_LEFT:
+			CSoundMgr::Get_Instance()->PlaySound(L"MONSTER_HURT.MP3.MP3", CSoundMgr::MONSTER);
 			m_tInfo.fCX = 50.f;
 			m_tInfo.fCY = 44.f;
 			m_tFrame.dwFrameSpeed = 200;

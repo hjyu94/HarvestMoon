@@ -14,6 +14,7 @@ public:
 	static void Reset_Scroll() { m_iScrollX = 0; m_iScrollY = 0; }
 
 	static void ScrollLock();
+	static void ScrollLock_for_Stage_2();
 
 private:
 	static int m_iScrollX;

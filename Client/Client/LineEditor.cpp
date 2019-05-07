@@ -11,6 +11,7 @@ CLineEditor::CLineEditor()
 
 CLineEditor::~CLineEditor()
 {
+	Release();
 }
 
 void CLineEditor::Initialize()
@@ -31,13 +32,6 @@ void CLineEditor::Update()
 		CScrollMgr::Sum_ScrollY(-10.0f);
 
 	CEditorLineMgr::Get_Instance()->Update();
-
-	//int iScrollX = CScrollMgr::Get_ScrollX();
-	//int iScrollY = CScrollMgr::Get_ScrollY();
-	//if (CKeyMgr::Get_Instance()->KeyDown(VK_LBUTTON))
-	//{
-	//	cout << iScrollX << ", " << iScrollY << endl;
-	//}
 }
 
 void CLineEditor::LateUpdate()

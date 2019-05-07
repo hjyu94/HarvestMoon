@@ -26,3 +26,8 @@ void CScrollMgr::ScrollLock()
 	if (m_iScrollY < 0) m_iScrollY = 0;
 	if (m_iScrollY > ptScene.y - WINCY) m_iScrollY = ptScene.y - WINCY;
 }
+
+void CScrollMgr::ScrollLock_for_Stage_2()
+{
+}
+

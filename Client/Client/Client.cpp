@@ -131,7 +131,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 					   //CreateWindowW 함수는 윈도우 창에 관한 모든 정보를 메모리에 만든 후 윈도우 창의 핸들을 반환. 그리고 우리는 이 윈도우의 핸들값은 이 윈도우 창을 참조하는 모든 함수의 인자로 사용된다. 
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);// 출력 영역의 크기를 조정하는 함수. 
 	
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   HWND hWnd = CreateWindowW(szWindowClass, L"The Lion King", WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
