@@ -28,6 +28,7 @@ public:
 	void Initialize();
 	void Render(HDC hDC);
 	void Release(); 
+	list<CLine*>& Get_List() { return m_listLine; }
 
 public:
 	bool LineCollision(float fInX, float fInY, float* pOutY);

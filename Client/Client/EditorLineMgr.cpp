@@ -13,6 +13,7 @@
 #include "Grass.h"
 #include "SceneMgr.h"
 #include "Giraffe.h"
+#include "Monkey.h"
 
 CEditorLineMgr* CEditorLineMgr::m_pInstance = nullptr;
 
@@ -114,6 +115,7 @@ void CEditorLineMgr::Update()
 			pVertex->Set_Pos(float(pt.x), float(pt.y));
 			m_listVertex.emplace_back(pVertex);
 		}
+
 		// 엔터로 옵션 바꾸기
 		if (CKeyMgr::Get_Instance()->KeyDown(VK_RETURN))
 		{
@@ -302,7 +304,25 @@ void CEditorLineMgr::Update()
 			m_listStage2[S2_GIRAFFE].emplace_back(pGiraffe);
 		}
 
+		// 'M' 으로 원숭이 추가
+		if (CKeyMgr::Get_Instance()->KeyUP('M'))
+		{
+			CMonkey* pMonkey = new CMonkey();
+			pMonkey->Initialize();
+			pMonkey->Set_Pos(float(pt.x), float(pt.y));
+			m_listStage2[S2_MONKEY].emplace_back(pMonkey);
+		}
+
+		// 'V'로 Vertical Block 추가
+		if (CKeyMgr::Get_Instance()->KeyDown('V'))
+		{
+			CVerticalBlocck* pBlock = CAbstractFactory<CVerticalBlocck>::Create(float(pt.x), float(pt.y));
+			pBlock->UpdateRect();
+			m_listVerticalBlock.emplace_back(pBlock);
+		}
+
 		// 엔터로 기린 방향 바꾸기
+		// 엔터로 원숭이 색 바꾸기
 		if (CKeyMgr::Get_Instance()->KeyDown(VK_RETURN))
 		{
 			for (auto& pGiraffe : m_listStage2[S2_GIRAFFE])
@@ -312,12 +332,35 @@ void CEditorLineMgr::Update()
 					pGiraffe->Set_Dir(!pGiraffe->Get_IsRightDir());
 				}
 			}
+
+			for (auto& pMonkey : m_listStage2[S2_MONKEY])
+			{
+				if (PtInRect(&pMonkey->Get_Rect(), pt))
+				{
+					static_cast<CMonkey*>(pMonkey)->Change_Color();
+				}
+			}
+		}
+
+		// 우클릭으로 원숭이 방향 바꾸기
+		if (CKeyMgr::Get_Instance()->KeyDown(VK_RBUTTON))
+		{
+			for (auto& pMonkey : m_listStage2[S2_MONKEY])
+			{
+				if (PtInRect(&pMonkey->Get_Rect(), pt))
+				{
+					static_cast<CMonkey*>(pMonkey)->Change_Dir();
+				}
+			}
 		}
 
 		// 기린 방향에 따라 다르게 그려지도록 UPDATE 수행
-		for (auto& pGiraffe : m_listStage2[S2_GIRAFFE])
+		for (int i = 0; i < STAGE2::S2_END; ++i)
 		{
-			pGiraffe->Update();
+			for (auto& pObj : m_listStage2[i])
+			{
+				pObj->Update();
+			}
 		}
 
 		// 지우기
@@ -754,6 +797,25 @@ void CEditorLineMgr::SaveData_for_stage_2()
 		WriteFile(hLineFile, &pGiraffe->Get_IsRightDir(), sizeof(bool), &dwByte, nullptr);
 	}
 	CloseHandle(hGiraffeFile);
+
+	// vertical block 저장
+
+	HANDLE hVerticalBlockFile = CreateFile(
+		L"../Data/Stage2/VerticalBlock.dat"
+		, GENERIC_WRITE, 0, NULL
+		, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL
+	);
+
+	if (INVALID_HANDLE_VALUE == hVerticalBlockFile)
+	{
+		MessageBox(g_hWnd, L"저장하지 못했습니다", L"Vertical 블록 저장 실패", MB_OK);
+	}
+
+	for (auto& pVerticalBlock : m_listVerticalBlock)
+	{
+		WriteFile(hVerticalBlockFile, &pVerticalBlock->Get_Info(), sizeof(INFO), &dwByte, nullptr);
+	}
+	CloseHandle(hVerticalBlockFile);
 
 	MessageBox(g_hWnd, L"저장했습니다", L"저장 성공", MB_OK);
 }

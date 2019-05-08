@@ -14,5 +14,10 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
+
+private:
+	bool m_bIsClear;
+	DWORD m_dwClear;
+	bool m_bEndingMusicStart;
 };
 

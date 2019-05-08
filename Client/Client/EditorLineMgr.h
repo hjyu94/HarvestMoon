@@ -51,7 +51,7 @@ private:
 	
 	enum STAGE2
 	{
-		S2_GIRAFFE, S2_END
+		S2_GIRAFFE, S2_MONKEY, S2_END
 	};
 
 private:

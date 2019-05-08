@@ -49,8 +49,6 @@ void CStage2Editor::Render(HDC hDC)
 		, SRCCOPY);
 
 	CEditorLineMgr::Get_Instance()->Render(hDC);
-
-	cout << iScrollX << ", " << iScrollY << endl;
 }
 
 void CStage2Editor::Release()

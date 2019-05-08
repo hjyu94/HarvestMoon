@@ -258,6 +258,12 @@
     <ClInclude Include="Giraffe.h">
       <Filter>01. Obj\02. Monster</Filter>
     </ClInclude>
+    <ClInclude Include="Monkey.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Ostrich.h">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -381,6 +387,12 @@
       <Filter>01. Obj\04. Map</Filter>
     </ClCompile>
     <ClCompile Include="Giraffe.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Monkey.cpp">
+      <Filter>01. Obj\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Ostrich.cpp">
       <Filter>01. Obj\02. Monster</Filter>
     </ClCompile>
   </ItemGroup>

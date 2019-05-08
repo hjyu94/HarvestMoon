@@ -6,6 +6,9 @@ CObjMgr* CObjMgr::m_pInstance = nullptr;
 
 CObjMgr::CObjMgr()
 {
+	m_fSaving_X = 0.f;
+	m_fSaving_Y = 0.f;
+	m_bIsSaved = false;
 }
 
 

@@ -32,7 +32,10 @@ void CTailVertex::Render(HDC hDC)
 	int iScrollX = CScrollMgr::Get_ScrollX();
 	int iScrollY = CScrollMgr::Get_ScrollY();
 
-	Ellipse(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	if (CKeyMgr::Get_Instance()->KeyPressing('A'))
+	{
+		Ellipse(hDC, m_tRect.left - iScrollX, m_tRect.top + iScrollY, m_tRect.right - iScrollX, m_tRect.bottom + iScrollY);
+	}
 }
 
 void CTailVertex::Release()

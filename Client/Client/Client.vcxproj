@@ -173,11 +173,13 @@
     <ClInclude Include="Lizard.h" />
     <ClInclude Include="Logo.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="Monkey.h" />
     <ClInclude Include="MonkeyNPC.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MyBitmap.h" />
     <ClInclude Include="Obj.h" />
     <ClInclude Include="ObjMgr.h" />
+    <ClInclude Include="Ostrich.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RestartScene.h" />
@@ -220,11 +222,13 @@
     <ClCompile Include="Lizard.cpp" />
     <ClCompile Include="Logo.cpp" />
     <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="Monkey.cpp" />
     <ClCompile Include="MonkeyNPC.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MyBitmap.cpp" />
     <ClCompile Include="Obj.cpp" />
     <ClCompile Include="ObjMgr.cpp" />
+    <ClCompile Include="Ostrich.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RestartScene.cpp" />
     <ClCompile Include="RhinoHead.cpp" />

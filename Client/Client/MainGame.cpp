@@ -39,6 +39,7 @@ void CMainGame::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/HP.bmp", L"HP");
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/UI/MP.bmp", L"MP");
 
+	//CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_STAGE_2);
 	CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENE_LOGO);
 }
 

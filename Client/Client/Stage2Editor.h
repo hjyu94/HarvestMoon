@@ -14,8 +14,5 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Render(HDC hDC) override;
 	virtual void Release() override;
-	
-public:
-	bool LineCollision(float fInX, float fInY, float* pOutY);
 };
 

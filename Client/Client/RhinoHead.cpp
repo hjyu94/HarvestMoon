@@ -121,7 +121,7 @@ void CRhinoHead::FrameMove()
 
 		if (m_eCurState == UP)
 		{
-			m_eNextState = IDLE;
+			m_eNextState  = IDLE;
 			m_pFrameKey = L"RHINO_HEAD_IDLE";
 		}
 
@@ -140,7 +140,8 @@ void CRhinoHead::Collision_Proc(CObj * pCounterObj)
 		{
 			m_eNextState = UP;
 			m_pFrameKey = L"RHINO_HEAD_UP";
-			static_cast<CPlayer*>(pCounterObj)->Drag_Jump();
+			static_cast<CPlayer*>(pCounterObj)->Jump_with_Rhino();
+			CSoundMgr::Get_Instance()->PlaySound(L"MONKEY.MP3", CSoundMgr::CHANNELID::MONSTER);
 		}
 	}
 }

@@ -3,6 +3,7 @@
 #include "Line.h"
 #include "LineMgr.h"
 #include "Player.h"
+#include "ObjMgr.h"
 
 CGiraffe::CGiraffe()
 	: m_pFrameKey(L"")
@@ -213,12 +214,7 @@ void CGiraffe::FrameMove()
 		else if (m_eCurState == NECK)
 		{
 			--m_tFrame.iFrameStart_X;
-			
-			if (m_pLine)
-			{
-				delete m_pLine;
-				m_pLine = nullptr;
-			}
+			CObjMgr::Get_Instance()->Get_Player()->Rolling_Along_Giraffe(m_bIsRightDir, m_tRect);
 		}
 	}
 }

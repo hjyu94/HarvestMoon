@@ -46,5 +46,10 @@ private:
 	static CObjMgr* m_pInstance;
 	OBJLIST m_Objlist[OBJID::END];
 	CObj* m_pBoss;
+
+public:
+	float m_fSaving_X;
+	float m_fSaving_Y;
+	bool m_bIsSaved;
 };
 

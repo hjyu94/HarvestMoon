@@ -21,6 +21,12 @@ public:
 		, HURT, HURT_LEFT
 		, DIE, DIE_LEFT
 		, SWING
+		, RIDING
+	};
+
+	enum DIR
+	{
+		D_LEFT, D_RIGHT, D_DOWN, D_UP, D_END
 	};
 
 public:
@@ -43,6 +49,7 @@ public:
 	void IsDanging();
 	void IsOffset();
 	void IsRecovering();
+	void IsRiding();
 
 	void Is_On_Another_Scene();
 
@@ -51,13 +58,15 @@ public:
 	virtual void FrameMove();
 	virtual void Collision_Proc(CObj* pCounterObj);
 	void BackToIdle();
-	void Drag_Jump();
-	
+	void Jump_with_Rhino();
+	void Rolling_Along_Giraffe(bool bIs_GiraffeDir_Right, RECT rcGiraffe);
+	void Rolling_With_Monkey(CPlayer::DIR eDIR);
+	void Riding_On_Ostrich();
+
 public:
 	STATE Get_CurState() { return m_eCurState; }
 	bool Get_IsHurt() { return m_bIsHurting; }
-	bool Get_Dangling_With_Rhino() { return m_bIsDangling_with_Rhino; }
-
+	bool Get_Is_Dangling_With_Rhino() { return m_bIsDangling_with_Rhino; }
 public:
 	bool IsBetween(DWORD dwTime, float min, float max)
 	{
@@ -66,8 +75,8 @@ public:
 	
 	int Get_CurStage() { return m_iCurStage; }
 	void Set_CurStage(int iStage) { m_iCurStage = iStage; }
-
-
+	int& Get_JumpCount() { return m_iJumpCount; }
+	void FinalShooting();
 private:
 
 	bool m_bIsRolling;
@@ -75,6 +84,9 @@ private:
 	bool m_bIsRoaring;
 	bool m_bIsDangling;
 	bool m_bIsDangling_with_Rhino;
+
+ 	bool m_bIsRolling_with_Monkey;
+	bool m_bIsRiding_On_Ostrich;
 
 	bool m_bIsSeeingDown;
 	bool m_bIsSeeingUp;
@@ -92,15 +104,14 @@ private:
 	DWORD m_dwAnimation;
 	DWORD m_dwKill;
 	DWORD m_dwDangling_with_Rhino;
-	
+	DWORD m_dwMonkeyCoolTime;
+
 	bool m_bIsTransparent;
 	int m_iTransparentCount;
 
 	float m_fVelX;
 	int m_iCurStage;
+	int m_iJumpCount; // Ostrich 2´Ü Á¡ÇÁ
 
-private:
-	bool m_bIsSaved;
-	float m_fSaving_X;
-	float m_fSaving_Y;
+	
 };

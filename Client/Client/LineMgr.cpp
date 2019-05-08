@@ -16,6 +16,7 @@
 #include "Grass.h"
 #include "SceneMgr.h"
 #include "Giraffe.h"
+#include "Monkey.h"
 
 CLineMgr* CLineMgr::m_pInstance = nullptr; 
 
@@ -129,6 +130,71 @@ bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY)
 	*pOutY = fY_On_Target;
 	return true; 
 }
+
+//
+//bool CLineMgr::LineCollision(float fInX, float fInY, float * pOutY, bool bIs_Should_Line_Be_Down)
+//{
+//	if (m_listLine.empty())
+//		return false;
+//
+//	CLine* pTarget = nullptr;
+//	float fMinDistY = 9999.f; // 맵의 Height 보다 커야 함.
+//	float fY_On_Target = 0.f;
+//
+//	//float fPlayerCY = CObjMgr::Get_Instance()->Get_Player()->Get_Info().fCY;
+//
+//	for (auto& pLine : m_listLine)
+//	{
+//		if (fInX >= pLine->Get_LineInfo().tLeftPoint.fx &&
+//			fInX <= pLine->Get_LineInfo().tRightPoint.fx)
+//		{
+//
+//			// 해당 x 에 여러 line이 있는 경우
+//			// 바로 밑의 line 을 타겟팅하자.
+//			float x1 = pLine->Get_LineInfo().tLeftPoint.fx;
+//			float x2 = pLine->Get_LineInfo().tRightPoint.fx;
+//			float y1 = pLine->Get_LineInfo().tLeftPoint.fy;
+//			float y2 = pLine->Get_LineInfo().tRightPoint.fy;
+//
+//			float fY_On_Line = ((y2 - y1) / (x2 - x1)) * (fInX - x1) + y1/* - fPlayerCY/2*/;
+//			float fDistY = fabs(fY_On_Line - fInY);
+//
+//			if (bIs_Should_Line_Be_Down)
+//				// Ostrich 때문에 만들어 놓음
+//			{
+//				if (fDistY < 40.f && fInY < fY_On_Line)
+//				{
+//					//if(fY_On_Line >= fInY)
+//					if (fMinDistY >= fDistY)
+//					{
+//						pTarget = pLine;
+//						fMinDistY = fDistY;
+//						fY_On_Target = fY_On_Line;
+//					}
+//				}
+//			}
+//			else
+//			{
+//				if (fDistY < 40.f)
+//				{
+//					//if(fY_On_Line >= fInY)
+//					if (fMinDistY >= fDistY)
+//					{
+//						pTarget = pLine;
+//						fMinDistY = fDistY;
+//						fY_On_Target = fY_On_Line;
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	if (nullptr == pTarget)
+//		return false;
+//
+//	*pOutY = fY_On_Target;
+//	return true;
+//}
 
 void CLineMgr::LoadData()
 {
@@ -414,7 +480,6 @@ void CLineMgr::LoadData()
 	cout << CObjMgr::Get_Instance()->Get_OBJLIST(OBJID::MAP).size() << endl;
 	cout << CLineMgr::Get_Instance()->m_listLine.size() << endl;
 	/********************************************************/
-	MessageBox(g_hWnd, L"라인 정보를 읽어왔습니다", L"로드 성공", MB_OK);
 }
 
 void CLineMgr::LoadData_for_stage_2()
@@ -467,5 +532,25 @@ void CLineMgr::LoadData_for_stage_2()
 	CloseHandle(hGiraffeFile);
 
 
-	MessageBox(g_hWnd, L"로드했습니다", L"stage 2", MB_OK);
+	// Verticalblock 로드
+	HANDLE hVerticlFile = CreateFile(L"../Data/Stage2/VerticalBlock.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+
+	if (INVALID_HANDLE_VALUE == hVerticlFile)
+	{
+		MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+		return;
+	}
+
+	while (true)
+	{
+		ReadFile(hVerticlFile, &tInfo, sizeof(INFO), &dwByte, nullptr);
+		if (0 == dwByte)
+		{
+			break;
+		}
+		CObjMgr::Get_Instance()->AddObject(OBJID::VERTICAL_BLOCK, CAbstractFactory<CVerticalBlocck>::Create(tInfo.fX, tInfo.fY));
+	}
+	CloseHandle(hVerticlFile);
+
 }

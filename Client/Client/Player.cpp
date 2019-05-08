@@ -19,12 +19,15 @@
 #include "Fly.h"
 #include "Hyena.h"
 #include "Lizard.h"
+#include "Monkey.h"
 
 #include "Item.h"
 #include "Vertex.h"
 #include "Block.h"
 #include "VerticalBlocck.h"
 #include "TailVertex.h"
+
+#include "Line.h"
 
 CPlayer::CPlayer()
 	: m_eNextState(IDLE)
@@ -42,7 +45,8 @@ void CPlayer::Initialize()
 
 	m_iHp = 90;
 	m_iMaxHp = 90;
-	m_iMp = 30;
+	//m_iMp = 30;
+	m_iMp = 90;
 	m_iMaxMp = 90;
 
 
@@ -86,6 +90,7 @@ void CPlayer::Initialize()
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_DEAD_LEFT.bmp", L"PLAYER_DEAD_LEFT");
 
 	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_SWING.bmp", L"PLAYER_SWING");
+	CBitmapMgr::Get_Instance()->InsertBmp(L"../Image/Player/PLAYER_RIDING.bmp", L"PLAYER_RIDING");
 
 	m_bIsRightDir = true;
 	m_bIsRolling = false;
@@ -114,14 +119,14 @@ void CPlayer::Initialize()
 	m_fVelY = 0.f;
 	m_fJumpPower = 0.f;
 
-	m_bIsSaved = false;
-
 	m_bIsSeeingDown = false;
 	m_bIsSeeingUp = false;
 	m_bIsScrollEffect = false;
 	m_bIsBlockCollision = false;
 	m_bIs_On_Another_Scene = false;
 	m_bIsDangling_with_Rhino = false;
+	m_bIsRolling_with_Monkey = false;
+	m_bIsRiding_On_Ostrich = false;
 
 	m_bIsTransparent = false;
 	m_iTransparentCount = 0;
@@ -134,11 +139,8 @@ void CPlayer::Initialize()
 
 	m_dwKill = GetTickCount();
 	m_dwDangling_with_Rhino = GetTickCount();
-
-	//if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE)
-	//	Set_Pos(130.f, 340.f);
-	//else if (CSceneMgr::Get_Instance()->Get_SCENEID() == CSceneMgr::SCENEID::SCENE_STAGE_2)
-	//	Set_Pos(0.f, 0.f);
+	m_dwMonkeyCoolTime = GetTickCount();
+	m_iJumpCount = 0;
 }
 
 int CPlayer::Update()
@@ -152,6 +154,7 @@ int CPlayer::Update()
 		IsHurting();
 		IsOffset();
 		IsRecovering();
+		IsRiding();
 	}
 
 	if (m_bIs_On_Another_Scene)
@@ -171,16 +174,35 @@ int CPlayer::Update()
 		m_bIsRolling = false;
 		m_bIsJump = false;
 	}
+
 	// 치트키: 보스 앞으로 가도록
-	if (CKeyMgr::Get_Instance()->KeyDown(VK_F5))
+	if (CKeyMgr::Get_Instance()->KeyDown(VK_F7))
 	{
-		m_tInfo.fX = 2200.f;
-		m_tInfo.fY = -2000.f;
-		CScrollMgr::Reset_Scroll();
-		CScrollMgr::Sum_ScrollX(1900.f);
-		CScrollMgr::Sum_ScrollY(2200.f);
+		if (m_iCurStage == 1)
+		{
+			m_tInfo.fX = 2200.f;
+			m_tInfo.fY = -2000.f;
+			CScrollMgr::Reset_Scroll();
+			CScrollMgr::Sum_ScrollX(1900.f);
+			CScrollMgr::Sum_ScrollY(2200.f);
+		}
+		else if (m_iCurStage == 2)
+		{
+
+		}
 	}
-	
+
+	// 치트키
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_F4))
+	{
+		iLife = 1;
+	}
+
+	if (CKeyMgr::Get_Instance()->KeyPressing(VK_F6))
+	{
+		iLife = 4;
+	}
+
 	return 0;
 }
 
@@ -365,10 +387,12 @@ void CPlayer::IsJumping()
 				m_fJumpPower = 0.f;
 				m_tInfo.fY = fy;
 				
-				
+ 				m_bIsRolling_with_Monkey = false;
 				m_bIsBlockCollision = false;
+				m_iJumpCount = 0;
 
 				/*BackToIdle();*/
+
 				if (m_bIsRightDir)
 				{
 					m_pFrameKey = L"PLAYER_STANDING_LAND";
@@ -419,27 +443,26 @@ void CPlayer::IsOffset()
 	int iScrollX = CScrollMgr::Get_ScrollX();
 	int iScrollY = CScrollMgr::Get_ScrollY();
 
-	if (iOffsetX + 60 < m_tInfo.fX - iScrollX)
-		CScrollMgr::Sum_ScrollX(+m_fSpeed);
-	if (iOffsetX - 60 > m_tInfo.fX - iScrollX)
-		CScrollMgr::Sum_ScrollX(-m_fSpeed);
+	if (m_bIsRolling_with_Monkey)
+	{
+		if (iOffsetX + 60 < m_tInfo.fX - iScrollX)
+			CScrollMgr::Sum_ScrollX(+18);
+		if (iOffsetX - 60 > m_tInfo.fX - iScrollX)
+			CScrollMgr::Sum_ScrollX(-18);
+	}
+	else
+	{
+		if (iOffsetX + 60 < m_tInfo.fX - iScrollX)
+			CScrollMgr::Sum_ScrollX(+m_fSpeed);
+		if (iOffsetX - 60 > m_tInfo.fX - iScrollX)
+			CScrollMgr::Sum_ScrollX(-m_fSpeed);
+	}
 
 	if (iOffsetY - 100 > m_tInfo.fY + iScrollY)
 		CScrollMgr::Sum_ScrollY(m_fSpeed);
 	if (iOffsetY + 100 < m_tInfo.fY + iScrollY)
 		CScrollMgr::Sum_ScrollY(-m_fSpeed);
 
-	/*if (iOffsetY - 100 > m_tInfo.fY + iScrollY)
-	{
-	if (m_bIsJump)
-	CScrollMgr::Sum_ScrollY(+m_fVelY);
-	else
-	CScrollMgr::Sum_ScrollY(+m_fSpeed);
-	}
-	if (iOffsetY + 100 < m_tInfo.fY + iScrollY)
-	{
-	CScrollMgr::Sum_ScrollY(-m_fSpeed);
-	}*/
 }
 
 void CPlayer::IsRecovering()
@@ -452,6 +475,20 @@ void CPlayer::IsRecovering()
 			m_iMp++;
 		m_dwRecover = GetTickCount();
 	}
+}
+
+void CPlayer::IsRiding()
+{
+	if (m_bIsRiding_On_Ostrich)
+	{
+		m_tInfo.fX += 5.f;
+		
+		if (m_tInfo.fY > 400)
+		{
+			Set_Hp(0);
+		}
+	}
+
 }
 
 
@@ -493,7 +530,7 @@ void CPlayer::IsRoaring()
 			for (auto& pMonster : listMonster)
 			{
 				// 일정 반경 내에 있는 몬스터중
-				if (pMonster->Is_Inside(m_tRect.left - 150, m_tRect.top - 10, m_tRect.right + 150, m_tRect.bottom + 10))
+				if (pMonster->Is_Inside(m_tRect.left - 150, m_tRect.top - 50, m_tRect.right + 150, m_tRect.bottom + 50))
 				{
 					// 고슴도치만 뒤집힌다.
 					// 정상인 얘들이 보이면 뒤집음. 이미 뒤집힌 얘는 뒤집지 않음.
@@ -506,6 +543,19 @@ void CPlayer::IsRoaring()
 						pMonster->Set_Stun();
 					}
 
+					// 핑크 원숭이는 좌우가 바뀐다.
+					if (m_dwMonkeyCoolTime + 1500 < GetTickCount())
+					{
+						if (dynamic_cast<CMonkey*>(pMonster) != nullptr)
+						{
+							CMonkey* pMonkey = dynamic_cast<CMonkey*>(pMonster);
+							if (pMonkey->Get_Color() == CMonkey::C_PINK)
+							{
+								m_dwMonkeyCoolTime = GetTickCount();
+								pMonkey->Turn_Around();
+							}
+						}
+					}
 				}
 			}
 		}
@@ -514,15 +564,25 @@ void CPlayer::IsRoaring()
 
 void CPlayer::IsRolling()
 {
-	if (m_bIsRolling)
+	 if (m_bIsRolling_with_Monkey)
 	{
 		CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_ROLLING.MP3.MP3", CSoundMgr::PLAYER);
-			
+
 		if (m_eCurState == ROLLING)
-			m_tInfo.fX += m_fSpeed;
-		else if(m_eCurState == ROLLING_LEFT)
+	 		m_tInfo.fX += 15.f;
+		else if (m_eCurState == ROLLING_LEFT)
+			m_tInfo.fX -= 15.f;
+	}
+	else if (m_bIsRolling)
+	{
+		CSoundMgr::Get_Instance()->PlaySound(L"PLAYER_ROLLING.MP3.MP3", CSoundMgr::PLAYER);
+
+		if (m_eCurState == ROLLING)
+			m_tInfo.fX += m_fSpeed ;
+		else if (m_eCurState == ROLLING_LEFT)
 			m_tInfo.fX -= m_fSpeed;
 	}
+
 }
 
 void CPlayer::KeyCheck()
@@ -549,7 +609,36 @@ void CPlayer::KeyCheck()
 		}
 	}
 
-	if (m_bIsDangling)
+	if (m_bIsRiding_On_Ostrich)
+	{
+		// 아래 키나 위 키만 먹는다
+		if (CKeyMgr::Get_Instance()->KeyPressing(VK_DOWN))
+		{
+			if (!m_bIsJump)
+			{
+				m_pFrameKey = L"PLAYER_DOWN";
+				m_eNextState = DOWN;
+			}
+		}
+		else if (CKeyMgr::Get_Instance()->KeyDown(VK_SPACE) && m_iJumpCount < 2)
+		{
+			m_iJumpCount++;
+			m_bIsJump = true;
+			m_fJumpPower = -16.f;
+			m_fDeltaTime = 0.f;
+			m_eNextState = STANDING_JUMP;
+			m_pFrameKey = L"PLAYER_STANDING_JUMP";
+		}
+		else
+		{
+			if (!m_bIsJump)
+			{
+				m_eNextState = RIDING;
+				m_pFrameKey = L"PLAYER_RIDING";
+			}
+		}
+	}
+	else if (m_bIsDangling)
 	{
 		if (m_bIsRightDir) // 오른쪽을 보고 있는 경우, 아래키랑 오른쪽 키만 먹는다
 		{
@@ -599,6 +688,7 @@ void CPlayer::KeyCheck()
 		if (CKeyMgr::Get_Instance()->KeyDown(VK_SPACE))
 		{
 			m_bIsDangling_with_Rhino = false;
+
 			m_dwDangling_with_Rhino = GetTickCount();
 
 			if (m_tFrame.iFrameStart_X <= 2)
@@ -1010,7 +1100,17 @@ void CPlayer::SceneChange()
 			m_tFrame.iFrameStart_Y = 0;
 			break;
 
+		case CPlayer::RIDING:
+			m_tInfo.fCX = 108.f;
+			m_tInfo.fCY = 78.f;
+			m_tFrame.dwFrameSpeed = 100;
+			m_tFrame.dwFrameTime = GetTickCount();
+			m_tFrame.iFrameStart_X = 0;
+			m_tFrame.iFrameEnd_X = 4;
+			m_tFrame.iFrameStart_Y = 0;
+			break;
 		}
+
 		m_eCurState = m_eNextState;
 		m_bMotionEnd = false;
 	}
@@ -1036,29 +1136,59 @@ void CPlayer::FrameMove()
 	if (m_tFrame.iFrameStart_X >= m_tFrame.iFrameEnd_X)
 	{
 		// 다른 Scene에 있는 경우(죽은 경우) stage scene으로 돌아오기
+		// 목숨이 0보다 작은 경우는 다시 시작할건지 묻는 scene으로 이동
 		if (m_bIs_On_Another_Scene)
 		{
 			if (iLife>0)
 			{
 				if (m_iCurStage == 1)
 				{
+
+
 					CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE);
-					this->Initialize();
-					this->Set_Pos(m_fSaving_X, m_fSaving_Y);
-					CScrollMgr::Reset_Scroll();
-					CScrollMgr::Sum_ScrollX(m_fSaving_X - 340 - 100);
-					CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 + 100);
+
+					if (CObjMgr::Get_Instance()->m_bIsSaved)
+					{
+						float fSavingX = CObjMgr::Get_Instance()->m_fSaving_X;
+						float fSavingY = CObjMgr::Get_Instance()->m_fSaving_Y;
+
+						this->Initialize();
+						this->Set_Pos(fSavingX, fSavingY);
+						CScrollMgr::Reset_Scroll();
+						CScrollMgr::Sum_ScrollX(fSavingX - 130);
+						CScrollMgr::Sum_ScrollY(-fSavingY + 340);
+					}
+					else
+					{
+						this->Initialize();
+						this->Set_Pos(130.f, 340.f);
+						CScrollMgr::Reset_Scroll();
+					}
 					m_eNextState = STANDING_LAND;
 					m_pFrameKey = L"PLAYER_STANDING_LAND";
 				}
+
 				else if (m_iCurStage == 2)
 				{
 					CSceneMgr::Get_Instance()->SceneChange(CSceneMgr::SCENEID::SCENE_STAGE_2);
-					this->Initialize();
-					this->Set_Pos(125.f, 220.f);
-					CScrollMgr::Reset_Scroll();
-					//CScrollMgr::Sum_ScrollX(m_fSaving_X - 340 - 100);
-					//CScrollMgr::Sum_ScrollY(-m_fSaving_Y + 340 + 100);
+					if (CObjMgr::Get_Instance()->m_bIsSaved)
+					{
+						float fSavingX = CObjMgr::Get_Instance()->m_fSaving_X;
+						float fSavingY = CObjMgr::Get_Instance()->m_fSaving_Y;
+
+						this->Initialize();
+						this->Set_Pos(fSavingX, fSavingY);
+						CScrollMgr::Reset_Scroll();
+						CScrollMgr::Sum_ScrollX(fSavingX - 200);
+						//CScrollMgr::Sum_ScrollY(-fSavingY + 200);
+					}
+					else
+					{
+						this->Initialize();
+						this->Set_Pos(130.f, 340.f);
+						CScrollMgr::Reset_Scroll();
+					}
+
 					m_eNextState = STANDING_LAND;
 					m_pFrameKey = L"PLAYER_STANDING_LAND";
 				}
@@ -1114,8 +1244,7 @@ void CPlayer::FrameMove()
 		}
 
 		// 구르는 경우나, 짖는 경우, 몬스터와 부딪힌 경우, 착지한 경우, 마지막에 IDLE로 교체
-		else if (m_eCurState == ROLLING
-			|| m_eCurState == ROLLING_LEFT)
+		else if (m_bIsRolling)
 		{
 			BackToIdle();
 			m_bIsRolling = false;
@@ -1504,9 +1633,9 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				break;
 
 			case CItem::SAVE:
-				m_bIsSaved = true;
-				m_fSaving_X = pCounterObj->Get_Info().fX;
-				m_fSaving_Y = pCounterObj->Get_Info().fY;
+				CObjMgr::Get_Instance()->m_bIsSaved = true;
+				CObjMgr::Get_Instance()->m_fSaving_X = pCounterObj->Get_Info().fX;
+				CObjMgr::Get_Instance()->m_fSaving_Y = pCounterObj->Get_Info().fY;
 				break;
 			}
 		}
@@ -1577,15 +1706,18 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 
 	if (Is_Counter_One_Of(CVerticalBlocck))
 	{
-		RECT rc = {};
-		IntersectRect(&rc, &m_tRect, &pCounterObj->Get_Rect());
-		if (m_tInfo.fX < pCounterObj->Get_Info().fX)
+		if (m_eCurState != DOWN) // Ostrich 타 있을 때 피하라고
 		{
-			this->Set_Pos(m_tInfo.fX - (rc.right - rc.left), m_tInfo.fY);
-		}
-		else
-		{
-			this->Set_Pos(m_tInfo.fX + (rc.right - rc.left), m_tInfo.fY);
+			RECT rc = {};
+			IntersectRect(&rc, &m_tRect, &pCounterObj->Get_Rect());
+			if (m_tInfo.fX < pCounterObj->Get_Info().fX)
+			{
+				this->Set_Pos(m_tInfo.fX - (rc.right - rc.left), m_tInfo.fY);
+			}
+			else
+			{
+				this->Set_Pos(m_tInfo.fX + (rc.right - rc.left), m_tInfo.fY);
+			}
 		}
 	}
 
@@ -1625,16 +1757,125 @@ void CPlayer::BackToIdle()
 
 	m_bIsHurting = false;
 	m_bIsRolling = false;
-	m_bIsJump = false;
+	//m_bIsJump = false;
 	m_bIsRoaring = false;
 	m_fJumpPower = 0.f;
 	m_fDeltaTime = 0.f;
 }
 
-void CPlayer::Drag_Jump()
+void CPlayer::Jump_with_Rhino()
 {
 	m_bIsJump = true;
-	m_bIsRoaring = false;
-	m_fJumpPower = -20.f;
+	m_bIsRolling = false;
+	m_fJumpPower = -25.f;
 	m_fDeltaTime = 0.f;
+}
+
+void CPlayer::Rolling_Along_Giraffe(bool bIs_GiraffeDir_Right, RECT rcGiraffe)
+{
+	if (rcGiraffe.left <= m_tInfo.fX && m_tInfo.fX <= rcGiraffe.right)
+	{
+		m_bIsRolling = true;
+		m_bIsJump = true;
+		m_fJumpPower = 0.f;
+		m_fDeltaTime = 0.f;
+		if (m_bIsRightDir)
+		{
+			m_eNextState = ROLLING;
+			m_pFrameKey = L"PLAYER_ROLLING";
+		}
+		else
+		{
+			m_eNextState = ROLLING_LEFT;
+			m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+		}
+
+
+		list<CLine*>& line_List = CLineMgr::Get_Instance()->Get_List();
+		for (auto& iter = line_List.begin(); iter != line_List.end(); )
+		{
+			LINEINFO info = (*iter)->Get_LineInfo();
+			if (info.tLeftPoint.fx <= m_tInfo.fX && m_tInfo.fX <= info.tRightPoint.fx && *iter)
+			{
+				delete *iter;
+				*iter = nullptr;
+				iter = line_List.erase(iter);
+			}
+			else
+			{
+				iter++;
+			}
+		}
+	}
+}
+
+void CPlayer::Rolling_With_Monkey(CPlayer::DIR eDIR)
+{
+	m_fJumpPower = 0.f;
+	m_fDeltaTime = 0.f;
+
+	switch (eDIR)
+	{
+	case CPlayer::D_LEFT:
+		m_bIsRolling_with_Monkey = true;
+		m_pFrameKey = L"PLAYER_ROLLING_LEFT";
+		m_eNextState = ROLLING_LEFT;
+		m_bIsRightDir = false;
+		m_bIsJump = true;
+		m_fJumpPower = -5.5f;
+		m_fDeltaTime = 0.f;
+		break;
+	
+	case CPlayer::D_RIGHT:
+		m_bIsRolling_with_Monkey = true;
+		m_pFrameKey = L"PLAYER_ROLLING";
+		m_eNextState = ROLLING;
+		m_bIsRightDir = true;
+		m_bIsJump = true;
+		m_fJumpPower = -8.f;
+		m_fDeltaTime = 0.f;
+		break;
+
+	case CPlayer::D_DOWN:
+		m_bIsRolling_with_Monkey = false;
+		m_pFrameKey = L"PLAYER_ROLLING";
+		m_eNextState = ROLLING;
+		m_bIsJump = true;
+		m_fJumpPower = 4.f;
+		m_fDeltaTime = 0.f;
+		break;
+
+	case CPlayer::D_UP:
+		m_bIsRolling_with_Monkey = false;
+		m_pFrameKey = L"PLAYER_ROLLING";
+		m_eNextState = ROLLING;
+		m_bIsJump = true;
+		m_fJumpPower = -15.f;
+		m_fDeltaTime = 0.f;
+		break;
+	}
+
+	m_bIsRolling = false;
+}
+
+void CPlayer::Riding_On_Ostrich()
+{
+	// 한번만 수행되도록
+	if (!m_bIsRiding_On_Ostrich)
+	{
+		m_bIsRiding_On_Ostrich = true;
+		m_eNextState = RIDING;
+		m_pFrameKey = L"PLAYER_RIDING";
+	}
+}
+
+void CPlayer::FinalShooting()
+{
+	m_bIsRiding_On_Ostrich = false;
+	m_bIsJump = true;
+	m_fJumpPower = -15.f;
+	m_fDeltaTime = 0.f;
+	m_bIsRolling_with_Monkey = true;
+	m_eNextState = ROLLING;
+	m_pFrameKey = L"PLAYER_ROLLING";
 }
