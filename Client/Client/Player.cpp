@@ -534,9 +534,13 @@ void CPlayer::IsRoaring()
 				{
 					// 고슴도치만 뒤집힌다.
 					// 정상인 얘들이 보이면 뒤집음. 이미 뒤집힌 얘는 뒤집지 않음.
-					if (!static_cast<CHedgeHog*>(pMonster)->Get_UpsideState())
+					if (dynamic_cast<CHedgeHog*>(pMonster) != nullptr)
 					{
-						static_cast<CHedgeHog*>(pMonster)->Upside_Down();
+						if (!static_cast<CHedgeHog*>(pMonster)->Get_UpsideState())
+						{
+							static_cast<CHedgeHog*>(pMonster)->Upside_Down();
+						}
+
 					}
 					else
 					{
@@ -544,9 +548,10 @@ void CPlayer::IsRoaring()
 					}
 
 					// 핑크 원숭이는 좌우가 바뀐다.
-					if (m_dwMonkeyCoolTime + 1500 < GetTickCount())
+
+					if (dynamic_cast<CMonkey*>(pMonster) != nullptr)
 					{
-						if (dynamic_cast<CMonkey*>(pMonster) != nullptr)
+						if (m_dwMonkeyCoolTime + 1500 < GetTickCount())
 						{
 							CMonkey* pMonkey = dynamic_cast<CMonkey*>(pMonster);
 							if (pMonkey->Get_Color() == CMonkey::C_PINK)
@@ -1292,7 +1297,9 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 {
 	if (Is_Counter_One_Of(CLizard))
 	{
-		if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
+		if (m_bIsJump && !m_bIsHurting
+			&& pCounterObj->Get_Rect().top <= m_tRect.bottom
+			&& m_tRect.bottom <= pCounterObj->Get_Info().fY)
 		{
 			m_bIsJump = true;
 			m_fJumpPower = -10.f;
@@ -1345,7 +1352,9 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 	{
 		CHedgeHog* pHedgeHog = static_cast<CHedgeHog*>(pCounterObj);
 
-		if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
+		if (m_bIsJump && !m_bIsHurting
+			&& pCounterObj->Get_Rect().top <= m_tRect.bottom
+			&& m_tRect.bottom <= pCounterObj->Get_Info().fY)
 		{
 			if (pHedgeHog->Get_UpsideState())
 			{
@@ -1377,16 +1386,16 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_fJumpPower = -10.f;
 					m_fDeltaTime = 0.f;
 
-						if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-						{
-							m_pFrameKey = L"PLAYER_HURT";
-							m_eNextState = HURT;
-						}
-						else // 왼쪽을 보고 있는 경우
-						{
-							m_pFrameKey = L"PLAYER_HURT_LEFT";
-							m_eNextState = HURT_LEFT;
-						}
+					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT";
+						m_eNextState = HURT;
+					}
+					else // 왼쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT_LEFT";
+						m_eNextState = HURT_LEFT;
+					}
 
 					m_bIsHurting = true;
 					m_bIsRolling = false;
@@ -1414,16 +1423,16 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 					m_bIsJump = true;
 					m_fJumpPower = -10.f;
 
-						if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-						{
-							m_pFrameKey = L"PLAYER_HURT";
-							m_eNextState = HURT;
-						}
-						else // 왼쪽을 보고 있는 경우
-						{
-							m_pFrameKey = L"PLAYER_HURT_LEFT";
-							m_eNextState = HURT_LEFT;
-						}
+					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT";
+						m_eNextState = HURT;
+					}
+					else // 왼쪽을 보고 있는 경우
+					{
+						m_pFrameKey = L"PLAYER_HURT_LEFT";
+						m_eNextState = HURT_LEFT;
+					}
 
 					m_bIsHurting = true;
 					m_bIsRolling = false;
@@ -1444,16 +1453,16 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				m_bIsJump = true;
 				m_fJumpPower = -10.f;
 
-					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT";
-						m_eNextState = HURT;
-					}
-					else // 왼쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT_LEFT";
-						m_eNextState = HURT_LEFT;
-					}
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
 
 				m_bIsHurting = true;
 				m_bIsRolling = false;
@@ -1481,23 +1490,26 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 				m_fJumpPower = -10.f;
 				m_fDeltaTime = 0.f;
 
-					if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT";
-						m_eNextState = HURT;
-					}
-					else // 왼쪽을 보고 있는 경우
-					{
-						m_pFrameKey = L"PLAYER_HURT_LEFT";
-						m_eNextState = HURT_LEFT;
-					}
+				if (m_bIsRightDir) // 오른쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT";
+					m_eNextState = HURT;
+				}
+				else // 왼쪽을 보고 있는 경우
+				{
+					m_pFrameKey = L"PLAYER_HURT_LEFT";
+					m_eNextState = HURT_LEFT;
+				}
 
 				m_bIsHurting = true;
 				m_bIsRolling = false;
 				m_bIsDangling = false;
 			}
 		}
-		else if (m_bIsJump && m_tInfo.fY < pCounterObj->Get_Info().fY)
+		else if ((m_bIsJump && !m_bIsHurting
+			&& pCounterObj->Get_Rect().top <= m_tRect.bottom
+			&& m_tRect.bottom <= pCounterObj->Get_Info().fY)
+			|| m_eCurState == STANDING_JUMP || m_eCurState == STANDING_JUMP_LEFT)
 		{
 			m_bIsJump = true;
 			m_fJumpPower = -10.f;
@@ -1554,8 +1566,10 @@ void CPlayer::Collision_Proc(CObj * pCounterObj)
 		CHyena* pHyena = static_cast<CHyena*>(pCounterObj);
 		CHyena::STATE eState = pHyena->Get_State();
 
-		if (m_bIsJump && m_tRect.bottom < pCounterObj->Get_Info().fY &&
-			(eState == CHyena::STATE::TIRED || eState == CHyena::STATE::TIRED_LEFT))
+		if (m_bIsJump && !m_bIsHurting
+			&& pCounterObj->Get_Rect().top <= m_tRect.bottom
+			&& m_tRect.bottom <= pCounterObj->Get_Info().fY
+			&& (eState == CHyena::STATE::TIRED || eState == CHyena::STATE::TIRED_LEFT))
 		{
 			m_bIsJump = true;
 			m_fJumpPower = -10.f;

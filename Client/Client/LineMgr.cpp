@@ -301,68 +301,68 @@ void CLineMgr::LoadData()
 
 	/********************************************************/
 
-	HANDLE hFileLIZARD = CreateFile(L"../Data/Lizard.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+	//HANDLE hFileLIZARD = CreateFile(L"../Data/Lizard.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	//// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
 
-	if (INVALID_HANDLE_VALUE == hFileLIZARD)
-	{
-		MessageBox(g_hWnd, L"LIZARD 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
-		return;
-	}
+	//if (INVALID_HANDLE_VALUE == hFileLIZARD)
+	//{
+	//	MessageBox(g_hWnd, L"LIZARD 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+	//	return;
+	//}
 
-	while (true)
-	{
-		ReadFile(hFileLIZARD, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
-		if (0 == dwByte4)
-		{
-			break;
-		}
-		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(tInfo3.fX, tInfo3.fY));
-	}
-	CloseHandle(hFileLIZARD);
-	/********************************************************/
+	//while (true)
+	//{
+	//	ReadFile(hFileLIZARD, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
+	//	if (0 == dwByte4)
+	//	{
+	//		break;
+	//	}
+	//	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(tInfo3.fX, tInfo3.fY));
+	//}
+	//CloseHandle(hFileLIZARD);
+	///********************************************************/
 
-	HANDLE hFileFLY = CreateFile(L"../Data/Fly.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+	//HANDLE hFileFLY = CreateFile(L"../Data/Fly.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	//// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
 
-	if (INVALID_HANDLE_VALUE == hFileFLY)
-	{
-		MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
-		return;
-	}
+	//if (INVALID_HANDLE_VALUE == hFileFLY)
+	//{
+	//	MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+	//	return;
+	//}
 
-	while (true)
-	{
-		ReadFile(hFileFLY, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
-		if (0 == dwByte4)
-		{
-			break;
-		}
-		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CFly>::Create(tInfo3.fX, tInfo3.fY));
-	}
-	CloseHandle(hFileFLY);
-	/********************************************************/
+	//while (true)
+	//{
+	//	ReadFile(hFileFLY, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
+	//	if (0 == dwByte4)
+	//	{
+	//		break;
+	//	}
+	//	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CFly>::Create(tInfo3.fX, tInfo3.fY));
+	//}
+	//CloseHandle(hFileFLY);
+	///********************************************************/
 
-	HANDLE hFileHedgehog = CreateFile(L"../Data/Hedgehog.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
+	//HANDLE hFileHedgehog = CreateFile(L"../Data/Hedgehog.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	//// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 
 
-	if (INVALID_HANDLE_VALUE == hFileHedgehog)
-	{
-		MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
-		return;
-	}
+	//if (INVALID_HANDLE_VALUE == hFileHedgehog)
+	//{
+	//	MessageBox(g_hWnd, L"block 정보를 읽어오지 못했습니다", L"로드 실패", MB_OK);
+	//	return;
+	//}
 
-	while (true)
-	{
-		ReadFile(hFileHedgehog, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
-		if (0 == dwByte4)
-		{
-			break;
-		}
-		CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(tInfo3.fX, tInfo3.fY));
-	}
-	CloseHandle(hFileHedgehog);
-	/********************************************************/
+	//while (true)
+	//{
+	//	ReadFile(hFileHedgehog, &tInfo3, sizeof(INFO), &dwByte4, nullptr);
+	//	if (0 == dwByte4)
+	//	{
+	//		break;
+	//	}
+	//	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(tInfo3.fX, tInfo3.fY));
+	//}
+	//CloseHandle(hFileHedgehog);
+	///********************************************************/
 
 	HANDLE hFileGrass = CreateFile(L"../Data/Grass.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	// 여기서 2, 5번만 바뀜. 파일을 읽기용으로 OPEN_EXISTING - 이미 존재하는 파일을 열겟다라는 의미. 

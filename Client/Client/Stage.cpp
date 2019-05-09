@@ -47,23 +47,36 @@ void CStage::Initialize()
 	
 
 	// µµ¸¶¹ì
+	CLizard* pLizard;
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(790, 390));
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1320, 390));
-	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1390, 26));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1400, -10));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(2000, 5));
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(500, -140));
+	pLizard = CAbstractFactory<CLizard>::Create(1400, -330);
+	pLizard->Set_Distance(50.f);
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pLizard);
+	pLizard = CAbstractFactory<CLizard>::Create(2290, -530);
+	pLizard->Set_Distance(50.f);
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pLizard);
+	
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1230, -1170));
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CLizard>::Create(1200, -1360));
+
+
 
 	// °í½¿µµÄ¡
 	CHedgeHog* pHedgeHog;
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(1700, 390));
-	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(1980, 60));
-	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(850, -50));
-	
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CHedgeHog>::Create(1000, -40));
+
 
 	// ³¯ÆÄ¸®
 	CFly* pFly;
 	pFly = CAbstractFactory<CFly>::Create(873, -230);
 	pFly->Set_Distance(50.f);
 	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, pFly);
+	CObjMgr::Get_Instance()->AddObject(OBJID::MONSTER, CAbstractFactory<CFly>::Create(1800, -280));
 
 
 	CItem* pItem = CAbstractFactory<CItem>::Create(800, -300);
